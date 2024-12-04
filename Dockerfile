@@ -1,4 +1,4 @@
-# Step 1: Node.js 기본 이미지 사용
+# Step 1: Node.js 기본 이미지 사용1
 FROM node:16
 
 # Step 2: 작업 디렉토리 설정
