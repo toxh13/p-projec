@@ -3,20 +3,23 @@ name: Deploy to Server
 on:
   push:
     branches:
-      - main  # main 브랜치에 푸시되면 배포 실행
+      - main  # main 브랜치에 푸시될 때마다 실행됨
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # 우분투 환경에서 실행
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2  # GitHub 저장소를 체크아웃
 
-      - name: Set up SSH key for server
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2  # Docker 설정
+
+      - name: Set up SSH for server deployment
         uses: webfactory/ssh-agent@v0.5.3
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}  # SSH 개인 키를 GitHub Secrets에서 가져옴
 
       - name: Deploy to server
         run: |
-          ssh user@125.250.18.224 'cd /path/to/your/project && git pull origin main && docker-compose down && docker-compose up -d'
+          ssh -o StrictHostKeyChecking=no user@your-server-ip "cd /path/to/project && git pull origin main && docker-compose down && docker-compose up -d"
