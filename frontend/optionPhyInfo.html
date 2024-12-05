@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<!-- 선택-->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>신체정보입력</title>
+  </head>
+  <body>
+    <h2>자신의 신체정보 입력</h2>
+    <!--저장방식이 아니라 일단 클릭시 넘어가는 방식으로 임시구현-->
+    <!--숫자만 입력되게, 입력이 안됐거나 숫자 이외의 것들을 입력시 다시입력되게 만들기-->
+    <label for="number">키 : </label>
+    <input type="text" placeholder="숫자 입력" id="option_stature" />
+    <br />
+    <label for="number">몸무게 : </label>
+    <input type="text" placeholder="숫자 입력" id="option_weight" />
+    <br />
+    <!--뒤로가기 버튼 만들기-->
+    <button onclick="location.href='optionTBSel.html'">저장</button>
+    <button onclick="clearInput()">다시 입력</button>
+
+    <script>
+      /*입력된 것들을 전체 초기화*/
+      function clearInput() {
+        document.getElementById("option_stature").value = "";
+        document.getElementById("option_weight").value = "";
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>하의 선택 페이지</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 50px;
+      }
+      .category-buttons,
+      .clothing-options {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin: 20px 0;
+      }
+      button {
+        margin: 10px;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>하의 선택 페이지</h1>
+    <div class="category-buttons" id="categoryButtons">
+      <button onclick="showClothing('캐주얼')">캐주얼</button>
+      <button onclick="showClothing('스트릿')">스트릿</button>
+      <button onclick="showClothing('미니멀')">미니멀</button>
+      <button onclick="showClothing('워크웨어')">워크웨어</button>
+      <button onclick="showClothing('스포티')">스포티</button>
+      <button onclick="showClothing('클래식')">클래식</button>
+      <button onclick="showClothing('시크')">시크</button>
+      <button onclick="showClothing('로맨틱')">로맨틱</button>
+      <button onclick="showClothing('시티보이')">시티보이</button>
+      <button onclick="showClothing('레트로')">레트로</button>
+    </div>
+
+    <div class="clothing-options hidden" id="clothingOptions">
+      <h2 id="selectedCategory"></h2>
+
+      <div id="clothingItems"></div>
+      <button onclick="goBack()">뒤로가기</button>
+    </div>
+
+    <script>
+      function showClothing(category) {
+        document.getElementById("categoryButtons").classList.add("hidden");
+        document.getElementById("clothingOptions").classList.remove("hidden");
+        document.getElementById("selectedCategory").innerText = category;
+
+        const clothingItems = {
+          캐주얼: ["1", "2", "3"],
+          스트릿: ["1", "2", "3"],
+          미니멀: ["1", "2", "3"],
+          워크웨어: ["1", "2", "3"],
+          스포티: ["1", "2", "3"],
+          클래식: ["1", "2", "3"],
+          시크: ["1", "2", "3"],
+          로맨틱: ["1", "2", "3"],
+          시티보이: ["1", "2", "3"],
+          레트로: ["1", "2", "3"],
+        };
+
+        const items = clothingItems[category];
+        const clothingDiv = document.getElementById("clothingItems");
+        clothingDiv.innerHTML = ""; // 이전 항목 지우기
+
+        items.forEach((item) => {
+          clothingDiv.innerHTML += `<button>${item}</button>`;
+        });
+      }
+
+      function goBack() {
+        document.getElementById("clothingOptions").classList.add("hidden");
+        document.getElementById("categoryButtons").classList.remove("hidden");
+      }
+    </script>
+  </body>
+</html>

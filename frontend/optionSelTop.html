@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>상의 선택 페이지</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 50px;
+      }
+      .category-buttons,
+      .clothing-options {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin: 20px 0;
+      }
+      button {
+        margin: 10px;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>상의 선택 페이지</h1>
+    <div class="category-buttons" id="categoryButtons">
+      <button onclick="showClothing('캐주얼')">캐주얼</button>
+      <button onclick="showClothing('스트릿')">스트릿</button>
+      <button onclick="showClothing('미니멀')">미니멀</button>
+      <button onclick="showClothing('워크웨어')">워크웨어</button>
+      <button onclick="showClothing('스포티')">스포티</button>
+      <button onclick="showClothing('클래식')">클래식</button>
+      <button onclick="showClothing('시크')">시크</button>
+      <button onclick="showClothing('로맨틱')">로맨틱</button>
+      <button onclick="showClothing('시티보이')">시티보이</button>
+      <button onclick="showClothing('레트로')">레트로</button>
+    </div>
+
+    <div class="clothing-options hidden" id="clothingOptions">
+      <h2 id="selectedCategory"></h2>
+
+      <div id="clothingItems"></div>
+      <button onclick="recommend()">재추천</button>
+      <button onclick="goBack()">뒤로가기</button>
+    </div>
+
+    <script>
+      function showClothing(category) {
+        document.getElementById("categoryButtons").classList.add("hidden");
+        document.getElementById("clothingOptions").classList.remove("hidden");
+        document.getElementById("selectedCategory").innerText = category;
+
+        const clothingItems = {
+          캐주얼: ["니트", "맨투맨", "후드티"],
+          스트릿: ["오버사이즈 티셔츠", "조거 팬츠", "스니커즈"],
+          미니멀: ["슬랙스", "니트", "셔츠"],
+          워크웨어: ["작업복", "카고 팬츠", "부츠"],
+          스포티: ["운동복", "레깅스", "스포츠 브라"],
+          클래식: ["블레이저", "드레스 셔츠", "치노 팬츠"],
+          시크: ["블랙 원피스", "가죽 자켓", "하이힐"],
+          로맨틱: ["레이스 블라우스", "플레어 스커트", "샌들"],
+          시티보이: ["후드 집업", "반바지", "캡"],
+          레트로: ["빈티지 티셔츠", "데님 재킷", "와이드 팬츠"],
+        };
+
+        const items = clothingItems[category];
+        const clothingDiv = document.getElementById("clothingItems");
+        clothingDiv.innerHTML = ""; // 이전 항목 지우기
+
+        items.forEach((item) => {
+          clothingDiv.innerHTML += `<button>${item}</button>`;
+        });
+      }
+
+      //뒤로가기기능
+      function goBack() {
+        document.getElementById("clothingOptions").classList.add("hidden");
+        document.getElementById("categoryButtons").classList.remove("hidden");
+      }
+
+      //받은 추천이 싫을때 제외 후 재추천 기능
+      function recommend() {}
+    </script>
+  </body>
+</html>

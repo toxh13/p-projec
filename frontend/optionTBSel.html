@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<!--상하의 둘중하나 선택창-->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>상하의 둘중하나 선택</title>
+    <style>
+      body {
+        display: flex;
+        flex-direction: column; /* 세로 방향 정렬 */
+        justify-content: center;
+        align-items: center;
+        height: 100vh; /* 전체 화면 높이를 사용 */
+        margin: 0; /* 기본 여백 제거 */
+        text-align: center; /* 텍스트 중앙 정렬 */
+      }
+      .container {
+        display: flex;
+        justify-content: center; /* 중앙 정렬 */
+        align-items: center; /* 수직 중앙 정렬 */
+        flex-direction: row; /* 가로 방향 정렬 */
+        width: 80%; /* 너비 설정 */
+        max-width: 800px; /* 최대 너비 설정 (선택 사항) */
+      }
+      .image_container {
+        margin: 20px;
+      }
+      img {
+        max-width: 100%;
+        height: auto;
+      }
+      button {
+        margin-top: 10px;
+        padding: 10px 20px;
+        font-size: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>상하의 선택</h2>
+    <!-- 상단에 위치 -->
+    <div class="container">
+      <div class="image_container">
+        <img src="image/TopImage.jpg" alt="로딩오류" width="300" height="200" />
+        <br />
+        <button onclick="location.href='optionSelTop.html'">상의</button>
+      </div>
+
+      <div class="image_container">
+        <img
+          src="image/BottomImage.jpg"
+          alt="로딩오류"
+          width="300"
+          height="200"
+        />
+        <br />
+        <button onclick="location.href='optionSelBotton.html'">하의</button>
+      </div>
+    </div>
+  </body>
+</html>
