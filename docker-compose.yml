@@ -22,9 +22,9 @@ services:
       - ai_server
     environment:
       - DB_HOST=db # DB 서버의 호스트 이름
-      - DB_USER=user
-      - DB_PASSWORD=userpassword
-      - DB_NAME=recommendation_db
+      - DB_USER=toxh13
+      - DB_PASSWORD=123123a
+      - DB_NAME=project_db
 
   # AI 서버 (FastAPI)
   ai_server:
@@ -43,10 +43,10 @@ services:
   db:
     image: mysql:8
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: recommendation_db
-      MYSQL_USER: user
-      MYSQL_PASSWORD: userpassword
+      MYSQL_ROOT_PASSWORD: 123123123a
+      MYSQL_DATABASE: project_db
+      MYSQL_USER: toxh13
+      MYSQL_PASSWORD: 123123a
     ports:
       - "3306:3306"
     networks:
