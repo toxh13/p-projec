@@ -5,7 +5,7 @@ FROM node:16-alpine
 WORKDIR /app
 
 # 3. 의존성 파일을 복사
-COPY package.json package-lock.json ./
+COPY package.json package-lock.json ./ 
 
 # 4. 의존성 설치
 RUN npm install
@@ -16,5 +16,5 @@ COPY . .
 # 6. 3000번 포트 오픈
 EXPOSE 3000
 
-# 7. 서버 실행 (서버 파일이 `server.js`라고 가정
-CMD ["node", "app.js"]
+# 7. 서버 실행
+CMD ["node", "server.js"]  # 'server.js'로 서버 실행
