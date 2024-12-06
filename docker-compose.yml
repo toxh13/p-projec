@@ -8,8 +8,6 @@ services:
       - "80:80"
     networks:
       - project-net
-    volumes:
-      - ./frontend:/var/www/html/
 
   # 백엔드 (Node.js)
   backend:
@@ -24,7 +22,7 @@ services:
 
   # AI 서버 (FastAPI)
   ai_server:
-    build: ./ai_server
+    build: ./AI
     ports:
       - "8000:8000"
     networks:
@@ -32,14 +30,18 @@ services:
 
   # DB 서버 (MySQL)
   db:
-    image: mysql:8
+    image: mysql:latest
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: recommendation_db
+      MYSQL_ROOT_PASSWORD: 123123123a          # 루트 비밀번호
+      MYSQL_DATABASE: project_db        # 기본 데이터베이스
+      MYSQL_USER: toxh13                          # 사용자 이름
+      MYSQL_PASSWORD: 123123a             # 사용자 비밀번호
     ports:
-      - "3306:3306"
+      - "3306:3306"                             # MySQL 기본 포트
     networks:
       - project-net
+    volumes:
+      - ./DB:/var/lib/mysql                # 데이터 저장용 볼륨 설정
 
 networks:
   project-net:
