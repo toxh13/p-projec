@@ -17,15 +17,15 @@ services:
       - "3000:3000"
     networks:
       - project-net
-    depends_on:
-      - db
-      - ai_server
     environment:
-      - DB_HOST=db # DB 서버의 호스트 이름
+      - DB_HOST=db
       - DB_USER=toxh13
       - DB_PASSWORD=123123a
       - DB_NAME=project_db
-
+    depends_on:
+      - db
+    volumes:
+      - ./backend:/app  # 코드 변경 반영을 위해 볼륨 설
   # AI 서버 (FastAPI)
   ai_server:
     build: ./AI
