@@ -23,6 +23,7 @@ let top_style = {};//상의 스타일 저장 변수
 let bottom_style = {};//하의 스타일 저장 변수
 //프론트엔드에서 사용자가 선택한 정보를 서버에 POST 요청으로 전달하여 저장하도록 변경해야함
 
+//기본 라우터
 app.get('/', (req, res) => {
     res.send('Hello World from the backend server!');
 });
@@ -39,7 +40,7 @@ app.post('/optionDecision.html', (req, res) => {
     res.status(200).json({ message: `성별 ${selectedGender}이 저장되었습니다.` });
 });
 
-//키, 몸무게 저장
+//신체정보 저장
 app.post("/optionPhyInfo.html", (req, res) => {
     const { stature, weight } = req.body;
   
