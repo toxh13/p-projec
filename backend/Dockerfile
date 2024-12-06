@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 3000
 
 # 7. 서버 실행 (서버 파일이 `server.js`라고 가정)
-CMD ["node", "server.js"]
+CMD ["node", "app.js"]
