@@ -11,6 +11,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 애플리케이션 파일 복사
 COPY . .
 
-# FastAPI 애플리케이션 실행 (main.py가 현재 /app 디렉터리에 있어야 함)
+# FastAPI 애플리케이션 실행 (main.py가 /app 디렉터리에 있어야 함)
 EXPOSE 8000
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
