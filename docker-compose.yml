@@ -8,6 +8,7 @@ services:
       - "80:80"
     networks:
       - project-net
+    # 오류가 발생할 수 있는 포트나 환경 변수를 추가
 
   # 백엔드 (Node.js)
   backend:
@@ -19,29 +20,39 @@ services:
     depends_on:
       - db
       - ai_server
+    environment:
+      - DB_HOST=db # DB 서버의 호스트 이름
+      - DB_USER=user
+      - DB_PASSWORD=userpassword
+      - DB_NAME=recommendation_db
 
   # AI 서버 (FastAPI)
   ai_server:
-    build: ./AI
+    build: ./ai_server
     ports:
       - "8000:8000"
     networks:
       - project-net
+    environment:
+      - AI_MODEL_PATH=/path/to/model  # 모델 경로 설정 (필요시)
 
   # DB 서버 (MySQL)
   db:
-    image: mysql:latest
+    image: mysql:8
     environment:
-      MYSQL_ROOT_PASSWORD: 123123123a          # 루트 비밀번호
-      MYSQL_DATABASE: project_db        # 기본 데이터베이스
-      MYSQL_USER: toxh13                          # 사용자 이름
-      MYSQL_PASSWORD: 123123a             # 사용자 비밀번호
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: recommendation_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: userpassword
     ports:
-      - "3306:3306"                             # MySQL 기본 포트
+      - "3306:3306"
     networks:
       - project-net
     volumes:
-      - ./DB:/var/lib/mysql                # 데이터 저장용 볼륨 설정
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
 
 networks:
   project-net:
