@@ -28,7 +28,7 @@ services:
 
   # AI 서버 (FastAPI)
   ai_server:
-    build: ./ai_server
+    build: ./AI
     ports:
       - "8000:8000"
     networks:
