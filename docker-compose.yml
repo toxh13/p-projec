@@ -34,8 +34,13 @@ services:
     networks:
       - project-net
     environment:
-      - AI_MODEL_PATH=/path/to/model  # 모델 경로 설정 (필요시)
-
+      # 필요시 추가 환경 변수 설정
+      # 예: 모델 경로 (현재는 사용하지 않음)
+      # AI_MODEL_PATH: /path/to/model
+    volumes:
+      - ./AI:/app  # AI 폴더를 컨테이너에 매핑
+    depends_on:
+      - db  # DB가 필요할 경우 DB와 연결
   # DB 서버 (MySQL)
   db:
     image: mysql:8
