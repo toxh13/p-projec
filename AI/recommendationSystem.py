@@ -10,12 +10,15 @@ def get_recommendation(gender, category, style, user_height, user_weight, exclud
         print(e)
         return None
 
-    # CSV 파일 읽기 (빈칸을 공백으로 채우기)
+    # CSV 파일 읽기
     data = pd.read_csv(csv_path).fillna("")
 
+    # 선택한 성별 및 공용 데이터 필터링
+    data = data[(data['성별'] == gender) | (data['성별'] == "공용")]
+
     # 키와 몸무게를 숫자로 변환
-    data['height'] = pd.to_numeric(data['키'], errors='coerce')
-    data['weight'] = pd.to_numeric(data['몸무게'], errors='coerce')
+    data['height'] = pd.to_numeric(data['평균 키'], errors='coerce')
+    data['weight'] = pd.to_numeric(data['평균 몸무게'], errors='coerce')
 
     # 유효한 데이터만 필터링
     data = data.dropna(subset=['height', 'weight'])
@@ -40,9 +43,9 @@ def get_recommendation(gender, category, style, user_height, user_weight, exclud
     return top_3_recommendations.reset_index(drop=True)
 
 # 사용자 입력 받기
-user_gender = input("성별을 선택하세요 (남성/여성): ").strip()
+user_gender = input("성별을 선택하세요 (남/여): ").strip()
 user_category = input("의류 종류를 선택하세요 (상의/하의): ").strip()
-user_style = input("스타일을 선택하세요 (고프코어, 레트로, 미니멀, 스트릿, 스포티, 워크웨어, 캐주얼, 클래식): ").strip()
+user_style = input("스타일을 선택하세요 (미니멀, 스트릿, 워크웨어, 캐주얼): ").strip()
 
 # 사용자 키와 몸무게 입력
 user_height = float(input("사용자의 키(cm)를 입력하세요: "))
@@ -55,7 +58,7 @@ if top_3_recommendations is None:
 
 print("추천 의류 정보:")
 for idx, row in top_3_recommendations.iterrows():
-    print(f"{idx}: 브랜드명: {row['브랜드명']}, 상품명: {row['상품명']}, 가격: {row['가격']}")
+    print(f"{idx}: 브랜드명: {row['브랜드']}, 상품명: {row['상품명']}, 가격: {row['현재 가격']}, 구매사이트: {row['구매사이트']}")
 
 selected_index = input("추천받은 의류 중 하나를 선택하세요 (0, 1, 2). 마음에 들지 않으면 'N'을 입력하세요: ").strip()
 if selected_index.lower() == 'n':
@@ -68,7 +71,7 @@ if selected_index.lower() == 'n':
 
     print("새로운 추천 의류 정보:")
     for idx, row in top_3_recommendations.iterrows():
-        print(f"{idx}: 브랜드명: {row['브랜드명']}, 상품명: {row['상품명']}, 가격: {row['가격']}")
+        print(f"{idx}: 브랜드명: {row['브랜드']}, 상품명: {row['상품명']}, 가격: {row['현재 가격']}, 구매사이트: {row['구매사이트']}")
 
     selected_index = input("추천받은 의류 중 하나를 선택하세요 (0, 1, 2): ").strip()
 
@@ -81,13 +84,13 @@ selected_item = top_3_recommendations.loc[selected_index]
 
 # 선택한 의류 정보 저장
 output_data = pd.DataFrame({
-    '브랜드명': [selected_item['브랜드명']],
+    '브랜드명': [selected_item['브랜드']],
     '상품명': [selected_item['상품명']],
-    '가격': [selected_item['가격']],
+    '가격': [selected_item['현재 가격']],
     '이미지 URL': [selected_item['이미지 URL']],
-    '모델 이미지 URL': [selected_item['모델 이미지 URL']],
-    '키': [selected_item['키']],
-    '몸무게': [selected_item['몸무게']]
+    '구매사이트': [selected_item['구매사이트']],
+    '평균 키': [selected_item['평균 키']],
+    '평균 몸무게': [selected_item['평균 몸무게']]
 })
 
 output_csv_path = "selected_item.csv"
@@ -97,14 +100,14 @@ print(f"선택한 의류 정보를 {output_csv_path} 파일에 저장했습니�
 # 2차 추천 (반대 카테고리)
 alternate_category = "하의" if user_category == "상의" else "상의"
 
-print(f"{alternate_category} 추천을 진행합니다...")
+print(f"\n{alternate_category} 추천을 진행합니다...")
 top_3_alternate = get_recommendation(user_gender, alternate_category, user_style, user_height, user_weight)
 if top_3_alternate is None:
     exit()
 
 print("추천 의류 정보:")
 for idx, row in top_3_alternate.iterrows():
-    print(f"{idx}: 브랜드명: {row['브랜드명']}, 상품명: {row['상품명']}, 가격: {row['가격']}")
+    print(f"{idx}: 브랜드명: {row['브랜드']}, 상품명: {row['상품명']}, 가격: {row['현재 가격']}, 구매사이트: {row['구매사이트']}")
 
 selected_index_alternate = input("추천받은 의류 중 하나를 선택하세요 (0, 1, 2). 마음에 들지 않으면 'N'을 입력하세요: ").strip()
 if selected_index_alternate.lower() == 'n':
@@ -117,7 +120,7 @@ if selected_index_alternate.lower() == 'n':
 
     print("새로운 추천 의류 정보:")
     for idx, row in top_3_alternate.iterrows():
-        print(f"{idx}: 브랜드명: {row['브랜드명']}, 상품명: {row['상품명']}, 가격: {row['가격']}")
+        print(f"{idx}: 브랜드명: {row['브랜드']}, 상품명: {row['상품명']}, 가격: {row['현재 가격']}, 구매사이트: {row['구매사이트']}")
 
     selected_index_alternate = input("추천받은 의류 중 하나를 선택하세요 (0, 1, 2): ").strip()
 
@@ -130,13 +133,13 @@ selected_item_alternate = top_3_alternate.loc[selected_index_alternate]
 
 # 선택한 반대 카테고리 의류 정보 저장
 output_data_alternate = pd.DataFrame({
-    '브랜드명': [selected_item_alternate['브랜드명']],
+    '브랜드명': [selected_item_alternate['브랜드']],
     '상품명': [selected_item_alternate['상품명']],
-    '가격': [selected_item_alternate['가격']],
+    '가격': [selected_item_alternate['현재 가격']],
     '이미지 URL': [selected_item_alternate['이미지 URL']],
-    '모델 이미지 URL': [selected_item_alternate['모델 이미지 URL']],
-    '키': [selected_item_alternate['키']],
-    '몸무게': [selected_item_alternate['몸무게']]
+    '구매사이트': [selected_item_alternate['구매사이트']],
+    '평균 키': [selected_item_alternate['평균 키']],
+    '평균 몸무게': [selected_item_alternate['평균 몸무게']]
 })
 
 output_csv_path_alternate = "selected_alternate_item.csv"
