@@ -1,18 +1,26 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+from typing import Optional, List
 import pandas as pd
 from sklearn.neighbors import NearestNeighbors
 from categorySelect import get_csv_path
 
 app = FastAPI()
 
-class RecommendationRequest(BaseModel):
+class UserDataRequest(BaseModel):
+    userId: str
     gender: str
-    category: str
-    style: str
-    height: float
+    stature: float
     weight: float
-    exclude_indices: list = None
+    top_style: Optional[str] = None
+    bottom_style: Optional[str] = None
+
+class RecommendationRequest(BaseModel):
+    userId: str
+    category: str
+    exclude_indices: Optional[List[int]] = None
+
+user_data = {}  # 유저 데이터를 저장하는 메모리 저장소
 
 def get_recommendation(gender, category, style, user_height, user_weight, exclude_indices=None):
     try:
@@ -27,33 +35,50 @@ def get_recommendation(gender, category, style, user_height, user_weight, exclud
     data = data.dropna(subset=['height', 'weight'])
 
     if exclude_indices is not None:
-        data = data.drop(exclude_indices, errors='ignore')
+        data = data.drop(index=exclude_indices, errors='ignore')
 
     knn_model = NearestNeighbors(n_neighbors=3, metric='euclidean')
     knn_model.fit(data[['height', 'weight']])
 
-    user_data = pd.DataFrame({
-        'height': [user_height],
-        'weight': [user_weight]
-    })
-
+    user_data = pd.DataFrame({'height': [user_height], 'weight': [user_weight]})
     distances, indices = knn_model.kneighbors(user_data)
     top_3_recommendations = data.iloc[indices[0]]
 
     return top_3_recommendations.reset_index(drop=True)
 
+@app.post("/collect")
+def collect_user_data(request: UserDataRequest):
+    user_data[request.userId] = {
+        "gender": request.gender,
+        "stature": request.stature,
+        "weight": request.weight,
+        "top_style": request.top_style,
+        "bottom_style": request.bottom_style,
+    }
+    return {"message": f"User {request.userId} 데이터가 저장되었습니다.", "data": user_data[request.userId]}
+
 @app.post("/recommend")
 def recommend(request: RecommendationRequest):
+    user_info = user_data.get(request.userId)
+    if not user_info:
+        raise HTTPException(status_code=404, detail=f"User {request.userId} 데이터가 존재하지 않습니다.")
+
+    gender = user_info["gender"]
+    stature = user_info["stature"]
+    weight = user_info["weight"]
+    style = user_info.get(f"{request.category}_style")
+
+    if not style:
+        raise HTTPException(status_code=400, detail=f"{request.category} 스타일이 설정되지 않았습니다.")
+
     recommendations = get_recommendation(
-        request.gender, request.category, request.style,
-        request.height, request.weight, request.exclude_indices
+        gender, request.category, style, stature, weight, request.exclude_indices
     )
-    if recommendations is None or recommendations.empty:
-        raise HTTPException(status_code=404, detail="No recommendations found")
+    if recommendations.empty:
+        raise HTTPException(status_code=404, detail="추천 결과가 없습니다.")
 
-    return recommendations.to_dict(orient='records')
+    return recommendations.to_dict(orient="records")
 
-# FastAPI 서버 실행
-# if __name__ == "__main__":
-#     import uvicorn
-#     uvicorn.run(app, host="0.0.0.0", port=8000)
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
