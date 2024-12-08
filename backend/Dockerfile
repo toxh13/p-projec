@@ -1,5 +1,5 @@
 # 1. Node.js 이미지 사용
-FROM node:16-alpine
+FROM node:18
 
 # 2. 작업 디렉터리 설정
 WORKDIR /app
@@ -9,6 +9,7 @@ COPY package.json package-lock.json ./
 
 # 4. 의존성 설치
 RUN npm install
+RUN npm install bcrypt --build-from-source
 
 # 5. 애플리케이션 소스 코드 복사
 COPY . .
@@ -17,4 +18,4 @@ COPY . .
 EXPOSE 3000
 
 # 7. 서버 실행
-CMD ["node", "server.js"]  # 'server.js'로 서버 실행
+CMD ["node", "server.js"]
