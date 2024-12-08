@@ -7,7 +7,8 @@ WORKDIR /app
 # 의존성 파일 복사 및 설치
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-
+RUN pip install pandas
+RUN pip install scikit-learn
 # 애플리케이션 파일 복사
 COPY . .
 
