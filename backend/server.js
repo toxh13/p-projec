@@ -5,7 +5,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
 const path = require("path");
-
+const mysql = require('mysql2');
 // Express 앱 생성, 포트 설정
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -23,9 +23,34 @@ let top_style = {};//상의 스타일 저장 변수
 let bottom_style = {};//하의 스타일 저장 변수
 //프론트엔드에서 사용자가 선택한 정보를 서버에 POST 요청으로 전달하여 저장하도록 변경해야함
 
+
+const connection = mysql.createConnection({
+  host: process.env.DB_HOST || 'db',  // Docker에서는 db 서비스 이름을 사용
+  user: process.env.DB_USER || 'toxh13',
+  password: process.env.DB_PASSWORD || '123123a',
+  database: process.env.DB_NAME || 'project_db'
+});
+
+// 데이터베이스 연결
+connection.connect((err) => {
+  if (err) {
+    console.error('데이터베이스 연결 실패: ', err.stack);
+    return;
+  }
+  console.log('데이터베이스에 연결되었습니다.');
+});
+
+// 예시 쿼리 실행 (연결 확인)
+connection.query('SELECT NOW()', (err, results) => {
+  if (err) {
+    console.error('쿼리 실행 실패: ', err.stack);
+    return;
+  }
+  console.log('쿼리 결과: ', results);
+});
 //기본 라우터
 app.get('/', (req, res) => {
-    res.send('Hello World from the backend server!');
+    res.send('Hello World from the bkend srver!');
 });
 
 //성별 저장
