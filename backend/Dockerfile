@@ -5,11 +5,12 @@ FROM node:18
 WORKDIR /app
 
 # 3. 의존성 파일을 복사
-COPY package.json package-lock.json ./ 
+COPY package*.json ./ 
 
 # 4. 의존성 설치
 RUN npm install
 RUN npm install bcrypt --build-from-source
+RUN npm install express
 
 # 5. 애플리케이션 소스 코드 복사
 COPY . .
