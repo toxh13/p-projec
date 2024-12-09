@@ -175,7 +175,10 @@ app.post('/api/login', (req, res) => {
   });
 });
 
-
+//회원가입페이지
+app.get('/join', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend/join.html'));
+});
 
 // 회원가입 API
 //password와 confirmpassword 일치여부, 중복된 아이디 여부, 중복된 이메일 여부 확인 후 회원가입
