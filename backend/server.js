@@ -130,5 +130,85 @@ app.get("/optionSelTop.html", (req, res) => {
   });
 //해당 정보를 AI서버로 전달 및 결과를 프론트엔드로 전달 구현해야함
 
+db.connect((err) => {
+    if (err) {
+      console.error('Database connection error:', err);
+    } else {
+      console.log('Connected to the database.');
+    }
+});
+
+app.post('/login', (req, res) => {
+    const { user_id, password } = req.body;
+  
+    const query = 'SELECT * FROM users WHERE user_id = ?';
+    db.query(query, [user_id], async (err, results) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send('Internal server error');
+      } else if (results.length === 0) {
+        res.status(404).send('User not found');
+      } else {
+        const user = results[0];
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (isMatch) {
+          res.status(200).send('Login successful');
+        } else {
+          res.status(401).send('Invalid user_id or password');
+        }
+      }
+    });
+});
+
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend/login.html'));
+});
+
+// 회원가입 API
+//password와 confirmpassword 일치여부, 중복된 아이디 여부, 중복된 이메일 여부 확인 후 회원가입
+app.post('/join', async (req, res) => {
+    const { user_id, password, confirmPassword, name, dob, email } = req.body;
+  //아이디, 비번, 비번확인, 이름, 생년월일, 이메일
+    //비밀번호 확인
+    if (password !== confirmPassword) {
+      return res.status(400).send('비밀번호 확인이 다릅니다');
+    }
+  
+    //아이디 중복 확인
+    const checkuser_idQuery = 'SELECT * FROM users WHERE user_id = ?';
+    db.query(checkuser_idQuery, [user_id], async (err, results) => {
+      if (results.length > 0) {
+        return res.status(400).send('이미 존재하는 아이디입니다');
+      }
+  
+      //이메일 중복 확인
+      const checkEmailQuery = 'SELECT * FROM users WHERE email = ?';
+      db.query(checkEmailQuery, [email], async (err, results) => {
+        if (results.length > 0) {
+          return res.status(400).send('이미 가입한 이메일입니다');
+        }
+  
+        //비밀번호 암호화
+        const hashedPassword = await bcrypt.hash(password, 10);
+  
+        //사용자 데이터 저장
+        const insertQuery =
+          'INSERT INTO users (user_id, password, name, dob, email) VALUES (?, ?, ?, ?, ?)';
+        db.query(
+          insertQuery,
+          [user_id, hashedPassword, name, dob, email],
+          (err) => {
+            if (err) {
+              console.error(err);
+              res.status(500).send('Internal server error');
+            } else {
+              res.status(201).send('회원가입이 완료되었습니다');
+            }
+          }
+        );
+      });
+    });
+});
+
 //서버 시작
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
