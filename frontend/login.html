@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="icon" type="image/x-icon" href="웹페이지아이콘추가" />
+    <!-- Font Awesome icons (free version)-->
+    <script
+      src="https://use.fontawesome.com/releases/v6.3.0/js/all.js"
+      crossorigin="anonymous"
+    ></script>
+    <!-- Google fonts-->
+    <link
+      href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900,900i"
+      rel="stylesheet"
+    />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="css/styles.css" rel="stylesheet" />
+    <style>
+      body {
+        padding-top: 70px;
+      }
+      table {
+        width: 280px;
+        height: 250px;
+        margin: auto;
+        font-size: 15px;
+      }
+      input[type="text"],
+      input[type="password"] {
+        width: 250px;
+        height: 32px;
+        font-size: 15px;
+        border: 0;
+        border-radius: 15px;
+        outline: none;
+        padding-left: 10px;
+        background-color: rgb(233, 233, 233);
+      }
+      .btn {
+        width: 263px;
+        height: 32px;
+        font-size: 15px;
+        border: 0;
+        border-radius: 15px;
+        outline: none;
+        padding-left: 10px;
+        background-color: rgb(164, 199, 255);
+      }
+      .btn:active {
+        width: 263px;
+        height: 32px;
+        font-size: 15px;
+        border: 0;
+        border-radius: 15px;
+        outline: none;
+        padding-left: 10px;
+        background-color: rgb(61, 135, 255);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navigation-->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
+      <div class="container px-5">
+        <a class="navbar-brand" href="index.html">스타일 추천 시스템</a>
+        <!--클릭시 메인화면으로-->
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarResponsive"
+          aria-controls="navbarResponsive"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ms-auto">
+            <!--내 옷장 기능, 클릭시 myPreset.html로 이동하는데 로그인되어있지 않으면 "로그인 후 이용가능합니다"라는 문구가 뜨면서 로그인 창으로 이동, 로그인 되어있다면 바로 이동-->
+            <li class="nav-item"><a class="nav-link" href="#!">내 옷장</a></li>
+            <!--회원가입 창으로 이동-->
+            <li class="nav-item"><a class="nav-link" href="#!">회원가입</a></li>
+            <!--로그인 창으로 이동-->
+            <li class="nav-item"><a class="nav-link" href="#!">로그인</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <table>
+      <tr>
+        <td><h2>로그인</h2></td>
+      </tr>
+      <tr>
+        <td><input type="text" placeholder="ID" /></td>
+      </tr>
+      <tr>
+        <td><input type="password" placeholder="Password" /></td>
+      </tr>
+      <tr>
+        <td><input type="checkbox" /> 로그인 정보 저장</td>
+      </tr>
+      <tr>
+        <td>
+          <input
+            type="submit"
+            value="Sign in"
+            class="btn"
+            onclick="alert('로그인 성공!'); setTimeout(function(){window.location.href='index.html';},1000);"
+          />
+        </td>
+      </tr>
+      <tr>
+        <td class="join"><a href="join.html">회원가입</a></td>
+      </tr>
+    </table>
+  </body>
+</html>
