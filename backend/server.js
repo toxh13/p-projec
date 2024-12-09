@@ -138,31 +138,44 @@ db.connect((err) => {
     }
 });
 
-app.post('/login', (req, res) => {
-    const { user_id, password } = req.body;
-  
-    const query = 'SELECT * FROM users WHERE user_id = ?';
-    db.query(query, [user_id], async (err, results) => {
-      if (err) {
-        console.error(err);
-        res.status(500).send('Internal server error');
-      } else if (results.length === 0) {
-        res.status(404).send('User not found');
-      } else {
-        const user = results[0];
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (isMatch) {
-          res.status(200).send('Login successful');
-        } else {
-          res.status(401).send('Invalid user_id or password');
-        }
-      }
-    });
+
+//로그인페이지
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend/login.html'));
 });
 
-app.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, 'login.html'));
+//POST: 로그인 요청 처리
+app.post('/api/login', (req, res) => {
+  const { user_id, password } = req.body;
+
+  const query = 'SELECT * FROM users WHERE user_id = ?';
+  db.query(query, [user_id], async (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send('Internal server error');
+    }
+
+    if (results.length === 0) {
+      return res.status(404).send('User not found');
+    }
+
+    const user = results[0];
+    try {
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (isMatch) {
+        const token = jwt.sign({ user_id: user.user_id }, 'your-secret-key', { expiresIn: '1h' });
+        res.status(200).json({ message: 'Login successful', token });
+      } else {
+        res.status(401).send('Invalid user_id or password');
+      }
+    } catch (error) {
+      console.error('Error during password comparison:', error);
+      res.status(500).send('Internal server error');
+    }
+  });
 });
+
+
 
 // 회원가입 API
 //password와 confirmpassword 일치여부, 중복된 아이디 여부, 중복된 이메일 여부 확인 후 회원가입
