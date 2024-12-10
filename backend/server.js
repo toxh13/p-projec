@@ -6,6 +6,10 @@ const jwt = require("jsonwebtoken");
 const cors = require("cors");
 const path = require("path");
 const mysql = require('mysql2');
+const session = require("express-session");
+const axios = require("axios");
+
+
 // Express 앱 생성, 포트 설정
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -16,66 +20,52 @@ app.use(express.static(path.join(__dirname, "public")));
 
 //선택한 정보들을 수집해서 AI서버에 전달 및 결과를 프론트엔드로 반환
 
-let gender = {}; //성별 저장 변수
-let physicalInfo = {};//신체정보(키, 몸무게)저장 변수
-let topandbottom = {};//상, 하의 선택 저장 변수
-let top_style = {};//상의 스타일 저장 변수
-let bottom_style = {};//하의 스타일 저장 변수
-//프론트엔드에서 사용자가 선택한 정보를 서버에 POST 요청으로 전달하여 저장하도록 변경해야함
-
-
-const connection = mysql.createConnection({
+/*const connection = mysql.createConnection({
   host: process.env.DB_HOST || 'db',  // Docker에서는 db 서비스 이름을 사용
   user: process.env.DB_USER || 'toxh13',
   password: process.env.DB_PASSWORD || '123123a',
   database: process.env.DB_NAME || 'project_db'
 });
+*/
+const connection = mysql.createConnection({
+  host: process.env.DB_HOST || 'p-project',
+  user: process.env.DB_USER || 'host',
+  password: process.env.DB_PASSWORD || 'host',
+  database: process.env.DB_NAME || 'pproject'
+});
 
-// 데이터베이스 연결
+//데이터베이스 연결
 connection.connect((err) => {
   if (err) {
     console.error('데이터베이스 연결 실패: ', err.stack);
     return;
   }
-  console.log('데이터베이스에 연결되었습니다.');
+  console.log('데이터베이스에 연결');
 });
 
-// 예시 쿼리 실행 (연결 확인)
-connection.query('SELECT NOW()', (err, results) => {
-  if (err) {
-    console.error('쿼리 실행 실패: ', err.stack);
-    return;
-  }
-  console.log('쿼리 결과: ', results);
-});
 //기본 라우터
 app.get('/', (req, res) => {
     res.send('Hello World from the bkend srver!');
 });
 
 //성별 저장
-app.post('/optionDecision.html', (req, res) => {
+app.post("/api/option/gender", (req, res) => {
     const { gender } = req.body;
-  
-    if (!gender) {
-      return res.status(400).json({ message: '성별이 선택되지 않았습니다.' });
+    if (!gender || (gender !== "남성" && gender !== "여성")) {
+      return res.status(400).json({ message: "유효하지 않은 성별입니다." });
     }
-    console.log(`성별: ${selectedGender}`);
-    gender = selectedGender;
-    res.status(200).json({ message: `성별 ${selectedGender}이 저장되었습니다.` });
-});
+    req.session.gender = gender;
+    res.status(200).json({ message: `성별 ${gender}이 저장되었습니다.` });
+  });
 
-//신체정보 저장
-app.post("/optionPhyInfo.html", (req, res) => {
+//신체정보(키 몸무게) 저장
+app.post("/api/option/physical-info", (req, res) => {
     const { stature, weight } = req.body;
-  
-    if (!stature || !weight || isNaN(stature) || isNaN(weight)) {
-      return res.status(400).json({ message: "숫자만 입력 가능합니다." });
+    if (!stature || stature <= 0 || isNaN(stature) || !weight || weight <= 0 || isNaN(weight)) {
+      return res.status(400).json({ message: "유효하지 않은 신체정보입니다." });
     }
-  
-    physicalInfo = { stature, weight };
-  
-    res.status(200).json({ message: "신체 정보가 저장되었습니다.", physicalInfo });
+    req.session.physicalInfo = { stature, weight };
+    res.status(200).json({ message: "신체 정보가 저장되었습니다." });
 });
 
 //상의/하의 선택 API
@@ -183,48 +173,55 @@ app.get('/join', (req, res) => {
 // 회원가입 API
 //password와 confirmpassword 일치여부, 중복된 아이디 여부, 중복된 이메일 여부 확인 후 회원가입
 app.post('/join', async (req, res) => {
-    const { user_id, password, confirmPassword, name, dob, email } = req.body;
+    const { user_id, password, confirmPassword, user_name, dob, email } = req.body;
   //아이디, 비번, 비번확인, 이름, 생년월일, 이메일
     //비밀번호 확인
-    if (password !== confirmPassword) {
-      return res.status(400).send('비밀번호 확인이 다릅니다');
+    if (!user_id || !password || !confirmPassword || !user_name || !dob || !email) {
+      return res.status(400).json({ message: "모든 정보를 입력해주세요." });
     }
-  
-    //아이디 중복 확인
-    const checkuser_idQuery = 'SELECT * FROM users WHERE user_id = ?';
-    db.query(checkuser_idQuery, [user_id], async (err, results) => {
-      if (results.length > 0) {
-        return res.status(400).send('이미 존재하는 아이디입니다');
-      }
-  
-      //이메일 중복 확인
-      const checkEmailQuery = 'SELECT * FROM users WHERE email = ?';
-      db.query(checkEmailQuery, [email], async (err, results) => {
-        if (results.length > 0) {
-          return res.status(400).send('이미 가입한 이메일입니다');
-        }
-  
-        //비밀번호 암호화
-        const hashedPassword = await bcrypt.hash(password, 10);
-  
-        //사용자 데이터 저장
-        const insertQuery =
-          'INSERT INTO users (user_id, password, name, dob, email) VALUES (?, ?, ?, ?, ?)';
-        db.query(
-          insertQuery,
-          [user_id, hashedPassword, name, dob, email],
-          (err) => {
-            if (err) {
-              console.error(err);
-              res.status(500).send('Internal server error');
-            } else {
-              res.status(201).send('회원가입이 완료되었습니다');
-            }
-          }
-        );
-      });
-    });
+
+    if (password !== confirmPassword) {
+      return res.status(400).json({ message: "비밀번호가 일치하지 않습니다." });
+    }
+
+try {
+  //ID 중복 확인
+  const [idCheckResult] = await db.promise().query(
+    "SELECT * FROM users WHERE user_id = ?",
+    [user_id]
+  );
+  if (idCheckResult.length > 0) {
+    return res.status(400).json({ message: "이미 존재하는 아이디입니다." });
+  }
+
+  // 이메일 중복 확인
+  const [emailCheckResult] = await db.promise().query(
+    "SELECT * FROM users WHERE email = ?",
+    [email]
+  );
+  if (emailCheckResult.length > 0) {
+    return res.status(400).json({ message: "이미 사용 중인 이메일입니다." });
+  }
+
+  //비밀번호 해시화
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  //사용자 데이터 저장
+  const [insertResult] = await db.promise().query(
+    "INSERT INTO users (user_id, password, user_name, dob, email) VALUES (?, ?, ?, ?, ?)",
+    [user_id, hashedPassword, user_name, dob, email]
+);
+
+  console.log("회원가입 성공:", insertResult);
+  res.status(201).json({ message: "회원가입 완료" });
+} catch (err) {
+  console.error("회원가입 실패:", err);
+  res.status(500).json({ message: "실패" });
+}
 });
+
+
+
 
 //서버 시작
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
