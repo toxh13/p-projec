@@ -3,23 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>스타일 추천 시스템 로그인</title>
     <link rel="icon" type="image/x-icon" href="웹페이지아이콘추가" />
-    <!-- Font Awesome icons (free version)-->
-    <script
-      src="https://use.fontawesome.com/releases/v6.3.0/js/all.js"
-      crossorigin="anonymous"
-    ></script>
-    <!-- Google fonts-->
-    <link
-      href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900,900i"
-      rel="stylesheet"
-    />
-    <!-- Core theme CSS (includes Bootstrap)-->
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900,900i" rel="stylesheet" />
     <link href="css/styles.css" rel="stylesheet" />
     <style>
       body {
@@ -53,13 +41,6 @@
         background-color: rgb(164, 199, 255);
       }
       .btn:active {
-        width: 263px;
-        height: 32px;
-        font-size: 15px;
-        border: 0;
-        border-radius: 15px;
-        outline: none;
-        padding-left: 10px;
         background-color: rgb(61, 135, 255);
       }
     </style>
@@ -69,7 +50,6 @@
     <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
       <div class="container px-5">
         <a class="navbar-brand" href="index.html">스타일 추천 시스템</a>
-        <!--클릭시 메인화면으로-->
         <button
           class="navbar-toggler"
           type="button"
@@ -83,15 +63,12 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarResponsive">
           <ul class="navbar-nav ms-auto">
-            <!--내 옷장 기능, 클릭시 myPreset.html로 이동하는데 로그인되어있지 않으면 "로그인 후 이용가능합니다"라는 문구가 뜨면서 로그인 창으로 이동, 로그인 되어있다면 바로 이동-->
             <li class="nav-item">
               <a class="nav-link" href="myPreset.html">내스타일</a>
             </li>
-            <!--회원가입 창으로 이동-->
             <li class="nav-item">
               <a class="nav-link" href="join.html">회원가입</a>
             </li>
-            <!--로그인 창으로 이동-->
             <li class="nav-item">
               <a class="nav-link" href="login.html">로그인</a>
             </li>
@@ -101,27 +78,58 @@
     </nav>
 
     <table>
-      <tr>
-        <td><h2>로그인</h2></td>
-      </tr>
-      <tr>
-        <td><input type="text" placeholder="ID" /></td>
-      </tr>
-      <tr>
-        <td><input type="password" placeholder="Password" /></td>
-      </tr>
-      <tr>
-        <td><input type="checkbox" /> 로그인 정보 저장</td>
-      </tr>
-      <tr>
-        <td>
-          <input type="submit" value="Sign in" class="btn" />
-        </td>
-      </tr>
-      <tr>
-        <td class="join"><a href="join.html">회원가입</a></td>
-      </tr>
+      <tr><td><h2>로그인</h2></td></tr>
+      <tr><td><input type="text" id="email" placeholder="ID" /></td></tr>
+      <tr><td><input type="password" id="password" placeholder="Password" /></td></tr>
+      <tr><td><input type="checkbox" id="remember_me" /> 로그인 정보 저장</td></tr>
+      <tr><td><input type="submit" value="Sign in" class="btn" id="loginButton" /></td></tr>
+      <tr><td class="join"><a href="join.html">회원가입</a></td></tr>
+      <tr><td class="message" id="login_error_message"></td></tr>
     </table>
-    <script src="../backend/server.js"></script>
+
+    <script>
+      // 로그인 요청 처리 함수
+      async function handleLogin(event) {
+        event.preventDefault();  // 기본 폼 제출 방지
+
+        const userId = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        // ID와 비밀번호가 입력되지 않은 경우 처리
+        if (!userId || !password) {
+          document.getElementById('login_error_message').textContent = 'ID와 비밀번호를 입력해주세요.';
+          return;
+        }
+
+        const loginData = { email: userId, password: password };
+
+        try {
+          // 서버에 로그인 요청 보내기
+          const response = await fetch('http://khs.uy.to:3000/api/login', {
+            method: 'POST',  // 요청 방식은 POST
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(loginData),
+          });
+
+          const result = await response.json();
+
+          if (response.status === 200) {
+            // 로그인 성공 시 토큰 저장 및 리디렉션
+            localStorage.setItem('token', result.token);
+            window.location.href = '/';  // 로그인 후 메인 페이지로 이동
+          } else {
+            // 로그인 실패 시 에러 메시지 표시
+            document.getElementById('login_error_message').textContent = result.message || '로그인 실패';
+          }
+        } catch (error) {
+          // 요청 실패 시 에러 처리
+          console.error('Error during login:', error);
+          document.getElementById('login_error_message').textContent = '서버 오류가 발생했습니다.';
+        }
+      }
+
+      // 로그인 버튼 클릭 시 로그인 처리
+      document.getElementById('loginButton').addEventListener('click', handleLogin);
+    </script>
   </body>
 </html>
