@@ -1,199 +1,133 @@
 // 필요한 모듈을 불러옵니다
 const express = require("express");
 const bodyParser = require("body-parser");
-const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
-const path = require("path");
-const mysql = require('mysql2');
-const session = require("express-session");
-const axios = require("axios");
+const mysql = require("mysql2");
+
 // Express 앱 생성
 const app = express();
 const PORT = 3000;
+const SECRET_KEY = "your_secret_key"; // JWT 서명용 키
 
 // 미들웨어 설정
-app.use(cors());  // CORS 허용
-app.use(bodyParser.json());  // JSON 요청 처리
+app.use(cors());
+app.use(bodyParser.json());
 
 // MySQL DB 연결 설정
 const db = mysql.createConnection({
-  host: 'db',  // DB 서버 주소
-  user: 'toxh13',       // DB 사용자 이름
-  password: '123123a',  // DB 비밀번호
-  database: 'project_db'  // 사용할 DB 이름
+  host: "db", // DB 서버 주소
+  user: "toxh13", // DB 사용자 이름
+  password: "123123a", // DB 비밀번호
+  database: "project_db", // 사용할 DB 이름
 });
 
 // DB 연결
 db.connect((err) => {
   if (err) {
-    console.error('DB 연결 실패:', err);
+    console.error("DB 연결 실패:", err);
     return;
   }
-  console.log('DB에 연결되었습니다.');
+  console.log("DB에 연결되었습니다.");
 });
 
 // 기본 라우터
-app.get('/', (req, res) => {
-  res.send('서버가 작동 중입니다.');
+app.get("/", (req, res) => {
+  res.send("서버가 작동 중입니다.");
 });
 
-// 로그인 요청을 처리하는 라우터
-app.post('/api/login', (req, res) => {
+// JWT 인증 미들웨어
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1]; // Bearer [token] 형태에서 토큰 추출
+
+  if (!token) return res.status(401).json({ message: "토큰이 없습니다." });
+
+  jwt.verify(token, SECRET_KEY, (err, user) => {
+    if (err) return res.status(403).json({ message: "토큰이 유효하지 않습니다." });
+    req.user = user; // 사용자 정보를 요청에 추가
+    next();
+  });
+};
+
+// 로그인 API
+app.post("/api/login", (req, res) => {
   const { email, password } = req.body;
 
-  // MySQL 쿼리로 사용자 정보 확인
-  const query = 'SELECT * FROM Users WHERE email = ? AND password = ?';
-  
+  // 사용자 조회 쿼리
+  const query = "SELECT * FROM Users WHERE email = ? AND password = ?";
   db.query(query, [email, password], (err, results) => {
     if (err) {
-      console.error('DB 쿼리 실행 오류:', err);
-      return res.status(500).json({ message: '서버 오류' });
+      console.error("DB 쿼리 실행 오류:", err);
+      return res.status(500).json({ message: "서버 오류" });
     }
 
-    if (results.length > 0) {
-      // 로그인 성공 시, 사용자 정보 반환 및 토큰 생성
-      return res.status(200).json({
-        message: '로그인 성공',
-        token: 'dummy_token',  // 실제 토큰을 JWT 등을 사용해 생성할 수 있습니다.
-      });
-    } else {
-      // 로그인 실패 시
-      return res.status(401).json({ message: '아이디나 비밀번호가 잘못되었습니다.' });
-    }
-  });
-});
-app.post('/api/signup', (req, res) => {
-  const { email, password, username } = req.body;
-
-  // 이메일 중복 확인
-  const checkEmailQuery = 'SELECT * FROM Users WHERE email = ?';
-  db.query(checkEmailQuery, [email], (err, results) => {
-    if (err) {
-      console.error('DB 쿼리 실행 오류:', err);
-      return res.status(500).json({ message: '서버 오류' });
+    if (results.length === 0) {
+      return res
+        .status(401)
+        .json({ message: "아이디 또는 비밀번호가 잘못되었습니다." });
     }
 
-    if (results.length > 0) {
-      return res.status(400).json({ message: '이미 등록된 이메일입니다.' });
-    }
+    const user = results[0];
 
-    // 새로운 사용자 등록
-    const query = 'INSERT INTO Users (email, password, username) VALUES (?, ?, ?)';
-    db.query(query, [email, password, username], (err, result) => {
-      if (err) {
-        console.error('DB 쿼리 실행 오류:', err);
-        return res.status(500).json({ message: '서버 오류' });
-      }
+    // JWT 토큰 생성
+    const token = jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, { expiresIn: "1h" });
 
-      return res.status(201).json({ message: '회원가입 성공' });
+    // 로그인 성공 응답
+    res.status(200).json({
+      message: "로그인 성공",
+      username: user.username,
+      token, // JWT 토큰
     });
   });
 });
-app.get('/', (req, res) => {
-  res.send('Hello World');
+
+// 회원가입 API
+app.post("/api/signup", (req, res) => {
+  const { email, password, username } = req.body;
+
+  // 이메일 중복 확인
+  const checkEmailQuery = "SELECT * FROM Users WHERE email = ?";
+  db.query(checkEmailQuery, [email], (err, results) => {
+    if (err) {
+      console.error("DB 쿼리 실행 오류:", err);
+      return res.status(500).json({ message: "서버 오류" });
+    }
+
+    if (results.length > 0) {
+      return res.status(400).json({ message: "이미 등록된 이메일입니다." });
+    }
+
+    // 새로운 사용자 등록
+    const query = "INSERT INTO Users (email, password, username) VALUES (?, ?, ?)";
+    db.query(query, [email, password, username], (err) => {
+      if (err) {
+        console.error("DB 쿼리 실행 오류:", err);
+        return res.status(500).json({ message: "서버 오류" });
+      }
+
+      res.status(201).json({ message: "회원가입 성공" });
+    });
+  });
 });
 
-//성별 저장
-app.post("/api/option/gender", (req, res) => {
-  const { gender } = req.body;
-  if (!gender || (gender !== "남성" && gender !== "여성")) {
-    return res.status(400).json({ message: "유효하지 않은 성별입니다." });
-  }
-  req.session.gender = gender;
-  res.status(200).json({ message: `성별 ${gender}이 저장되었습니다.` });
-});
+// 인증된 사용자 정보 조회 API
+app.get("/api/user", authenticateToken, (req, res) => {
+  const userId = req.user.id;
 
-//신체정보(키 몸무게) 저장
-app.post("/api/option/physical-info", (req, res) => {
-  const { stature, weight } = req.body;
-  if (!stature || stature <= 0 || isNaN(stature) || !weight || weight <= 0 || isNaN(weight)) {
-    return res.status(400).json({ message: "유효하지 않은 신체정보입니다." });
-  }
-  req.session.physicalInfo = { stature, weight };
-  res.status(200).json({ message: "신체 정보가 저장되었습니다." });
-});
+  const query = "SELECT id, email, username FROM Users WHERE id = ?";
+  db.query(query, [userId], (err, results) => {
+    if (err) {
+      console.error("DB 쿼리 실행 오류:", err);
+      return res.status(500).json({ message: "서버 오류" });
+    }
 
-//상의/하의 선택 API
-app.post('/optionTBSel.html', (req, res) => {
-  const { userId, selection } = req.body;
-  //selection은 'top' 또는 'bottom'
-  if (!userId || !selection) {
-    return res.status(400).json({ message: 'userId와 selection이 필요' });
-  }
+    if (results.length === 0) {
+      return res.status(404).json({ message: "사용자를 찾을 수 없습니다." });
+    }
 
-  topandbottom[userId] = selection;
-  console.log(`[INFO] User(${userId}) top/bottom selected: ${selection}`);
-  res.json({ message: '상의/하의 선택이 저장됨', data: topandbottom[userId] });
-});
-
-//상의 스타일 선택 API
-app.post('/optionSelTop.html', (req, res) => {
-  const { userId, style } = req.body;
-  //style은 '캐주얼', '스트릿', '미니멀', ... 중 하나로 가정
-  if (!userId || !style) {
-    return res.status(400).json({ message: 'userId와 style이 필요' });
-  }
-
-  top_style[userId] = style;
-  console.log(`[INFO] User(${userId}) top style selected: ${style}`);
-  res.json({ message: '상의 스타일 선택이 저장됨', data: top_style[userId] });
-});
-
-//하의의 스타일 선택 API
-app.post('/optionSelBottom.html', (req, res) => {
-  const { userId, style } = req.body;
-  //style은 '캐주얼', '스트릿', '미니멀', ... 중 하나
-  if (!userId || !style) {
-    return res.status(400).json({ message: 'userId와 style이 필요' });
-  }
-
-  top_style[userId] = style;
-  console.log(`[INFO] User(${userId}) top style selected: ${style}`);
-  res.json({ message: '하의 스타일 선택이 저장됨', data: bottom_style[userId] });
-});
-
-//저장한 성별, 신체정보(키,몸무게), 상하의 선택, 상의 및 하의 스타일 저장
-app.get("/optionSelTop.html", (req, res) => {
-  const userInfo = {
-    gender: req.session.gender,
-    physicalInfo: req.session.physicalInfo,
-    topandbottom: req.session.topandbottom,
-    top_style: req.session.top_style,
-    bottom_style: req.session.bottom_style,
-  };
-  res.json(userInfo);
-});
-//해당 정보를 AI서버로 전달 및 결과를 프론트엔드로 전달 구현해야함
-
-//사용자 프리셋 페이지
-app.get("/presets", verifyToken, async (req, res) => {
-  const userId = req.user.user_id; // JWT에서 추출한 사용자 ID
-
-  const query = "SELECT * FROM presets WHERE user_id = ? ORDER BY created_at DESC";
-  try {
-    const [rows] = await db.promise().query(query, [userId]);
-    res.status(200).json(rows); // 프리셋 데이터를 JSON 형식으로 반환
-  } catch (error) {
-    console.error("조회 실패:", error);
-    res.status(500).json({ message: "조회 실패" });
-  }
-});
-//사용자 프리셋 삭제
-app.delete("/presets/:id", verifyToken, async (req, res) => {
-  const presetId = req.params.id; // URL에서 프리셋 ID 가져오기
-  const userId = req.user.user_id; // JWT에서 사용자 ID 가져오기
-
-  const query = "DELETE FROM presets WHERE id = ? AND user_id = ?";
-  try {
-    const [result] = await db.promise().query(query, [presetId, userId]);
-  {
-      res.status(200).json({ message: "프리셋이 삭제되었습니다." });
-  
-  } catch (error) {
-    console.error("프리셋 삭제 실패:", error);
-    res.status(500).json({ message: "프리셋 삭제 실패" });
-  }
+    res.status(200).json(results[0]);
+  });
 });
 
 // 서버 시작
