@@ -4,6 +4,7 @@ from typing import Optional, List
 import pandas as pd
 from sklearn.neighbors import NearestNeighbors
 from categorySelect import get_csv_path
+import db
 
 app = FastAPI()
 
@@ -20,8 +21,7 @@ class RecommendationRequest(BaseModel):
     category: str
     exclude_indices: Optional[List[int]] = None
 
-user_data = {}  # 유저 데이터를 저장하는 메모리 저장소
-
+# 추천 데이터 처리
 def get_recommendation(gender, category, style, user_height, user_weight, exclude_indices=None):
     try:
         csv_path = get_csv_path(gender, category, style)
@@ -48,21 +48,40 @@ def get_recommendation(gender, category, style, user_height, user_weight, exclud
 
 @app.post("/collect")
 def collect_user_data(request: UserDataRequest):
-    user_data[request.userId] = {
-        "gender": request.gender,
-        "stature": request.stature,
-        "weight": request.weight,
-        "top_style": request.top_style,
-        "bottom_style": request.bottom_style,
-    }
-    return {"message": f"User {request.userId} 데이터가 저장되었습니다.", "data": user_data[request.userId]}
+    # DB에 유저 데이터 저장
+    success = db.save_user_data(
+        request.userId,
+        request.gender,
+        request.stature,
+        request.weight,
+        request.top_style,
+        request.bottom_style
+    )
+    
+    if success:
+        return {"message": f"User {request.userId} 데이터가 저장되었습니다."}
+    else:
+        raise HTTPException(status_code=500, detail="유저 데이터 저장에 실패했습니다.")
+@app.get("/db-status")
+def db_status():
+    try:
+        connection = db.create_connection()
+        if connection.is_connected():
+            connection.close()
+            return {"status": "success", "message": "DB 연결이 정상입니다."}
+        else:
+            return {"status": "failure", "message": "DB 연결에 실패했습니다."}
+    except Exception as e:
+        return {"status": "failure", "message": f"DB 연결에 실패했습니다. 오류: {str(e)}"}
+
 
 @app.post("/recommend")
 def recommend(request: RecommendationRequest):
-    user_info = user_data.get(request.userId)
+    # DB에서 유저 데이터 조회
+    user_info = db.get_user_data(request.userId)
     if not user_info:
         raise HTTPException(status_code=404, detail=f"User {request.userId} 데이터가 존재하지 않습니다.")
-
+    
     gender = user_info["gender"]
     stature = user_info["stature"]
     weight = user_info["weight"]
