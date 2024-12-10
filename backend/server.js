@@ -166,6 +166,35 @@ app.get("/optionSelTop.html", (req, res) => {
 });
 //해당 정보를 AI서버로 전달 및 결과를 프론트엔드로 전달 구현해야함
 
+//사용자 프리셋 페이지
+app.get("/presets", verifyToken, async (req, res) => {
+  const userId = req.user.user_id; // JWT에서 추출한 사용자 ID
+
+  const query = "SELECT * FROM presets WHERE user_id = ? ORDER BY created_at DESC";
+  try {
+    const [rows] = await db.promise().query(query, [userId]);
+    res.status(200).json(rows); // 프리셋 데이터를 JSON 형식으로 반환
+  } catch (error) {
+    console.error("조회 실패:", error);
+    res.status(500).json({ message: "조회 실패" });
+  }
+});
+//사용자 프리셋 삭제
+app.delete("/presets/:id", verifyToken, async (req, res) => {
+  const presetId = req.params.id; // URL에서 프리셋 ID 가져오기
+  const userId = req.user.user_id; // JWT에서 사용자 ID 가져오기
+
+  const query = "DELETE FROM presets WHERE id = ? AND user_id = ?";
+  try {
+    const [result] = await db.promise().query(query, [presetId, userId]);
+  {
+      res.status(200).json({ message: "프리셋이 삭제되었습니다." });
+  
+  } catch (error) {
+    console.error("프리셋 삭제 실패:", error);
+    res.status(500).json({ message: "프리셋 삭제 실패" });
+  }
+});
 
 // 서버 시작
 app.listen(PORT, () => {
