@@ -29,17 +29,7 @@
         height: 550px;
         margin: auto;
       }
-      .email {
-        width: 127px;
-        height: 32px;
-        font-size: 15px;
-        border: 0;
-        border-color: lightgray;
-        border-radius: 15px;
-        outline: none;
-        padding-left: 10px;
-        background-color: rgb(233, 233, 233);
-      }
+      .email,
       .text {
         width: 250px;
         height: 32px;
@@ -101,15 +91,12 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarResponsive">
           <ul class="navbar-nav ms-auto">
-            <!--내 옷장 기능, 클릭시 myPreset.html로 이동하는데 로그인되어있지 않으면 "로그인 후 이용가능합니다"라는 문구가 뜨면서 로그인 창으로 이동, 로그인 되어있다면 바로 이동-->
             <li class="nav-item">
               <a class="nav-link" href="myPreset.html">내스타일</a>
             </li>
-            <!--회원가입 창으로 이동-->
             <li class="nav-item">
               <a class="nav-link" href="join.html">회원가입</a>
             </li>
-            <!--로그인 창으로 이동-->
             <li class="nav-item">
               <a class="nav-link" href="login.html">로그인</a>
             </li>
@@ -118,48 +105,18 @@
       </div>
     </nav>
 
-    <form>
+    <form id="joinForm">
       <table>
         <tr>
           <td><h2>회원가입</h2></td>
-        </tr>
-        <tr>
-          <td>아이디</td>
-        </tr>
-        <tr>
-          <td><input type="text" class="text" /></td>
-        </tr>
-        <tr>
-          <td>비밀번호</td>
-        </tr>
-        <tr>
-          <td><input type="password" class="text" /></td>
-        </tr>
-        <tr>
-          <td>비밀번호 확인</td>
-        </tr>
-        <tr>
-          <td><input type="password" class="text" /></td>
-        </tr>
-        <tr>
-          <td>이름</td>
-        </tr>
-        <tr>
-          <td><input type="text" class="text" /></td>
-        </tr>
-        <tr>
-          <td>생년월일</td>
-        </tr>
-        <tr>
-          <td><input type="date" class="text" /></td>
         </tr>
         <tr>
           <td>이메일</td>
         </tr>
         <tr>
           <td>
-            <input type="text" class="email" /> @
-            <select>
+            <input type="text" class="email" id="email" /> @
+            <select id="emailDomain">
               <option>naver.com</option>
               <option>gmail.com</option>
               <option>daum.net</option>
@@ -168,12 +125,74 @@
           </td>
         </tr>
         <tr>
+          <td>비밀번호</td>
+        </tr>
+        <tr>
+          <td><input type="password" class="text" id="password" required /></td>
+        </tr>
+        <tr>
+          <td>비밀번호 확인</td>
+        </tr>
+        <tr>
+          <td><input type="password" class="text" id="confirmPassword" required /></td>
+        </tr>
+        <tr>
+          <td>이름</td>
+        </tr>
+        <tr>
+          <td><input type="text" class="text" id="username" required /></td>
+        </tr>
+        <tr>
           <td>
             <input type="submit" value="가입하기" class="btn" />
           </td>
         </tr>
       </table>
     </form>
-    <script src="../backend/server.js"></script>
+
+    <script>
+      document.getElementById('joinForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const email = document.getElementById('email').value;
+        const emailDomain = document.getElementById('emailDomain').value;
+        const fullEmail = `${email}@${emailDomain}`;
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const username = document.getElementById('username').value;
+
+        // 비밀번호 일치 확인
+        if (password !== confirmPassword) {
+          alert('비밀번호가 일치하지 않습니다.');
+          return;
+        }
+
+        // 회원가입 데이터 전송
+        fetch('http://khs.uy.to:3000/api/signup', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: fullEmail,
+            password: password,
+            username: username,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.message === '회원가입 성공') {
+              alert('회원가입이 완료되었습니다.');
+              window.location.href = 'login.html';  // 로그인 페이지로 리디렉션
+            } else {
+              alert(data.message);
+            }
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+            alert('서버 오류가 발생했습니다.');
+          });
+      });
+    </script>
   </body>
 </html>
