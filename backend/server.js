@@ -220,6 +220,9 @@ try {
 }
 });
 
+app.get("/myPreset", verifyToken, (req, res) => {
+  res.sendFile(path.join(__dirname, "frontend/myPreset.html"));
+});
 
 //서버 시작
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
