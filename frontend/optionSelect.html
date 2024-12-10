@@ -31,7 +31,7 @@
         margin: auto;
       }
       .option phyInfo {
-        margin-left: 5px;
+        margin-left: 5px;   
       }
       .images img {
         width: 100px;
@@ -105,7 +105,6 @@
         cursor: pointer;
       }
     </style>
-    </style>
   </head>
   <body>
     <!-- Navigation-->
@@ -125,7 +124,7 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarResponsive">
           <ul class="navbar-nav ms-auto">
-            <li class="nav-item"><a class="nav-link" href="#!">내정보</a></li>
+            <li class="nav-item"><a class="nav-link" href="#!">내스타일</a></li>
             <!--로그인을 안했다면 "로그인"띄우기-->
             <li class="nav-item"><a class="nav-link" href="#!">로그인</a></li>
             <!--로그인을 했다면 "로그아웃" 띄우기-->
@@ -308,28 +307,66 @@
 
     <!--결정한 의류 보여주기-->
     <div id="option5" class="option">
-      <h2>옵션 5</h2>
-      <div class="images">
-        <img
-          src="image5-1.jpg"
-          alt="옵션 5-1"
-          onclick="selectOption('option5', 'option5-1')"
-        />
-        <img
-          src="image5-2.jpg"
-          alt="옵션 5-2"
-          onclick="selectOption('option5', 'option5-2')"
-        />
-        <img
-          src="image5-3.jpg"
-          alt="옵션 5-3"
-          onclick="selectOption('option5', 'option5-3')"
-        />
-        <img
-          src="image5-4.jpg"
-          alt="옵션 5-4"
-          onclick="selectOption('option5', 'option5-4')"
-        />
+      <h2>맞춤 스타일</h2>
+      <div>
+        <table>
+          <tr>
+            <td rowspan="6">
+              <img
+                src="image/TopImage.jpg"
+                alt="..."
+                width="300px"
+                height="400px"
+              />
+            </td>
+            <th>상의 상품정보</th>
+          </tr>
+          <tr>
+            <td>상품명</td>
+          </tr>
+          <tr>
+            <td>상품정보</td>
+          </tr>
+          <tr>
+            <td>상품정보2</td>
+          </tr>
+          <tr>
+            <td>
+              <button>변경</button>
+              <button>보러가기</button>
+            </td>
+          </tr>
+        </table>
+        <table>
+          <tr>
+            <td rowspan="5">
+              <img
+                src="image/BottomImage.jpg"
+                alt="..."
+                width="300px"
+                height="400px"
+              />
+            </td>
+            <th>하의 상품정보</th>
+          </tr>
+          <tr>
+            <td>상품명</td>
+          </tr>
+          <tr>
+            <td>상품정보</td>
+          </tr>
+          <tr>
+            <td>상품정보2</td>
+          </tr>
+          <tr>
+            <td>
+              <button>변경</button>
+              <button>보러가기</button>
+            </td>
+          </tr>
+        </table>
+        <button>재추천</button>
+        <button>내스타일에 저장</button>
       </div>
     </div>
 
@@ -502,5 +539,6 @@
         }
       }
     </script>
+    <script src="../backend/server.js"></script>
   </body>
 </html>
