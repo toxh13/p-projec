@@ -20,19 +20,13 @@ app.use(express.static(path.join(__dirname, "public")));
 
 //선택한 정보들을 수집해서 AI서버에 전달 및 결과를 프론트엔드로 반환
 
-/*const connection = mysql.createConnection({
+const connection = mysql.createConnection({
   host: process.env.DB_HOST || 'db',  // Docker에서는 db 서비스 이름을 사용
   user: process.env.DB_USER || 'toxh13',
   password: process.env.DB_PASSWORD || '123123a',
   database: process.env.DB_NAME || 'project_db'
 });
-*/
-const connection = mysql.createConnection({
-  host: process.env.DB_HOST || 'p-project',
-  user: process.env.DB_USER || 'host',
-  password: process.env.DB_PASSWORD || 'host',
-  database: process.env.DB_NAME || 'pproject'
-});
+
 
 //데이터베이스 연결
 connection.connect((err) => {
