@@ -26,8 +26,14 @@ const connection = mysql.createConnection({
   password: process.env.DB_PASSWORD || '123123a',
   database: process.env.DB_NAME || 'project_db'
 });
-
-
+/*
+const connection = mysql.createConnection({
+  host: process.env.DB_HOST || 'p-project',
+  user: process.env.DB_USER || 'host',
+  password: process.env.DB_PASSWORD || 'host',
+  database: process.env.DB_NAME || 'pproject'
+});
+*/
 //데이터베이스 연결
 connection.connect((err) => {
   if (err) {
@@ -39,7 +45,7 @@ connection.connect((err) => {
 
 //기본 라우터
 app.get('/', (req, res) => {
-    res.send('Hello World from the bkend srver!');
+    res.send('Hello World');
 });
 
 //성별 저장
@@ -197,10 +203,10 @@ try {
     return res.status(400).json({ message: "이미 사용 중인 이메일입니다." });
   }
 
-  //비밀번호 해시화
+//비밀번호 해시화
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  //사용자 데이터 저장
+//사용자 데이터 저장
   const [insertResult] = await db.promise().query(
     "INSERT INTO users (user_id, password, user_name, dob, email) VALUES (?, ?, ?, ?, ?)",
     [user_id, hashedPassword, user_name, dob, email]
@@ -213,8 +219,6 @@ try {
   res.status(500).json({ message: "실패" });
 }
 });
-
-
 
 
 //서버 시작
