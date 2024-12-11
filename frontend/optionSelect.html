@@ -105,36 +105,10 @@
         cursor: pointer;
       }
     </style>
+    <script src="navbar.js" defer></script>
   </head>
   <body>
-    <!-- Navigation-->
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
-      <div class="container px-5">
-        <a class="navbar-brand" href="index.html">스타일 추천 시스템</a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarResponsive"
-          aria-controls="navbarResponsive"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarResponsive">
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item"><a class="nav-link" href="#!">내스타일</a></li>
-            <!--로그인을 안했다면 "로그인"띄우기-->
-            <li class="nav-item"><a class="nav-link" href="#!">로그인</a></li>
-            <!--로그인을 했다면 "로그아웃" 띄우기-->
-            <li class="nav-item"><a class="nav-link" href="#!">로그아웃</a></li>
-          </ul>
-        </div>
-      </div>
-    </nav>
-    <!--각 옵션마다 뒤로가기 버튼 만들기-->
-
+    <div id="nav-container"></div> <!-- 동적으로 nav.html 삽입 -->
     <!--성별선택 옵션-->
     <div id="option1" class="option">
       <h2>성별을 선택하세요</h2>
