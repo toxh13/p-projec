@@ -36,25 +36,34 @@ app.get("/", (req, res) => {
   res.send("서버가 작동 중입니다.");
 });
 
-// JWT 인증 미들웨어
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1]; // Bearer [token] 형태에서 토큰 추출
+  const token = authHeader && authHeader.split(" ")[1];
 
-  if (!token) return res.status(401).json({ message: "토큰이 없습니다." });
+  if (!token) {
+    console.error("[ERROR] 토큰이 없습니다.");
+    return res.status(401).json({ message: "토큰이 없습니다." });
+  }
 
   jwt.verify(token, SECRET_KEY, (err, user) => {
-    if (err) return res.status(403).json({ message: "토큰이 유효하지 않습니다." });
-    req.user = user; // 사용자 정보를 요청에 추가
+    if (err) {
+      console.error("[ERROR] 토큰 검증 실패:", err);
+      return res.status(403).json({ message: "토큰이 유효하지 않습니다." });
+    }
+
+    console.log("[INFO] 토큰 검증 성공, 사용자 정보:", user);
+    req.user = user; // user 객체를 요청에 저장
     next();
   });
 };
+
+
+
 
 // 로그인 API
 app.post("/api/login", (req, res) => {
   const { email, password } = req.body;
 
-  // 사용자 조회 쿼리
   const query = "SELECT * FROM Users WHERE email = ? AND password = ?";
   db.query(query, [email, password], (err, results) => {
     if (err) {
@@ -63,17 +72,15 @@ app.post("/api/login", (req, res) => {
     }
 
     if (results.length === 0) {
-      return res
-        .status(401)
-        .json({ message: "아이디 또는 비밀번호가 잘못되었습니다." });
+      return res.status(401).json({ message: "아이디 또는 비밀번호가 잘못되었습니다." });
     }
 
     const user = results[0];
 
     // JWT 토큰 생성
-    const token = jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, { expiresIn: "1h" });
+    const token = jwt.sign({ id: user.user_id, email: user.email }, SECRET_KEY, { expiresIn: "1h" });
 
-    // 로그인 성공 응답
+
     res.status(200).json({
       message: "로그인 성공",
       username: user.username,
@@ -86,7 +93,6 @@ app.post("/api/login", (req, res) => {
 app.post("/api/signup", (req, res) => {
   const { email, password, username } = req.body;
 
-  // 이메일 중복 확인
   const checkEmailQuery = "SELECT * FROM Users WHERE email = ?";
   db.query(checkEmailQuery, [email], (err, results) => {
     if (err) {
@@ -98,7 +104,6 @@ app.post("/api/signup", (req, res) => {
       return res.status(400).json({ message: "이미 등록된 이메일입니다." });
     }
 
-    // 새로운 사용자 등록
     const query = "INSERT INTO Users (email, password, username) VALUES (?, ?, ?)";
     db.query(query, [email, password, username], (err) => {
       if (err) {
@@ -127,6 +132,71 @@ app.get("/api/user", authenticateToken, (req, res) => {
     }
 
     res.status(200).json(results[0]);
+  });
+});
+app.get("/api/clothing_presets", authenticateToken, (req, res) => {
+  const userId = req.user.id; // 로그인된 사용자의 ID
+
+  if (!userId) {
+    console.error("[ERROR] 사용자 ID가 undefined 상태입니다.");
+    return res.status(400).json({ message: "사용자 ID가 필요합니다." });
+  }
+
+  console.log(`[INFO] 사용자 ID(${userId})의 프리셋 요청 수신`);
+
+  const query = `
+    SELECT 
+      user_closet_id,
+      user_id,
+      top_clothing_id,
+      bottom_clothing_id,
+      style,
+      added_at AS created_at
+    FROM User_Closets
+    WHERE user_id = ? 
+    ORDER BY added_at DESC;
+  `;
+
+  db.query(query, [userId], (err, results) => {
+    if (err) {
+      console.error("[ERROR] DB 조회 오류:", err);
+      return res.status(500).json({ message: "DB 조회 오류" });
+    }
+
+    res.status(200).json({ message: "프리셋 조회 성공", data: results });
+  });
+});
+
+
+
+
+// 프리셋 삭제 API (User_Closets 테이블 기반)
+app.delete("/api/user_closets/:presetId", authenticateToken, (req, res) => {
+  const presetId = req.params.presetId; // 삭제하려는 프리셋 ID
+  const userId = req.user.id; // 로그인된 사용자의 ID
+
+  console.log(`[INFO] 사용자 ID(${userId})의 프리셋 삭제 요청: presetId(${presetId})`);
+
+  const query = `
+    DELETE FROM User_Closets
+    WHERE user_closet_id = ? AND user_id = ?;
+  `;
+
+  db.query(query, [presetId, userId], (err, result) => {
+    if (err) {
+      console.error("[ERROR] DB 삭제 오류:", err);
+      return res.status(500).json({ message: "DB 삭제 오류" });
+    }
+
+    if (result.affectedRows === 0) {
+      console.log(`[INFO] 삭제 실패: 사용자 ID(${userId})의 프리셋(${presetId})이 존재하지 않거나 권한 없음`);
+      return res
+        .status(404)
+        .json({ message: "해당 프리셋을 찾을 수 없거나 삭제 권한이 없습니다." });
+    }
+
+    console.log(`[INFO] 사용자 ID(${userId})의 프리셋(${presetId})이 삭제되었습니다.`);
+    res.status(200).json({ message: "프리셋이 삭제되었습니다." });
   });
 });
 
