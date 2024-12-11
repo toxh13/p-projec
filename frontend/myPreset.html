@@ -1,18 +1,21 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>스타일 추천 시스템</title>
+    <title>내스타일 - 스타일 추천 시스템</title>
     <link rel="icon" type="image/x-icon" href="웹페이지아이콘추가" />
-    <!-- Font Awesome icons (free version)-->
+    <!-- Font Awesome icons (free version) -->
     <script
       src="https://use.fontawesome.com/releases/v6.3.0/js/all.js"
       crossorigin="anonymous"
     ></script>
-    <!-- Google fonts-->
+    <!-- Google fonts -->
     <link
       href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900"
       rel="stylesheet"
@@ -21,29 +24,10 @@
       href="https://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900,900i"
       rel="stylesheet"
     />
-    <!-- Core theme CSS (includes Bootstrap)-->
+    <!-- Core theme CSS (includes Bootstrap) -->
     <link href="css/styles.css" rel="stylesheet" />
+    <script src="navbar.js" defer></script>
     <style>
-      .option {
-        display: none;
-        text-align: center;
-        padding-top: 70px;
-        margin: auto;
-      }
-      div .phyInfo {
-        text-align: right;
-        width: 300px;
-        height: 120px;
-        margin: 0px auto;
-        padding-bottom: 10px auto;
-      }
-      .images img {
-        width: 250px;
-        height: auto;
-        margin: 5px;
-        cursor: pointer;
-      }
-      /*상단바 관련*/
       body {
         font-family: Arial, sans-serif;
         margin: 20px;
@@ -54,12 +38,8 @@
         margin: 20px auto;
         padding: 10px;
         border-radius: 5px;
-
-        /*가로 세로 200px만큼 줄이기*/
         width: 800px;
-        height: auto;
-
-        overflow: auto; /*내용이 넘칠경우 스크롤 생기도록 설정*/
+        overflow: auto;
       }
       .preset-header {
         display: flex;
@@ -70,7 +50,6 @@
         display: flex;
         margin: 10px auto;
         width: 450px;
-        height: auto;
       }
       .item img {
         width: 200px;
@@ -84,7 +63,6 @@
       }
       .button {
         margin-top: 10px;
-        margin-bottom: 30px;
         background-color: #007bff;
         color: white;
         border: none;
@@ -98,358 +76,120 @@
       .settings-button {
         margin-left: 10px;
       }
-
-      /*옵션 관련 스타일*/
-      .option {
-        display: none;
-      }
-      .images img {
-        width: 100px;
-        height: auto;
-        margin: 5px;
-        cursor: pointer;
-      }
     </style>
   </head>
+
   <body>
-    <!-- Navigation-->
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
-      <div class="container px-5">
-        <a class="navbar-brand" href="index.html">스타일 추천 시스템</a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarResponsive"
-          aria-controls="navbarResponsive"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarResponsive">
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="myPreset.html">내스타일</a>
-            </li>
-            <!--로그인을 안했다면 "로그인"띄우기-->
-            <li class="nav-item">
-              <a class="nav-link" href="login.html">로그인</a>
-            </li>
-            <!--로그인을 했다면 "로그아웃" 띄우기-->
-            <li class="nav-item"><a class="nav-link" href="#!">로그아웃</a></li>
-          </ul>
-        </div>
-      </div>
-    </nav>
+    <div id="nav-container"></div> <!-- 동적으로 nav.html 삽입 -->
 
-    <!--성별선택 옵션-->
-    <div id="option1" class="option">
-      <h2>성별을 선택하세요</h2>
-      <div class="images">
-        <img
-          src="image/man.jpg"
-          alt="남성이미지"
-          onclick="selectOption('option1', '남성')"
-        />
-        <img
-          src="image/woman.jpg"
-          alt="여성이미지"
-          onclick="selectOption('option1', '여성')"
-        />
-      </div>
-    </div>
-    <!--어느정도 구현완료-->
-
-    <!--키 몸무게 입력옵션-->
-    <div id="option2" class="option">
-      <h2>자신의 신체정보를 입력해주세요</h2>
-      <!--저장방식이 아니라 일단 클릭시 넘어가는 방식으로 임시구현-->
-      <!--숫자만 입력되게, 입력이 안됐거나 숫자 이외의 것들을 입력시 다시입력되게 만들기-->
-      <div class="phyInfo">
-        <label for="number">키 : </label>
-        <input
-          type="text"
-          placeholder="숫자 입력"
-          id="option_stature"
-          name="option_stature"
-        />
-        <p></p>
-        <label for="number">몸무게 : </label>
-        <input
-          type="text"
-          placeholder="숫자 입력"
-          id="option_weight"
-          name="option_weight"
-        />
-      </div>
-      <!--
-      <div class="phyInfo">
-        <label for="number">몸무게 : </label>
-        <input type="text" placeholder="숫자 입력" id="option_weight" name="option_weight" />
-      </div>
-    -->
-      <button onclick="selectOptionInput('option2')">다음</button>
-      <button onclick="clearInput()">다시 입력</button>
-      <button onclick="goBack('option2','option1')">뒤로가기</button>
-    </div>
-    <!--어느정도 구현완료-->
-
-    <!--상하의 둘중하나 선택-->
-    <div id="option3" class="option">
-      <h2>상하의 선택</h2>
-      <div class="images">
-        <img
-          src="image/TopImage.jpg"
-          alt="상의이미지"
-          onclick="selectOption('option3', '상의')"
-        />
-        <img
-          src="image/BottomImage.jpg"
-          alt="하의이미지"
-          onclick="selectOption('option3', '하의')"
-        />
-      </div>
-      <button onclick="goBack('option3','option2')">뒤로가기</button>
-    </div>
-
-    <!--선택한 의류 추천-->
-    <div id="option4" class="option">
-      <!--상의 선택시-->
-      <div>
-        <h2>상의 스타일 선택</h2>
-
-        <!--10가지 카테고리 선택-->
-        <div class="category-buttons" id="categoryButtons">
-          <button onclick="showTopClothing('캐주얼')">캐주얼</button>
-          <button onclick="showTopClothing('스트릿')">스트릿</button>
-          <button onclick="showTopClothing('미니멀')">미니멀</button>
-          <button onclick="showTopClothing('워크웨어')">워크웨어</button>
-          <button onclick="showTopClothing('스포티')">스포티</button>
-          <button onclick="showTopClothing('클래식')">클래식</button>
-          <button onclick="showTopClothing('시크')">시크</button>
-          <button onclick="showTopClothing('로맨틱')">로맨틱</button>
-          <button onclick="showTopClothing('시티보이')">시티보이</button>
-          <button onclick="showTopClothing('레트로')">레트로</button>
-        </div>
-        <p></p>
-        <!--카테고리 하나 선택시 해당 카테고리 내에서 랜덤으로 4가지 상의 출력-->
-        <div class="clothing-options hidden" id="clothingOptions">
-          <h2 id="selectedCategory"></h2>
-          <div id="clothingItems">
-            <img src="" alt="추천이미지" width="100px" height="100px" />
-          </div>
-          <p></p>
-          <!--추천받은 제품 불만족시 해당 제품 제외후 나머지에서 재추천-->
-          <button onclick="recommend()">재추천</button>
-          <button onclick="goBack('option4','option3')">뒤로가기</button>
-        </div>
-
-        <!--하의 선택시-->
-        <!--추천받은 의류 불만족시 재추천-->
-      </div>
-    </div>
-
-    <!--상의면 하의, 하의면 상의 추천받기-->
-    <div id="option5" class="option">
-      <h2>옵션 5</h2>
-    </div>
-
-    <!--결정한 의류 보여주기-->
-    <!--보러가기 눌렀을때 새창으로 띄어주면서 보여주기-->
-    <!--저장 을 눌렀을때 로그인 되어있다면 바로저장, 비로그인시 로그인 후 저장되게끔-->
-    <div id="option6" class="option">
-      <h2>맞춤 스타일</h2>
-      <div>
-        <table>
-          <tr>
-            <td rowspan="6">
-              <img
-                src="image/TopImage.jpg"
-                alt="..."
-                width="300px"
-                height="400px"
-              />
-            </td>
-            <th>상의 상품정보</th>
-          </tr>
-          <tr>
-            <td>상품명</td>
-          </tr>
-          <tr>
-            <td>상품정보</td>
-          </tr>
-          <tr>
-            <td>상품정보2</td>
-          </tr>
-          <tr>
-            <td>
-              <button>변경</button>
-              <button>보러가기</button>
-            </td>
-          </tr>
-        </table>
-        <table>
-          <tr>
-            <td rowspan="5">
-              <img
-                src="image/BottomImage.jpg"
-                alt="..."
-                width="300px"
-                height="400px"
-              />
-            </td>
-            <th>하의 상품정보</th>
-          </tr>
-          <tr>
-            <td>상품명</td>
-          </tr>
-          <tr>
-            <td>상품정보</td>
-          </tr>
-          <tr>
-            <td>상품정보2</td>
-          </tr>
-          <tr>
-            <td>
-              <button>변경</button>
-              <button>보러가기</button>
-            </td>
-          </tr>
-        </table>
-        <button>재추천</button>
-        <button>내스타일에 저장</button>
-      </div>
-    </div>
+    <!-- 저장된 프리셋 목록 -->
+    <div id="preset-container"></div>
 
     <script>
-      //옵션선택페이지를 카운팅해주는 변수
-      let currentOptionIndex = 0;
+      document.addEventListener("DOMContentLoaded", () => {
+        fetchPresets();
+      });
 
-      //다음 옵션으로 넘어가게끔 만듦
-      function showNextOption() {
-        if (currentOptionIndex < 7) {
-          document.getElementById(
-            `option${currentOptionIndex + 1}`
-          ).style.display = "block";
+      // 프리셋 데이터를 가져오기 위한 함수
+      // 프리셋 데이터를 가져오기 위한 함수
+function fetchPresets() {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("로그인이 필요합니다.");
+    window.location.href = "/login.html";
+    return;
+  }
+
+  fetch("http://khs.uy.to:3000/api/clothing_presets", {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP 상태 코드: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      // 응답 데이터가 배열인지 객체인지 확인
+      const presets = Array.isArray(data) ? data : data.data;
+
+      if (!presets || presets.length === 0) {
+        renderNoPresets();
+        return;
+      }
+      renderPresets(presets);
+    })
+    .catch((error) => {
+      console.error("프리셋 데이터를 가져오는 중 오류:", error);
+      alert(`프리셋을 불러오는 중 오류가 발생했습니다: ${error.message}`);
+    });
+}
+
+      // 프리셋 데이터를 렌더링
+      function renderPresets(presets) {
+        const container = document.getElementById("preset-container");
+
+        container.innerHTML = presets
+          .map(
+            (preset) => `
+            <div class="preset">
+              <div class="preset-header">
+                <div>저장한 날짜: ${new Date(preset.created_at).toLocaleString()}</div>
+                <div>
+                  <button class="button settings-button" onclick="openSettings(${preset.user_closet_id})">설정정보</button>
+                  <button class="button delete-button" onclick="deletePreset(${preset.user_closet_id})">삭제</button>
+                </div>
+              </div>
+              <div class="item">
+                <div>스타일: ${preset.style}</div>
+                <div>상의 ID: ${preset.top_clothing_id}</div>
+                <div>하의 ID: ${preset.bottom_clothing_id}</div>
+              </div>
+            </div>`
+          )
+          .join("");
+      }
+
+      // 프리셋이 없을 때 렌더링
+      function renderNoPresets() {
+        const container = document.getElementById("preset-container");
+        container.innerHTML = "<p>저장된 프리셋이 없습니다.</p>";
+      }
+
+      // 프리셋 삭제
+      function deletePreset(userClosetId) {
+        if (confirm("정말로 삭제하시겠습니까?")) {
+          const token = localStorage.getItem("token");
+          fetch(`http://khs.uy.to:3000/api/clothing_presets/${userClosetId}`, {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error("삭제에 실패했습니다.");
+              }
+              alert("프리셋이 삭제되었습니다.");
+              fetchPresets(); // 데이터 갱신
+            })
+            .catch((error) => {
+              console.error("삭제 중 오류 발생:", error);
+              alert("삭제 중 오류가 발생했습니다.");
+            });
         }
       }
 
-      //선다형 선택창
-      function selectOption(optionId, selectedOption) {
-        alert(selectedOption + "(을)를 선택하였습니다.");
-        document.getElementById(optionId).style.display = "none"; // 선택한 옵션 숨기기
-        currentOptionIndex++;
-        showNextOption(); // 다음 옵션 보기
-      }
-
-      //키,몸무게 입력창
-      function selectOptionInput(optionID) {
-        var stature = document.getElementById("option_stature").value;
-        var weight = document.getElementById("option_weight").value;
-
-        //입력값이 숫자인지 확인
-        if (
-          !isNaN(stature) &&
-          !isNaN(weight) &&
-          stature !== "" &&
-          weight !== ""
-        ) {
-          alert(
-            "키 : " + stature + ", 몸무게 : " + weight + "가 입력되었습니다."
-          );
-          document.getElementById(optionID).style.display = "none";
-          currentOptionIndex++;
-          showNextOption();
-        } else {
-          alert("올바른 숫자를 입력해주세요.");
-        }
-      }
-
-      //뒤로가기 버튼
-      function goBack(currentoptionID, previousoptionID) {
-        //현재옵션 숨기기
-        document.getElementById(currentoptionID).style.display = "none";
-
-        //이전 옵션 보이기
-        if (previousoptionID) {
-          document.getElementById(previousoptionID).style.display = "block";
-        }
-        currentOptionIndex--;
-      }
-
-      // 페이지 로드 시 첫 번째 옵션 보여주기
-      window.onload = function () {
-        showNextOption();
-      };
-
-      //DB에서 카테고리 별로 이름 가져옴
-      let currentCategory = "";
-      let lastRecommendedItem = "";
-
-      //상의
-      function showTopClothing(category) {
-        document.getElementById("categoryButtons").classList.add("hidden");
-        document.getElementById("clothingOptions").classList.remove("hidden");
-        document.getElementById("selectedCategory").innerText = category;
-
-        const clothingItems = {
-          캐주얼: ["니트", "맨투맨", "후드티"],
-          스트릿: ["오버사이즈 티셔츠", "조거 팬츠", "스니커즈"],
-          미니멀: ["슬랙스", "니트", "셔츠"],
-          워크웨어: ["작업복", "카고 팬츠", "부츠"],
-          스포티: ["운동복", "레깅스", "스포츠 브라"],
-          클래식: ["블레이저", "드레스 셔츠", "치노 팬츠"],
-          시크: ["블랙 원피스", "가죽 자켓", "하이힐"],
-          로맨틱: ["레이스 블라우스", "플레어 스커트", "샌들"],
-          시티보이: ["후드 집업", "반바지", "캡"],
-          레트로: ["빈티지 티셔츠", "데님 재킷", "와이드 팬츠"],
-        };
-
-        currentCategory = category; //현재 카테고리 저장
-        const items = clothingItems[category];
-        const clothingDiv = document.getElementById("clothingItems");
-        clothingDiv.innerHTML = ""; // 이전 항목 지우기
-
-        //랜덤으로 하나의 항목 선택
-        const randomItem = items[Math.floor(Math.random() * items.length)];
-        clothingDiv.innerHTML = `<button onclick="selectOption('option4', '${randomItem}')">${randomItem}</button>`;
-      }
-
-      //하의
-
-      //재추천
-      function recommend() {
-        if (currentCategory) {
-          const clothingItems = {
-            캐주얼: ["니트", "맨투맨", "후드티"],
-            스트릿: ["오버사이즈 티셔츠", "조거 팬츠", "스니커즈"],
-            미니멀: ["슬랙스", "니트", "셔츠"],
-            워크웨어: ["작업복", "카고 팬츠", "부츠"],
-            스포티: ["운동복", "레깅스", "스포츠 브라"],
-            클래식: ["블레이저", "드레스 셔츠", "치노 팬츠"],
-            시크: ["블랙 원피스", "가죽 자켓", "하이힐"],
-            로맨틱: ["레이스 블라우스", "플레어 스커트", "샌들"],
-            시티보이: ["후드 집업", "반바지", "캡"],
-            레트로: ["빈티지 티셔츠", "데님 재킷", "와이드 팬츠"],
-          };
-
-          const items = clothingItems[currentCategory].filter(
-            (item) => item !== lastRecommendedItem
-          );
-
-          if (items.length > 0) {
-            lastRecommendedItem =
-              items[Math.floor(Math.random() * items.length)];
-            document.getElementById(
-              "clothingItems"
-            ).innerHTML = `<button>${lastRecommendedItem}</button>`;
-          } else {
-            alert("더 이상 추천할 수 있는 항목이 없습니다.");
-          }
-        }
+      // 설정 정보 보기
+      function openSettings(userClosetId) {
+        alert(`프리셋 ID ${userClosetId}의 설정 정보를 여기에 표시합니다.`);
       }
     </script>
-    <script src="../backend/server.js"></script>
+
+    <!-- Bootstrap core JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>
