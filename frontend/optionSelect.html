@@ -7,29 +7,69 @@
     <meta name="author" content="" />
     <title>스타일 추천 시스템</title>
     <link rel="icon" type="image/x-icon" href="웹페이지아이콘추가" />
-    <!-- Font Awesome icons (free version) -->
-    <script
-      src="https://use.fontawesome.com/releases/v6.3.0/js/all.js"
-      crossorigin="anonymous"
-    ></script>
+    <!-- Font Awesome icons -->
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <!-- Google fonts -->
-    <link
-      href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900,900i"
-      rel="stylesheet"
-    />
-    <!-- Core theme CSS (includes Bootstrap) -->
+    <link href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900,900i" rel="stylesheet" />
+    <!-- Core theme CSS -->
     <link href="css/styles.css" rel="stylesheet" />
-    <link href="css/optionsel.css" rel="stylesheet" />
     <script src="js/navbar.js" defer></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        padding-top: 70px;
+      }
+      .option {
+        display: none;
+        text-align: center;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        width: 300px;
+      }
+      .images img {
+        width: 100px;
+        height: auto;
+        margin: 5px;
+        cursor: pointer;
+      }
+      .phyInfo {
+        margin: 10px auto;
+        text-align: left;
+      }
+      .phyInfo input {
+        width: 100%;
+        padding: 5px;
+        margin: 5px 0;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+      button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        margin: 10px;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+      }
+    </style>
   </head>
   <body>
     <div id="nav-container"></div> <!-- 동적으로 nav.html 삽입 -->
 
-    <!-- HTML 컨텐츠 -->
+
+    <!-- Step 1: 성별 선택 -->
     <div id="option1" class="option">
       <h2>성별을 선택하세요</h2>
       <div class="images">
@@ -38,6 +78,7 @@
       </div>
     </div>
 
+    <!-- Step 2: 키와 몸무게 입력 -->
     <div id="option2" class="option">
       <h2>자신의 신체정보를 입력해주세요</h2>
       <div class="phyInfo">
@@ -52,8 +93,75 @@
       <button onclick="goBack('option2', 'option1')">뒤로가기</button>
     </div>
 
-    <!-- 추가 옵션들 -->
-    <!-- JavaScript를 연결 -->
-    <script src="js/optionsel.js" defer></script>
+    <!-- Step 3: 스타일 선택 -->
+    <div id="option3" class="option">
+      <h2>스타일을 선택하세요</h2>
+      <button onclick="selectOption('option3', '캐주얼')">캐주얼</button>
+      <button onclick="selectOption('option3', '스트릿')">스트릿</button>
+      <button onclick="selectOption('option3', '미니멀')">미니멀</button>
+      <button onclick="selectOption('option3', '클래식')">클래식</button>
+      <button onclick="goBack('option3', 'option2')">뒤로가기</button>
+    </div>
+
+    <!-- Step 4: 상의 또는 하의 선택 -->
+    <div id="option4" class="option">
+      <h2>상의 또는 하의를 선택하세요</h2>
+      <div class="images">
+        <img src="image/TopImage.jpg" alt="상의" onclick="selectOption('option4', '상의')" />
+        <img src="image/BottomImage.jpg" alt="하의" onclick="selectOption('option4', '하의')" />
+      </div>
+      <button onclick="goBack('option4', 'option3')">뒤로가기</button>
+    </div>
+
+    <script>
+      let currentOptionIndex = 0;
+      let userData = {}; // 사용자 데이터 저장
+
+      // 옵션 선택
+      function selectOption(optionId, selectedOption) {
+        if (optionId === 'option1') userData.gender = selectedOption;
+        if (optionId === 'option3') userData.style = selectedOption;
+        if (optionId === 'option4') userData.clothingType = selectedOption;
+
+        document.getElementById(optionId).style.display = 'none';
+        currentOptionIndex++;
+        showNextOption();
+      }
+
+      // 신체 정보 입력
+      function selectOptionInput(optionID) {
+        const stature = document.getElementById("option_stature").value;
+        const weight = document.getElementById("option_weight").value;
+
+        if (!isNaN(stature) && !isNaN(weight) && stature && weight) {
+          userData.stature = stature;
+          userData.weight = weight;
+          document.getElementById(optionID).style.display = "none";
+          currentOptionIndex++;
+          showNextOption();
+        } else {
+          alert("올바른 숫자를 입력해주세요.");
+        }
+      }
+
+      // 뒤로가기
+      function goBack(currentOptionId, previousOptionId) {
+        document.getElementById(currentOptionId).style.display = 'none';
+        document.getElementById(previousOptionId).style.display = 'block';
+        currentOptionIndex--;
+      }
+
+      // 다음 옵션 표시
+      function showNextOption() {
+        const nextOption = document.getElementById(`option${currentOptionIndex + 1}`);
+        if (nextOption) nextOption.style.display = 'block';
+        else alert('모든 데이터를 입력했습니다! 서버로 데이터를 전송합니다.');
+      }
+
+      // 페이지 로드 시 첫 번째 옵션 표시
+      window.onload = function () {
+        showNextOption();
+      };
+    </script>
   </body>
 </html>

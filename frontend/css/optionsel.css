@@ -19,9 +19,35 @@ body {
   }
   
   .phyInfo {
-    text-align: right;
-    width: 300px;
-    height: 120px;
-    margin: 0 auto;
+    margin: 10px auto;
+    text-align: left;
+  }
+  
+  .phyInfo input {
+    width: 200px;
+    height: 30px;
+    padding: 5px;
+    margin-left: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+  button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
   }
   

@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // nav.html 로드
   try {
-    const response = await fetch("nav.html");
+    const response = await fetch("../nav.html");
     const navHtml = await response.text();
     navContainer.innerHTML = navHtml;
 
