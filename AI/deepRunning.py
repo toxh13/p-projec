@@ -9,10 +9,12 @@ import json
 
 # 예시: 이미지 특징 벡터를 로드
 # 이미지 특징 벡터 데이터. 각 벡터는 이미지를 나타내는 고차원 특징 벡터입니다.
-features = np.load("C:\\Work\\dbServer\\image_features.npy")
+features_path = os.path.join("..", "AI", "image_features.npy")
+features = np.load(features_path)
 
 # 라벨 데이터 로드. 각 의류 항목의 정보가 포함된 CSV 파일.
-labels = pd.read_csv("C:/Work/dbServer/Clothing_data.csv")
+labels_path = os.path.join("..", "AI", "Clothing_data.csv")
+labels = pd.read_csv(labels_path)
 
 # 라벨 인코딩
 # 스타일별로 고유한 숫자 값을 매핑하여 라벨 데이터를 숫자로 변환.
@@ -78,18 +80,19 @@ def save_recommendations_to_json(recommendations, json_path):
         json.dump(data_to_save, json_file, ensure_ascii=False, indent=4)
 
 # 추천 시스템 함수
-def recommend_clothing(user_height, user_weight, user_gender, user_style, recommend_top, top_n=3):
+def recommend_clothing(user_height, user_weight, user_gender, user_style, clothingType, top_n=3):
     # 의류 데이터를 로드
-    clothing_data = pd.read_csv("C:/Work/dbServer/Clothing_data.csv")
+    csv_path = os.path.join("..", "AI", "Clothing_data.csv")
+    clothing_data = pd.read_csv(csv_path)
     # JSON 저장 경로 설정
-    json_path = os.path.join("..", "frontend", "JSON", "images.json")
+    json_path = os.path.join("..", "frontend", "JSON", "firstRecomm.json")
 
     # 평균 키와 몸무게를 숫자로 변환 (오류 데이터 처리)
     clothing_data['평균 키'] = pd.to_numeric(clothing_data['평균 키'], errors='coerce')
     clothing_data['평균 몸무게'] = pd.to_numeric(clothing_data['평균 몸무게'], errors='coerce')
 
     # 사용자가 상의를 추천받고자 하는 경우
-    if recommend_top:
+    if clothingType == "상의":
         filtered_data = clothing_data[
             (clothing_data['평균 키'] >= user_height - 5) &
             (clothing_data['평균 키'] <= user_height + 5) &
@@ -100,7 +103,7 @@ def recommend_clothing(user_height, user_weight, user_gender, user_style, recomm
             (clothing_data['스타일'] == user_style) &
             (clothing_data['부위'] == "상의")
         ]
-    else:
+    elif clothingType == "하의":
         # 사용자가 하의를 추천받고자 하는 경우
         filtered_data = clothing_data[
             (clothing_data['평균 키'] >= user_height - 5) &
@@ -182,16 +185,16 @@ def recommend_clothing(user_height, user_weight, user_gender, user_style, recomm
                 print("추천할 의류가 더 이상 없습니다.")
                 break
 
-def recommend_otherClothing(selected_item_index, clothing_data, image_features, recommend_top=True, top_n=3):
+def recommend_otherClothing(selected_item_index, clothing_data, image_features, clothingType, top_n=3):
     user_height = selected_item['평균 키']
     user_weight = selected_item['평균 몸무게']
     user_gender = selected_item['성별']
     user_style = selected_item['스타일']
 
     # 추천 대상 필터링
-    if recommend_top:
+    if clothingType == "상의":
         target_data = clothing_data[clothing_data['부위'] == '하의']
-    else:
+    elif clothingType == "하의":
         target_data = clothing_data[clothing_data['부위'] == '상의']
 
     if target_data.empty:
@@ -240,11 +243,11 @@ def recommend_otherClothing(selected_item_index, clothing_data, image_features, 
                 break
 
 # 예시 사용자 입력
-user_height = 175
-user_weight = 70
-user_gender = "남성"
-user_style = "캐주얼"
-recommend_top = True  # True이면 상의를 먼저 추천, False이면 하의를 먼저 추천
+# user_height = 175
+# user_weight = 70
+# user_gender = "남"
+# user_style = "캐주얼"
+# clothingType = "상의"
 
-recommend_clothing(user_height, user_weight, user_gender, user_style, recommend_top, top_n=3)
-# recommend_otherClothing(selected_item_index, clothing_data, image_features, recommend_top, top_n=3)
+recommend_clothing(user_height, user_weight, user_gender, user_style, clothingType, top_n=3)
+# recommend_otherClothing(selected_item_index, clothing_data, image_features, clothingType, top_n=3)
