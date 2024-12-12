@@ -4,14 +4,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // 프리셋 데이터를 가져오기 위한 함수
 function fetchPresets() {
-  /*
   const token = localStorage.getItem("token");
   if (!token) {
     alert("로그인이 필요합니다.");
     window.location.href = "/login.html";
     return;
   }
-  */
 
   fetch("http://khs.uy.to:3000/api/clothing_presets", {
     method: "GET",
