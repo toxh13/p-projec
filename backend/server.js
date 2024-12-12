@@ -146,15 +146,26 @@ app.get("/api/clothing_presets", authenticateToken, (req, res) => {
 
   const query = `
     SELECT 
-      user_closet_id,
-      user_id,
-      top_clothing_id,
-      bottom_clothing_id,
-      style,
-      added_at AS created_at
-    FROM User_Closets
-    WHERE user_id = ? 
-    ORDER BY added_at DESC;
+      uc.user_closet_id,
+      uc.user_id,
+      uc.style,
+      uc.added_at AS created_at,
+      uc.height,
+      uc.weight,
+      uc.sex,
+      top.id AS top_clothing_id,
+      top.상품명 AS top_name,
+      top.브랜드 AS top_brand,
+      top.이미지_URL AS top_image_url,
+      bottom.id AS bottom_clothing_id,
+      bottom.상품명 AS bottom_name,
+      bottom.브랜드 AS bottom_brand,
+      bottom.이미지_URL AS bottom_image_url
+    FROM User_Closets uc
+    LEFT JOIN Clothing top ON uc.top_clothing_id = top.id
+    LEFT JOIN Clothing bottom ON uc.bottom_clothing_id = bottom.id
+    WHERE uc.user_id = ? 
+    ORDER BY uc.added_at DESC;
   `;
 
   db.query(query, [userId], (err, results) => {
@@ -164,6 +175,32 @@ app.get("/api/clothing_presets", authenticateToken, (req, res) => {
     }
 
     res.status(200).json({ message: "프리셋 조회 성공", data: results });
+  });
+});
+
+// 완성된 의류 프리셋 저장 API
+app.post("/api/user_closets", authenticateToken, (req, res) => {
+  const userId = req.user.id; // JWT에서 추출된 사용자 ID
+  const { top_clothing_id, bottom_clothing_id, style } = req.body;
+
+  if (!top_clothing_id || !bottom_clothing_id || !style) {
+    console.error("[ERROR] 누락된 필드:", { top_clothing_id, bottom_clothing_id, style });
+    return res.status(400).json({ message: "모든 필드를 제공해야 합니다." });
+  }
+
+  const query = `
+    INSERT INTO User_Closets (user_id, top_clothing_id, bottom_clothing_id, style, added_at)
+    VALUES (?, ?, ?, ?, NOW());
+  `;
+
+  db.query(query, [userId, top_clothing_id, bottom_clothing_id, style], (err, results) => {
+    if (err) {
+      console.error("[ERROR] DB 저장 오류:", err);
+      return res.status(500).json({ message: "DB 저장 오류" });
+    }
+
+    console.log(`[INFO] 사용자 ID(${userId})의 프리셋이 저장되었습니다.`);
+    res.status(201).json({ message: "프리셋 저장 성공", presetId: results.insertId });
   });
 });
 
@@ -197,6 +234,45 @@ app.delete("/api/user_closets/:presetId", authenticateToken, (req, res) => {
 
     console.log(`[INFO] 사용자 ID(${userId})의 프리셋(${presetId})이 삭제되었습니다.`);
     res.status(200).json({ message: "프리셋이 삭제되었습니다." });
+  });
+});
+// Clothing 데이터 조회 API
+app.get("/api/clothing/:id", (req, res) => {
+  const clothingId = req.params.id; // 요청된 의류 ID
+
+  console.log(`[INFO] Clothing ID(${clothingId}) 데이터 요청 수신`);
+
+  const query = `
+    SELECT 
+      id,
+      상품명 AS name,
+      브랜드 AS brand,
+      품번 AS product_code,
+      성별 AS gender,
+      이미지_URL AS image_url,
+      현재_가격 AS price,
+      평균_키 AS avg_height,
+      평균_몸무게 AS avg_weight,
+      구매사이트 AS purchase_link,
+      부위 AS part,
+      스타일 AS style
+    FROM Clothing
+    WHERE id = ?;
+  `;
+
+  db.query(query, [clothingId], (err, results) => {
+    if (err) {
+      console.error("[ERROR] DB 조회 오류:", err);
+      return res.status(500).json({ message: "DB 조회 오류" });
+    }
+
+    if (results.length === 0) {
+      console.log(`[INFO] Clothing ID(${clothingId}) 데이터가 존재하지 않습니다.`);
+      return res.status(404).json({ message: "의류 데이터를 찾을 수 없습니다." });
+    }
+
+    console.log(`[INFO] Clothing ID(${clothingId}) 데이터 조회 성공`);
+    res.status(200).json(results[0]);
   });
 });
 
