@@ -9,6 +9,8 @@ services:
     networks:
       - project-net
     # 오류가 발생할 수 있는 포트나 환경 변수를 추가
+    volumes:
+      - ./frontend:/var/www/html
 
   # 백엔드 (Node.js)
   backend:
