@@ -23,18 +23,25 @@
     />
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="css/styles.css" rel="stylesheet" />
+
+    <!--백엔드와 연동-->
+    <script src="../backend/server.js"></script>
     <style>
       .option {
         display: none;
         text-align: center;
-        padding-top: 10px;
+        padding-top: 70px;
         margin: auto;
       }
-      .option phyInfo {
-        margin-left: 5px;   
+      div .phyInfo {
+        text-align: right;
+        width: 300px;
+        height: 120px;
+        margin: 0px auto;
+        padding-bottom: 10px auto;
       }
       .images img {
-        width: 100px;
+        width: 250px;
         height: auto;
         margin: 5px;
         cursor: pointer;
@@ -66,7 +73,8 @@
         display: flex;
         margin: 10px auto;
         width: 450px;
-        height: auto;
+        height: 450px;
+        /*height: auto;*/
       }
       .item img {
         width: 200px;
@@ -80,6 +88,7 @@
       }
       .button {
         margin-top: 10px;
+        margin-bottom: 30px;
         background-color: #007bff;
         color: white;
         border: none;
@@ -104,11 +113,51 @@
         margin: 5px;
         cursor: pointer;
       }
+
+      /*상하의선택옵션 관련*/
+      .hidden {
+        display: none;
+      }
+      .item {
+        margin: 10px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        display: inline-block;
+      }
     </style>
-    <script src="navbar.js" defer></script>
   </head>
   <body>
-    <div id="nav-container"></div> <!-- 동적으로 nav.html 삽입 -->
+    <!-- Navigation-->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
+      <div class="container px-5">
+        <a class="navbar-brand" href="index.html">스타일 추천 시스템</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarResponsive"
+          aria-controls="navbarResponsive"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="myPreset.html">내스타일</a>
+            </li>
+            <!--로그인을 안했다면 "로그인"띄우기-->
+            <li class="nav-item">
+              <a class="nav-link" href="login.html">로그인</a>
+            </li>
+            <!--로그인을 했다면 "로그아웃" 띄우기-->
+            <li class="nav-item"><a class="nav-link" href="#!">로그아웃</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
     <!--성별선택 옵션-->
     <div id="option1" class="option">
       <h2>성별을 선택하세요</h2>
@@ -134,12 +183,27 @@
       <!--숫자만 입력되게, 입력이 안됐거나 숫자 이외의 것들을 입력시 다시입력되게 만들기-->
       <div class="phyInfo">
         <label for="number">키 : </label>
-        <input type="text" placeholder="숫자 입력" id="option_stature" name="option_stature"/>
+        <input
+          type="text"
+          placeholder="숫자 입력"
+          id="option_stature"
+          name="option_stature"
+        />
+        <p></p>
+        <label for="number">몸무게 : </label>
+        <input
+          type="text"
+          placeholder="숫자 입력"
+          id="option_weight"
+          name="option_weight"
+        />
       </div>
+      <!--
       <div class="phyInfo">
         <label for="number">몸무게 : </label>
         <input type="text" placeholder="숫자 입력" id="option_weight" name="option_weight" />
       </div>
+    -->
       <button onclick="selectOptionInput('option2')">다음</button>
       <button onclick="clearInput()">다시 입력</button>
       <button onclick="goBack('option2','option1')">뒤로가기</button>
@@ -170,116 +234,41 @@
       <div>
         <h2>상의 스타일 선택</h2>
 
-        <!--10가지 카테고리 선택-->
-        <div class="category-buttons" id="categoryButtons">
-          <button onclick="showTopClothing('캐주얼')">캐주얼</button>
-          <button onclick="showTopClothing('스트릿')">스트릿</button>
-          <button onclick="showTopClothing('미니멀')">미니멀</button>
-          <button onclick="showTopClothing('워크웨어')">워크웨어</button>
-          <button onclick="showTopClothing('스포티')">스포티</button>
-          <button onclick="showTopClothing('클래식')">클래식</button>
-          <button onclick="showTopClothing('시크')">시크</button>
-          <button onclick="showTopClothing('로맨틱')">로맨틱</button>
-          <button onclick="showTopClothing('시티보이')">시티보이</button>
-          <button onclick="showTopClothing('레트로')">레트로</button>
+        <!-- 카테고리 선택 영역 -->
+        <div id="category-selection">
+          <h2>카테고리 선택</h2>
+          <select id="category">
+            <option value="">선택하세요</option>
+            <option value="캐주얼">캐주얼</option>
+            <option value="스트릿">스트릿</option>
+            <option value="미니멀">미니멀</option>
+            <option value="워크웨어">워크웨어</option>
+          </select>
+          <button onclick="showRecommendations()">추천받기</button>
+          <button onclick="goBack('option4','option3')">뒤로가기</button>
         </div>
 
-        <!--카테고리 하나 선택시 해당 카테고리 내에서 랜덤으로 4가지 상의 출력-->
-        <div class="clothing-options hidden" id="clothingOptions">
-          <h2 id="selectedCategory"></h2>
-          <div id="clothingItems"></div>
-          <!--추천받은 제품 불만족시 해당 제품 제외후 나머지에서 재추천-->
-          <button onclick="recommend()">재추천</button>
-          <button onclick="goBack()">뒤로가기</button>
+        <!-- 추천 상품 영역 -->
+        <div id="recommendations" class="hidden">
+          <h2>추천 상품</h2>
+          <div id="items"></div>
+          <button onclick="reRecommend()">재추천</button>
+          <button onclick="goBackToCategory()">뒤로가기</button>
         </div>
 
-      <!--하의 선택시-->
-      <!--
-      <div>
-        <h2>상의 스타일 선택</h2>
-        <div class="images">
-          <img
-            src="image4-1.jpg"
-            alt="옵션 4-1"
-            onclick="selectOption('option4', 'option4-1')"
-          />
-          <img
-            src="image4-2.jpg"
-            alt="옵션 4-2"
-            onclick="selectOption('option4', 'option4-2')"
-          />
-          <img
-            src="image4-3.jpg"
-            alt="옵션 4-3"
-            onclick="selectOption('option4', 'option4-3')"
-          />
-          <img
-            src="image4-4.jpg"
-            alt="옵션 4-4"
-            onclick="selectOption('option4', 'option4-4')"
-          />
+        <!-- 관련 하의 추천 영역 -->
+        <div id="related-recommendations" class="hidden">
+          <h2>관련된 하의 추천</h2>
+          <div id="related-items"></div>
+          <button onclick="relatedReRecommend()">재추천</button>
+          <button onclick="goBackToRecommendations()">뒤로가기</button>
         </div>
-        <button onclick="goBack('option4','option3')">뒤로가기</button>
-      </div>
-      -->
-    </div>
-
-    <!--추천받은 의류 불만족시 재추천-->
-    <div id="option5" class="option">
-      <h2>옵션 5</h2>
-      <div class="images">
-        <img
-          src="image5-1.jpg"
-          alt="옵션 5-1"
-          onclick="selectOption('option5', 'option5-1')"
-        />
-        <img
-          src="image5-2.jpg"
-          alt="옵션 5-2"
-          onclick="selectOption('option5', 'option5-2')"
-        />
-        <img
-          src="image5-3.jpg"
-          alt="옵션 5-3"
-          onclick="selectOption('option5', 'option5-3')"
-        />
-        <img
-          src="image5-4.jpg"
-          alt="옵션 5-4"
-          onclick="selectOption('option5', 'option5-4')"
-        />
-      </div>
-      <button onclick="goBack('option5','option4')">뒤로가기</button>
-    </div>
-
-    <!--상의면 하의, 하의면 상의 추천받기-->
-    <div id="option5" class="option">
-      <h2>옵션 5</h2>
-      <div class="images">
-        <img
-          src="image5-1.jpg"
-          alt="옵션 5-1"
-          onclick="selectOption('option5', 'option5-1')"
-        />
-        <img
-          src="image5-2.jpg"
-          alt="옵션 5-2"
-          onclick="selectOption('option5', 'option5-2')"
-        />
-        <img
-          src="image5-3.jpg"
-          alt="옵션 5-3"
-          onclick="selectOption('option5', 'option5-3')"
-        />
-        <img
-          src="image5-4.jpg"
-          alt="옵션 5-4"
-          onclick="selectOption('option5', 'option5-4')"
-        />
       </div>
     </div>
 
     <!--결정한 의류 보여주기-->
+    <!--보러가기 눌렀을때 새창으로 띄어주면서 보여주기-->
+    <!--저장 을 눌렀을때 로그인 되어있다면 바로저장, 비로그인시 로그인 후 저장되게끔-->
     <div id="option5" class="option">
       <h2>맞춤 스타일</h2>
       <div>
@@ -289,8 +278,8 @@
               <img
                 src="image/TopImage.jpg"
                 alt="..."
-                width="300px"
-                height="400px"
+                width="250px"
+                height="300px"
               />
             </td>
             <th>상의 상품정보</th>
@@ -317,8 +306,8 @@
               <img
                 src="image/BottomImage.jpg"
                 alt="..."
-                width="300px"
-                height="400px"
+                width="330px"
+                height="430px"
               />
             </td>
             <th>하의 상품정보</th>
@@ -340,61 +329,7 @@
           </tr>
         </table>
         <button>재추천</button>
-        <button>내스타일에 저장</button>
-      </div>
-    </div>
-
-    <!--보러가기 눌렀을때 새창으로 띄어주면서 보여주기-->
-    <div id="option5" class="option">
-      <h2>옵션 5</h2>
-      <div class="images">
-        <img
-          src="image5-1.jpg"
-          alt="옵션 5-1"
-          onclick="selectOption('option5', 'option5-1')"
-        />
-        <img
-          src="image5-2.jpg"
-          alt="옵션 5-2"
-          onclick="selectOption('option5', 'option5-2')"
-        />
-        <img
-          src="image5-3.jpg"
-          alt="옵션 5-3"
-          onclick="selectOption('option5', 'option5-3')"
-        />
-        <img
-          src="image5-4.jpg"
-          alt="옵션 5-4"
-          onclick="selectOption('option5', 'option5-4')"
-        />
-      </div>
-    </div>
-
-    <!--저장 을 눌렀을때 로그인 되어있다면 바로저장, 비로그인시 로그인 후 저장되게끔-->
-    <div id="option5" class="option">
-      <h2>옵션 5</h2>
-      <div class="images">
-        <img
-          src="image5-1.jpg"
-          alt="옵션 5-1"
-          onclick="selectOption('option5', 'option5-1')"
-        />
-        <img
-          src="image5-2.jpg"
-          alt="옵션 5-2"
-          onclick="selectOption('option5', 'option5-2')"
-        />
-        <img
-          src="image5-3.jpg"
-          alt="옵션 5-3"
-          onclick="selectOption('option5', 'option5-3')"
-        />
-        <img
-          src="image5-4.jpg"
-          alt="옵션 5-4"
-          onclick="selectOption('option5', 'option5-4')"
-        />
+        <button onclick="location.href='myPreset.html'">내스타일에 저장</button>
       </div>
     </div>
 
@@ -402,9 +337,14 @@
       //옵션선택페이지를 카운팅해주는 변수
       let currentOptionIndex = 0;
 
+      // 페이지 로드 시 첫 번째 옵션 보여주기
+      window.onload = function () {
+        showNextOption();
+      };
+
       //다음 옵션으로 넘어가게끔 만듦
       function showNextOption() {
-        if (currentOptionIndex < 8) {
+        if (currentOptionIndex < 7) {
           document.getElementById(
             `option${currentOptionIndex + 1}`
           ).style.display = "block";
@@ -413,7 +353,7 @@
 
       //선다형 선택창
       function selectOption(optionId, selectedOption) {
-        alert(selectedOption + "(을)를 선택되었습니다.");
+        alert(selectedOption + "(을)를 선택하였습니다.");
         document.getElementById(optionId).style.display = "none"; // 선택한 옵션 숨기기
         currentOptionIndex++;
         showNextOption(); // 다음 옵션 보기
@@ -421,98 +361,204 @@
 
       //키,몸무게 입력창
       function selectOptionInput(optionID) {
-        var stature = document.getElementById('option_stature').value;
-        var weight = document.getElementById('option_weight').value;
-        
+        var stature = document.getElementById("option_stature").value;
+        var weight = document.getElementById("option_weight").value;
+
         //입력값이 숫자인지 확인
-        if(!isNaN(stature) && !isNaN(weight) && stature !== '' && weight !== ''){
-          alert('키 : '+ stature+', 몸무게 : '+weight+'가 입력되었습니다.');
-          document.getElementById(optionID).style.display = 'none';
+        if (
+          !isNaN(stature) &&
+          !isNaN(weight) &&
+          stature !== "" &&
+          weight !== ""
+        ) {
+          alert(
+            "키 : " + stature + ", 몸무게 : " + weight + "가 입력되었습니다."
+          );
+          document.getElementById(optionID).style.display = "none";
           currentOptionIndex++;
           showNextOption();
-        } else{
-          alert('올바른 숫자를 입력해주세요.');
+        } else {
+          alert("올바른 숫자를 입력해주세요.");
         }
       }
 
       //뒤로가기 버튼
-      function goBack(currentoptionID, previousoptionID){
+      function goBack(currentoptionID, previousoptionID) {
         //현재옵션 숨기기
-        document.getElementById(currentoptionID).style.display='none';
+        document.getElementById(currentoptionID).style.display = "none";
 
         //이전 옵션 보이기
-        if(previousoptionID) {
-          document.getElementById(previousoptionID).style.display='block';
+        if (previousoptionID) {
+          document.getElementById(previousoptionID).style.display = "block";
         }
         currentOptionIndex--;
       }
 
-      // 페이지 로드 시 첫 번째 옵션 보여주기
-      window.onload = function () {
-        showNextOption();
+      //상의
+      // 각 카테고리에 대한 상의 상품 목록
+      const products = {
+        캐주얼: [
+          { name: "캐주얼 상의 1", img: "image1.jpg" },
+          { name: "캐주얼 상의 2", img: "image2.jpg" },
+          { name: "캐주얼 상의 3", img: "image3.jpg" },
+          { name: "캐주얼 상의 4", img: "image4.jpg" },
+          { name: "캐주얼 상의 5", img: "image5.jpg" },
+        ],
+        스트릿: [
+          { name: "스트릿 상의 1", img: "image1.jpg" },
+          { name: "스트릿 상의 2", img: "image2.jpg" },
+          { name: "스트릿 상의 3", img: "image3.jpg" },
+          { name: "스트릿 상의 4", img: "image4.jpg" },
+          { name: "스트릿 상의 5", img: "image5.jpg" },
+        ],
+        미니멀: [
+          { name: "미니멀 상의 1", img: "image1.jpg" },
+          { name: "미니멀 상의 2", img: "image2.jpg" },
+          { name: "미니멀 상의 3", img: "image3.jpg" },
+          { name: "미니멀 상의 4", img: "image4.jpg" },
+          { name: "미니멀 상의 5", img: "image5.jpg" },
+        ],
+        워크웨어: [
+          { name: "워크웨어 상의 1", img: "image1.jpg" },
+          { name: "워크웨어 상의 2", img: "image2.jpg" },
+          { name: "워크웨어 상의 3", img: "image3.jpg" },
+          { name: "워크웨어 상의 4", img: "image4.jpg" },
+          { name: "워크웨어 상의 5", img: "image5.jpg" },
+        ],
       };
 
-      //DB에서 카테고리 별로 이름 가져옴
-      let currentCategory = '';
-      let lastRecommendedItem = '';
-        //상의
-      function showTopClothing(category) {
-        document.getElementById("categoryButtons").classList.add("hidden");
-        document.getElementById("clothingOptions").classList.remove("hidden");
-        document.getElementById("selectedCategory").innerText = category;
+      // 각 카테고리에 대한 관련 하의 상품 목록
+      const relatedProducts = {
+        캐주얼: [
+          { name: "캐주얼 하의 1", img: "related1.jpg" },
+          { name: "캐주얼 하의 2", img: "related2.jpg" },
+          { name: "캐주얼 하의 3", img: "related3.jpg" },
+        ],
+        스트릿: [
+          { name: "스트릿 하의 1", img: "related1.jpg" },
+          { name: "스트릿 하의 2", img: "related2.jpg" },
+          { name: "스트릿 하의 3", img: "related3.jpg" },
+        ],
+        미니멀: [
+          { name: "미니멀 하의 1", img: "related1.jpg" },
+          { name: "미니멀 하의 2", img: "related2.jpg" },
+          { name: "미니멀 하의 3", img: "related3.jpg" },
+        ],
+        워크웨어: [
+          { name: "워크웨어 하의 1", img: "related1.jpg" },
+          { name: "워크웨어 하의 2", img: "related2.jpg" },
+          { name: "워크웨어 하의 3", img: "related3.jpg" },
+        ],
+      };
 
-        const clothingItems = {
-          캐주얼: ["니트", "맨투맨", "후드티"],
-          스트릿: ["오버사이즈 티셔츠", "조거 팬츠", "스니커즈"],
-          미니멀: ["슬랙스", "니트", "셔츠"],
-          워크웨어: ["작업복", "카고 팬츠", "부츠"],
-          스포티: ["운동복", "레깅스", "스포츠 브라"],
-          클래식: ["블레이저", "드레스 셔츠", "치노 팬츠"],
-          시크: ["블랙 원피스", "가죽 자켓", "하이힐"],
-          로맨틱: ["레이스 블라우스", "플레어 스커트", "샌들"],
-          시티보이: ["후드 집업", "반바지", "캡"],
-          레트로: ["빈티지 티셔츠", "데님 재킷", "와이드 팬츠"],
-        };
+      // 추천 상품을 보여주는 함수
+      function showRecommendations() {
+        const category = document.getElementById("category").value;
+        if (!category) return; // 카테고리가 선택되지 않으면 함수 종료
 
-        currentCategory = category; //현재 카테고리 저장
-        const items = clothingItems[category];
-        const clothingDiv = document.getElementById("clothingItems");
-        clothingDiv.innerHTML = ""; // 이전 항목 지우기
+        // 선택한 카테고리에 따라 화면 전환
+        document.getElementById("category-selection").classList.add("hidden");
+        document.getElementById("recommendations").classList.remove("hidden");
 
-        //랜덤으로 하나의 항목 선택
-        const randomItem = items[Math.floor(Math.random()*items.length)];
-        clothingDiv.innerHTML = `<button>${randomItem}</button>`;
+        displayItems(products[category]); // 상품 목록 표시
       }
 
-        //하의
+      // 상품 목록을 랜덤으로 표시하는 함수
+      function displayItems(itemList) {
+        const itemsDiv = document.getElementById("items");
+        itemsDiv.innerHTML = ""; // 이전 내용 초기화
 
-      //재추천
-      function recommend() {
-        if(currentCategory) {
-          const clothingItems = {
-            캐주얼: ["니트", "맨투맨", "후드티"],
-            스트릿: ["오버사이즈 티셔츠", "조거 팬츠", "스니커즈"],
-            미니멀: ["슬랙스", "니트", "셔츠"],
-            워크웨어: ["작업복", "카고 팬츠", "부츠"],
-            스포티: ["운동복", "레깅스", "스포츠 브라"],
-            클래식: ["블레이저", "드레스 셔츠", "치노 팬츠"],
-            시크: ["블랙 원피스", "가죽 자켓", "하이힐"],
-            로맨틱: ["레이스 블라우스", "플레어 스커트", "샌들"],
-            시티보이: ["후드 집업", "반바지", "캡"],
-            레트로: ["빈티지 티셔츠", "데님 재킷", "와이드 팬츠"],
+        // 랜덤으로 3개의 상품 선택
+        const randomItems = itemList
+          .sort(() => 0.5 - Math.random())
+          .slice(0, 3);
+        randomItems.forEach((item) => {
+          const itemDiv = document.createElement("div");
+          itemDiv.className = "item";
+          itemDiv.innerHTML = `<img src="${item.img}" alt="${item.name}" width="100"><br>${item.name}`;
+          itemDiv.onclick = () => showRelatedRecommendations(item.name); // 클릭 시 관련 하의 추천
+          itemsDiv.appendChild(itemDiv);
+        });
+      }
+
+      // 재추천 기능
+      function reRecommend() {
+        const category = document.getElementById("category").value;
+        displayItems(products[category]); // 선택한 카테고리에서 상품 재추천
+      }
+
+      // 카테고리 선택 화면으로 돌아가는 함수
+      function goBackToCategory() {
+        document.getElementById("recommendations").classList.add("hidden");
+        document
+          .getElementById("category-selection")
+          .classList.remove("hidden");
+      }
+
+      // 관련 하의 추천을 보여주는 함수
+      function showRelatedRecommendations(selectedItem) {
+        const category = document.getElementById("category").value;
+
+        //추천 상품 화면 숨기기
+        document.getElementById("recommendations").classList.add("hidden");
+
+        //관련 하의 추천 화면 표시
+        document
+          .getElementById("related-recommendations")
+          .classList.remove("hidden");
+
+        displayRelatedItems(relatedProducts[category]); // 관련 하의 표시
+      }
+
+      // 하의 선택 시 이전 옵션 숨기고 option5로 이동하도록 수정
+      itemDiv.onclick = () => {
+        document.getElementById("related-recommendations").style.display =
+          "none"; // 하의 추천 숨기기
+        // 여기에 맞춤 스타일 화면으로 이동하는 코드 추가
+        document.getElementById("option5").style.display = "block"; // option5 보이기
+        currentOptionIndex = 4; // 현재 옵션 인덱스 업데이트
+      };
+
+      // 관련 하의 목록을 랜덤으로 표시하는 함수
+      function displayRelatedItems(relatedItemList) {
+        const relatedItemsDiv = document.getElementById("related-items");
+        relatedItemsDiv.innerHTML = ""; // 이전 내용 초기화
+
+        // 랜덤으로 3개의 관련 하의 선택
+        const randomRelatedItems = relatedItemList
+          .sort(() => 0.5 - Math.random())
+          .slice(0, 3);
+        randomRelatedItems.forEach((item) => {
+          const itemDiv = document.createElement("div");
+          itemDiv.className = "item";
+          itemDiv.innerHTML = `<img src="${item.img}" alt="${item.name}" width="100"><br>${item.name}`;
+
+          // 하의 선택 시 이전 옵션 숨기고 다음 옵션으로 이동
+          itemDiv.onclick = () => {
+            document.getElementById("related-recommendations").style.display =
+              "none"; // 하의 추천 숨기기
+            document.getElementById("option5").style.display = "block"; // option5 보이기
+            currentOptionIndex = 4; // 현재 옵션 인덱스 업데이트
+            //showNextOption(); // 다음 옵션으로 이동
           };
 
-          const items = clothingItems[currentCategory].filter(item => item !== lastRecommendedItem);
-            
-          if (items.length > 0) {
-              lastRecommendedItem = items[Math.floor(Math.random() * items.length)];
-              document.getElementById("clothingItems").innerHTML = `<button>${lastRecommendedItem}</button>`;
-          } else {
-            alert("더 이상 추천할 수 있는 항목이 없습니다.");
-          }
-        }
+          relatedItemsDiv.appendChild(itemDiv);
+        });
+      }
+
+      // 관련 하의 재추천 기능
+      function relatedReRecommend() {
+        const category = document.getElementById("category").value;
+        displayRelatedItems(relatedProducts[category]); // 선택한 카테고리에서 관련 하의 재추천
+      }
+
+      // 추천 상품 화면으로 돌아가는 함수
+      function goBackToRecommendations() {
+        document
+          .getElementById("related-recommendations")
+          .classList.add("hidden");
+        document.getElementById("recommendations").classList.remove("hidden");
       }
     </script>
-    <script src="../backend/server.js"></script>
   </body>
 </html>
