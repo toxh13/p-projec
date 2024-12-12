@@ -109,7 +109,7 @@
       <!-- 카테고리 선택 옵션 -->
       <div class="option-section" id="categorySection">
         <h3>카테고리 선택</h3>
-        <select name="user_style" id="category" required>
+        <select name="category" id="category" required>
           <option value="">카테고리 선택</option>
           <option value="캐주얼">캐주얼</option>
           <option value="스트릿">스트릿</option>
@@ -117,11 +117,8 @@
           <option value="워크웨이">워크웨이</option>
           <option value="프레피">프레피</option>
         </select>
-        <button type="button" onclick="validateCategory()">다음</button>
-        <button
-          type="button"
-          onclick="prevSection('categorySection', 'heightWeightSection')"
-        >
+        <button type="button" name="user_style" onclick="validateCategory()">다음</button>
+        <button type="button" onclick="prevSection('categorySection', 'heightWeightSection')">
           뒤로가기
         </button>
       </div>
