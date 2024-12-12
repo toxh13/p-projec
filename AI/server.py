@@ -11,11 +11,10 @@ def recommend():
     user_weight = int(user_data['user_weight'])
     user_gender = user_data['user_gender']
     user_style = user_data['user_style']
-    recommend_top = user_data['recommend_top']
+    clothingType = user_data['clothingType']
 
     # 추천 함수 호출
-    recommend_top = True if recommend_top == "true" else False
-    recommend_clothing(user_height, user_weight, user_gender, user_style, recommend_top, top_n=3)
+    recommend_clothing(user_height, user_weight, user_gender, user_style, clothingType, top_n=3)
 
     return jsonify({"status": "success", "message": "Recommendations processed!"})
 
