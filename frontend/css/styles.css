@@ -1,0 +1,137 @@
+/*join.html 스타일*/
+body.joinBody {
+  padding-top: 70px;
+}
+table.joinTable {
+  width: 280px;
+  height: 550px;
+  margin: auto;
+}
+.emailId,
+.inputText {
+  width: 250px;
+  height: 32px;
+  font-size: 15px;
+  border: 0;
+  border-radius: 15px;
+  outline: none;
+  padding-left: 10px;
+  background-color: rgb(233, 233, 233);
+}
+select.emailSelect {
+  width: 100px;
+  height: 32px;
+  font-size: 15px;
+  border: 1;
+  border-color: lightgray;
+  border-radius: 15px;
+  outline: none;
+  padding-left: 10px;
+}
+.systemJoin {
+  width: 262px;
+  height: 32px;
+  font-size: 15px;
+  border: 0;
+  border-radius: 15px;
+  outline: none;
+  padding-left: 10px;
+  background-color: rgb(164, 199, 255);
+}
+.systemJoin:active {
+  width: 262px;
+  height: 32px;
+  font-size: 15px;
+  border: 0;
+  border-radius: 15px;
+  outline: none;
+  padding-left: 10px;
+  background-color: rgb(61, 135, 255);
+}
+
+/**/
+/*login.html 관련*/
+body.loginBody {
+  padding-top: 70px;
+}
+table.loginTable {
+  width: 280px;
+  height: 250px;
+  margin: auto;
+  font-size: 15px;
+}
+.loginTable input[type="text"],
+.loginTable input[type="password"] {
+  width: 250px;
+  height: 32px;
+  font-size: 15px;
+  border: 0;
+  border-radius: 15px;
+  outline: none;
+  padding-left: 10px;
+  background-color: rgb(233, 233, 233);
+}
+.loginSingIn {
+  width: 263px;
+  height: 32px;
+  font-size: 15px;
+  border: 0;
+  border-radius: 15px;
+  outline: none;
+  padding-left: 10px;
+  background-color: rgb(164, 199, 255);
+}
+.loginSingIn:active {
+  background-color: rgb(61, 135, 255);
+}
+
+/**/
+/*myPreset.html 관련*/
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+  padding-top: 70px;
+}
+.preset {
+  border: 1px solid #ddd;
+  margin: 20px auto;
+  padding: 10px;
+  border-radius: 5px;
+  width: 800px;
+  overflow: auto;
+}
+.preset-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.item {
+  display: flex;
+  margin: 10px auto;
+  width: 450px;
+}
+.item img {
+  width: 200px;
+  height: 270px;
+  margin-right: 10px;
+}
+.item-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.button {
+  margin-top: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+.delete-button {
+  background-color: #dc3545;
+}
+.settings-button {
+  margin-left: 10px;
+}
