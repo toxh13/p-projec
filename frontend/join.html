@@ -4,12 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Join</title>
-    <!-- Font Awesome icons (free version)-->
+    <!-- Font Awesome icons -->
     <script
       src="https://use.fontawesome.com/releases/v6.3.0/js/all.js"
       crossorigin="anonymous"
     ></script>
-    <!-- Google fonts-->
+    <!-- Google fonts -->
     <link
       href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900"
       rel="stylesheet"
@@ -18,32 +18,28 @@
       href="https://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900,900i"
       rel="stylesheet"
     />
-    <!-- Core theme CSS (includes Bootstrap)-->
+    <!-- Core theme CSS -->
     <link href="css/styles.css" rel="stylesheet" />
-    
-    <!--css파일-->
-    <link href="css/bootstrapStyles.css" rel="stylesheet" />
-    <!--부트스트랩css-->
-    <link href="css/styles.css" rel="stylesheet" />
-    <!--커스텀 css파일-->
+    <!-- Custom CSS -->
+    <link href="css/join.css" rel="stylesheet" />
+    <script src="js/navbar.js" defer></script>
+    <script src="js/join.js" defer></script>
   </head>
-  <body class="joinBody">
+  <body>
     <div id="nav-container"></div> <!-- 동적으로 nav.html 삽입 -->
 
     <form id="joinForm">
-      <table class="joinTable">
+      <table>
         <tr>
-          <td>
-            <h2>회원가입</h2>
-          </td>
+          <td><h2>회원가입</h2></td>
         </tr>
         <tr>
           <td>이메일</td>
         </tr>
         <tr>
           <td>
-            <input type="text" class="emailId" id="email" /> @
-            <select id="emailDomain" class="emailSelect">
+            <input type="text" class="email" id="email" /> @
+            <select id="emailDomain">
               <option>naver.com</option>
               <option>gmail.com</option>
               <option>daum.net</option>
@@ -55,42 +51,26 @@
           <td>비밀번호</td>
         </tr>
         <tr>
-          <td>
-            <input type="password" class="inputText" id="password" required />
-          </td>
+          <td><input type="password" class="text" id="password" required /></td>
         </tr>
         <tr>
           <td>비밀번호 확인</td>
         </tr>
         <tr>
-          <td>
-            <input
-              type="password"
-              class="inputText"
-              id="confirmPassword"
-              required
-            />
-          </td>
+          <td><input type="password" class="text" id="confirmPassword" required /></td>
         </tr>
         <tr>
           <td>이름</td>
         </tr>
         <tr>
-          <td>
-            <input type="text" class="inputText" id="username" required />
-          </td>
+          <td><input type="text" class="text" id="username" required /></td>
         </tr>
         <tr>
           <td>
-            <input type="submit" value="가입하기" class="systemJoin" />
+            <input type="submit" value="가입하기" class="btn" />
           </td>
         </tr>
       </table>
     </form>
-    <!--js연동-->
-    <script src="js/navbar.js" defer></script>
-    <!--네비게이션기능-->
-    <script src="js/join.js" defer></script>
-    <!--회원가입기능-->
   </body>
 </html>

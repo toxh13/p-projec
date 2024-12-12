@@ -7,12 +7,12 @@
     <meta name="author" content="" />
     <title>스타일 추천 시스템</title>
     <link rel="icon" type="image/x-icon" href="웹페이지아이콘추가" />
-    <!-- Font Awesome icons (free version)-->
+    <!-- Font Awesome icons (free version) -->
     <script
       src="https://use.fontawesome.com/releases/v6.3.0/js/all.js"
       crossorigin="anonymous"
     ></script>
-    <!-- Google fonts-->
+    <!-- Google fonts -->
     <link
       href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900"
       rel="stylesheet"
@@ -21,293 +21,39 @@
       href="https://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900,900i"
       rel="stylesheet"
     />
-    
-    <!--css-->
-    <!--부트스트랩css-->
-    <link href="css/bootstrapStyles.css" rel="stylesheet" />
-    <!--옵션선택css-->
-    <!--<link href="css/optionSelstyle.css" rel="stylesheet" />-->
-    <style>
-      .optionSel {
-        display: none;
-        text-align: center;
-        padding-top: 70px;
-        margin: auto;
-      }
-      div .phyInfo {
-        text-align: right;
-        width: 300px;
-        height: 120px;
-        margin: 0px auto;
-        padding-bottom: 10px auto;
-      }
-      /*이미지별로 따로 만들생각하기*/
-      .GenImage img {
-        padding-top: 50px;
-        width: 180px;
-        height: auto;
-        margin: 5px;
-        cursor: pointer;
-      }
-      
-      /*상단바 관련*/
-      body .optionSelBody {
-        font-family: Arial, sans-serif;
-        margin: 20px;
-        padding-top: 70px;
-      }
-      .preset {
-        border: 1px solid #ddd;
-        margin: 20px auto;
-        padding: 10px;
-        border-radius: 5px;
-      
-        /*가로 세로 200px만큼 줄이기*/
-        width: 800px;
-        height: auto;
-      
-        overflow: auto; /*내용이 넘칠경우 스크롤 생기도록 설정*/
-      }
-      .preset-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      .item {
-        display: flex;
-        margin: 10px auto;
-        width: 450px;
-        height: 450px;
-        /*height: auto;*/
-      }
-      .item img {
-        width: 200px;
-        height: 270px;
-        margin-right: 10px;
-      }
-      .item-info {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-      }
-      .button {
-        margin-top: 10px;
-        margin-bottom: 30px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        padding: 10px;
-        cursor: pointer;
-        border-radius: 5px;
-      }
-      .delete-button {
-        background-color: #dc3545;
-      }
-      .settings-button {
-        margin-left: 10px;
-      }
-      
-      /*옵션 관련 스타일*/
-      .option {
-        display: none;
-      }
-      .images img {
-        width: 100px;
-        height: auto;
-        margin: 5px;
-        cursor: pointer;
-      }
-      
-      /*상하의선택옵션 관련*/
-      .hidden {
-        display: none;
-      }
-      .item {
-        margin: 10px;
-        padding: 10px;
-        border: 1px solid #ccc;
-        display: inline-block;
-      }
-    </style>
+    <!-- Core theme CSS (includes Bootstrap) -->
+    <link href="css/styles.css" rel="stylesheet" />
+    <link href="css/optionsel.css" rel="stylesheet" />
+    <script src="js/navbar.js" defer></script>
   </head>
-  <body class="optionSelBody">
-    <!--Navigation-->
-    <div id="nav-container"></div>
-    <!--동적으로 nav.html 삽입-->
+  <body>
+    <div id="nav-container"></div> <!-- 동적으로 nav.html 삽입 -->
 
-    <!--1. 성별선택 옵션-->
-    <div id="option1" class="optionSel">
+    <!-- HTML 컨텐츠 -->
+    <div id="option1" class="option">
       <h2>성별을 선택하세요</h2>
       <div class="images">
-        <img
-          src="image/man.jpg"
-          alt="남성이미지"
-          onclick="selectOption('option1','남성')"
-        />
-        <img
-          src="image/woman.jpg"
-          alt="여성이미지"
-          onclick="selectOption('option1','여성')"
-        />
+        <img src="image/man.jpg" alt="남성" onclick="selectOption('option1', '남성')" />
+        <img src="image/woman.jpg" alt="여성" onclick="selectOption('option1', '여성')" />
       </div>
     </div>
-    <!--어느정도 구현완료-->
 
-    <!--2. 키 몸무게 입력옵션-->
-    <div id="option2" class="optionSel">
+    <div id="option2" class="option">
       <h2>자신의 신체정보를 입력해주세요</h2>
-      <!--저장방식이 아니라 일단 클릭시 넘어가는 방식으로 임시구현-->
-      <!--숫자만 입력되게, 입력이 안됐거나 숫자 이외의 것들을 입력시 다시입력되게 만들기-->
       <div class="phyInfo">
-        <label for="number">키 : </label>
-        <input
-          type="text"
-          placeholder="숫자 입력"
-          id="option_stature"
-          name="option_stature"
-        />
-        <p></p>
-        <label for="number">몸무게 : </label>
-        <input
-          type="text"
-          placeholder="숫자 입력"
-          id="option_weight"
-          name="option_weight"
-        />
+        <label for="option_stature">키:</label>
+        <input type="text" id="option_stature" placeholder="숫자 입력" />
+      </div>
+      <div class="phyInfo">
+        <label for="option_weight">몸무게:</label>
+        <input type="text" id="option_weight" placeholder="숫자 입력" />
       </div>
       <button onclick="selectOptionInput('option2')">다음</button>
-      <button onclick="clearInput()">다시 입력</button>
-      <button onclick="goBack('option2','option1')">뒤로가기</button>
-    </div>
-    <!--어느정도 구현완료-->
-
-    <!--3. 상하의 둘중하나 선택-->
-    <div id="option3" class="optionSel">
-      <h2>상하의 선택</h2>
-      <div class="images">
-        <img
-          src="image/TopImage.jpg"
-          alt="상의이미지"
-          onclick="selectOption('option3', '상의')"
-        />
-        <img
-          src="image/BottomImage.jpg"
-          alt="하의이미지"
-          onclick="selectOption('option3', '하의')"
-        />
-      </div>
-      <button onclick="goBack('option3','option2')">뒤로가기</button>
+      <button onclick="goBack('option2', 'option1')">뒤로가기</button>
     </div>
 
-    <!--선택한 의류 추천-->
-    <div id="option4" class="optionSel">
-      <!--상의 선택시-->
-      <div>
-        <h2>상의 스타일 선택</h2>
-
-        <!-- 카테고리 선택 영역 -->
-        <div id="category-selection">
-          <h2>카테고리 선택</h2>
-          <select id="category">
-            <option value="">선택하세요</option>
-            <option value="캐주얼">캐주얼</option>
-            <option value="스트릿">스트릿</option>
-            <option value="미니멀">미니멀</option>
-            <option value="워크웨어">워크웨어</option>
-          </select>
-          <button onclick="showRecommendations()">추천받기</button>
-          <button onclick="goBack('option4','option3')">뒤로가기</button>
-        </div>
-
-        <!-- 추천 상품 영역 -->
-        <div id="recommendations" class="hidden">
-          <h2>추천 상품</h2>
-          <div id="items"></div>
-          <button onclick="reRecommend()">재추천</button>
-          <button onclick="goBackToCategory()">뒤로가기</button>
-        </div>
-
-        <!-- 관련 하의 추천 영역 -->
-        <div id="related-recommendations" class="hidden">
-          <h2>관련된 하의 추천</h2>
-          <div id="related-items"></div>
-          <button onclick="relatedReRecommend()">재추천</button>
-          <button onclick="goBackToRecommendations()">뒤로가기</button>
-        </div>
-      </div>
-    </div>
-
-    <!--결정한 의류 보여주기-->
-    <!--보러가기 눌렀을때 새창으로 띄어주면서 보여주기-->
-    <!--저장 을 눌렀을때 로그인 되어있다면 바로저장, 비로그인시 로그인 후 저장되게끔-->
-    <div id="option5" class="optionSel">
-      <h2>맞춤 스타일</h2>
-      <div>
-        <table>
-          <tr>
-            <td rowspan="6">
-              <img
-                src="image/TopImage.jpg"
-                alt="..."
-                width="250px"
-                height="300px"
-              />
-            </td>
-            <th>상의 상품정보</th>
-          </tr>
-          <tr>
-            <td>상품명</td>
-          </tr>
-          <tr>
-            <td>상품정보</td>
-          </tr>
-          <tr>
-            <td>상품정보2</td>
-          </tr>
-          <tr>
-            <td>
-              <button>변경</button>
-              <button>보러가기</button>
-            </td>
-          </tr>
-        </table>
-        <table>
-          <tr>
-            <td rowspan="5">
-              <img
-                src="image/BottomImage.jpg"
-                alt="..."
-                width="330px"
-                height="430px"
-              />
-            </td>
-            <th>하의 상품정보</th>
-          </tr>
-          <tr>
-            <td>상품명</td>
-          </tr>
-          <tr>
-            <td>상품정보</td>
-          </tr>
-          <tr>
-            <td>상품정보2</td>
-          </tr>
-          <tr>
-            <td>
-              <button>변경</button>
-              <button>보러가기</button>
-            </td>
-          </tr>
-        </table>
-        <button>재추천</button>
-        <button onclick="location.href='myPreset.html'">내스타일에 저장</button>
-      </div>
-    </div>
-
-    <!--js-->
-    <!-- 동적 네비게이션 로드 -->
-    <script src="js/navbar.js" defer></script>
-    <!--옵션선택 js-->
-    <script src="js/optionSel.js" defer></script>
+    <!-- 추가 옵션들 -->
+    <!-- JavaScript를 연결 -->
+    <script src="js/optionsel.js" defer></script>
   </body>
 </html>

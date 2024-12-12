@@ -5,64 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>스타일 추천 시스템 로그인</title>
     <link rel="icon" type="image/x-icon" href="웹페이지아이콘추가" />
-    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-    <link href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900,900i" rel="stylesheet" />
+    <script
+      src="https://use.fontawesome.com/releases/v6.3.0/js/all.js"
+      crossorigin="anonymous"
+    ></script>
+    <link
+      href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900,900i"
+      rel="stylesheet"
+    />
     <link href="css/styles.css" rel="stylesheet" />
-
-    <!--css파일-->
-    <link href="css/bootstrapStyles.css" rel="stylesheet" />
-    <!--부트스트랩css-->
-    <link href="css/styles.css" rel="stylesheet" />
-    <!--커스텀 css파일-->
-  </head>
-  <body class="loginBody">
-    <div id="nav-container"></div>
-    <!-- 동적으로 nav.html 삽입 -->
-
-    <table class="loginTable">
-      <tr>
-        <td>
-          <h2>로그인</h2>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <input type="text" id="email" placeholder="ID" />
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <input type="password" id="password" placeholder="Password" />
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <input type="checkbox" id="remember_me" /> 로그인 정보 저장
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <input
-            type="submit"
-            value="로그인"
-            class="loginSingIn"
-            id="loginButton"
-          />
-        </td>
-      </tr>
-      <tr>
-        <td class="join"><a href="join.html">회원가입</a></td>
-      </tr>
-      <tr>
-        <td class="message" id="login_error_message"></td>
-      </tr>
-    </table>
-
-    <!--js연동-->
+    <link href="css/login.css" rel="stylesheet" />
     <script src="js/navbar.js" defer></script>
-    <!--네비게이션기능-->
     <script src="js/login.js" defer></script>
-    <!--회원가입기능-->
+  </head>
+  <body>
+    <div id="nav-container"></div> <!-- 동적으로 nav.html 삽입 -->
+
+    <table>
+      <tr><td><h2>로그인</h2></td></tr>
+      <tr><td><input type="text" id="email" placeholder="ID" /></td></tr>
+      <tr><td><input type="password" id="password" placeholder="Password" /></td></tr>
+      <tr><td><input type="checkbox" id="remember_me" /> 로그인 정보 저장</td></tr>
+      <tr><td><input type="submit" value="Sign in" class="btn" id="loginButton" /></td></tr>
+      <tr><td class="join"><a href="join.html">회원가입</a></td></tr>
+      <tr><td class="message" id="login_error_message"></td></tr>
+    </table>
   </body>
 </html>
