@@ -9,101 +9,60 @@
     <link href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900,900i" rel="stylesheet" />
     <link href="css/styles.css" rel="stylesheet" />
-    <style>
-      body {
-        padding-top: 70px;
-      }
-      table {
-        width: 280px;
-        height: 250px;
-        margin: auto;
-        font-size: 15px;
-      }
-      input[type="text"],
-      input[type="password"] {
-        width: 250px;
-        height: 32px;
-        font-size: 15px;
-        border: 0;
-        border-radius: 15px;
-        outline: none;
-        padding-left: 10px;
-        background-color: rgb(233, 233, 233);
-      }
-      .btn {
-        width: 263px;
-        height: 32px;
-        font-size: 15px;
-        border: 0;
-        border-radius: 15px;
-        outline: none;
-        padding-left: 10px;
-        background-color: rgb(164, 199, 255);
-      }
-      .btn:active {
-        background-color: rgb(61, 135, 255);
-      }
-    </style>
-       <script src="navbar.js" defer></script>
+
+    <!--css파일-->
+    <link href="css/bootstrapStyles.css" rel="stylesheet" />
+    <!--부트스트랩css-->
+    <link href="css/styles.css" rel="stylesheet" />
+    <!--커스텀 css파일-->
+
+    <!--js연동-->
+    <script src="navbar.js" defer></script>
+    <!--네비게이션기능-->
+    <script src="../backend/login.js" defer></script>
+    <!--회원가입기능-->
   </head>
-  <body>
-    <div id="nav-container"></div> <!-- 동적으로 nav.html 삽입 -->
+  <body class="loginBody">
+    <div id="nav-container"></div>
+    <!-- 동적으로 nav.html 삽입 -->
 
-    <table>
-      <tr><td><h2>로그인</h2></td></tr>
-      <tr><td><input type="text" id="email" placeholder="ID" /></td></tr>
-      <tr><td><input type="password" id="password" placeholder="Password" /></td></tr>
-      <tr><td><input type="checkbox" id="remember_me" /> 로그인 정보 저장</td></tr>
-      <tr><td><input type="submit" value="Sign in" class="btn" id="loginButton" /></td></tr>
-      <tr><td class="join"><a href="join.html">회원가입</a></td></tr>
-      <tr><td class="message" id="login_error_message"></td></tr>
+    <table class="loginTable">
+      <tr>
+        <td>
+          <h2>로그인</h2>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="text" id="email" placeholder="ID" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="password" id="password" placeholder="Password" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input type="checkbox" id="remember_me" /> 로그인 정보 저장
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <input
+            type="submit"
+            value="로그인"
+            class="loginSingIn"
+            id="loginButton"
+          />
+        </td>
+      </tr>
+      <tr>
+        <td class="join"><a href="join.html">회원가입</a></td>
+      </tr>
+      <tr>
+        <td class="message" id="login_error_message"></td>
+      </tr>
     </table>
-
-    <script>
-      // 로그인 요청 처리 함수
-      async function handleLogin(event) {
-        event.preventDefault(); // 기본 폼 제출 방지
-
-        const email = document.getElementById("email").value;
-        const password = document.getElementById("password").value;
-
-        // ID와 비밀번호가 입력되지 않은 경우 처리
-        if (!email || !password) {
-          document.getElementById("login_error_message").textContent = "ID와 비밀번호를 입력해주세요.";
-          return;
-        }
-
-        const loginData = { email, password };
-
-        try {
-          // 서버에 로그인 요청 보내기
-          const response = await fetch("http://khs.uy.to:3000/api/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(loginData),
-          });
-
-          const result = await response.json();
-
-          if (response.status === 200) {
-            // 로그인 성공: 토큰과 사용자 이름 저장
-            localStorage.setItem("token", result.token);
-            localStorage.setItem("username", result.username);
-            alert(`${result.username}님 환영합니다!`);
-            window.location.href = "index.html"; // 메인 페이지로 이동
-          } else {
-            // 로그인 실패 시 에러 메시지 표시
-            document.getElementById("login_error_message").textContent = result.message || "로그인 실패";
-          }
-        } catch (error) {
-          // 요청 실패 시 에러 처리
-          console.error("Error during login:", error);
-          document.getElementById("login_error_message").textContent = "서버 오류가 발생했습니다.";
-        }
-      }
-
-      // 로그인 버튼 클릭 시 로그인 처리
-      document.getElementById("loginButton").addEventListener("click", handleLogin);
-    </script>
   </body>
 </html>
