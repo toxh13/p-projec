@@ -26,6 +26,10 @@
 
     <!--백엔드와 연동-->
     <script src="../backend/server.js"></script>
+
+    <!-- 동적 네비게이션 로드 -->
+    <script src="navbar.js" defer></script>
+
     <style>
       .option {
         display: none;
@@ -127,36 +131,9 @@
     </style>
   </head>
   <body>
-    <!-- Navigation-->
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
-      <div class="container px-5">
-        <a class="navbar-brand" href="index.html">스타일 추천 시스템</a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarResponsive"
-          aria-controls="navbarResponsive"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarResponsive">
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="myPreset.html">내스타일</a>
-            </li>
-            <!--로그인을 안했다면 "로그인"띄우기-->
-            <li class="nav-item">
-              <a class="nav-link" href="login.html">로그인</a>
-            </li>
-            <!--로그인을 했다면 "로그아웃" 띄우기-->
-            <li class="nav-item"><a class="nav-link" href="#!">로그아웃</a></li>
-          </ul>
-        </div>
-      </div>
-    </nav>
+    <!-- Navigation -->
+    <div id="nav-container"></div>
+    <!-- 동적으로 nav.html 삽입 -->
 
     <!--성별선택 옵션-->
     <div id="option1" class="option">
