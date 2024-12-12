@@ -4,6 +4,8 @@ from sklearn.model_selection import train_test_split
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, BatchNormalization, Activation
+import os
+import json
 
 # 예시: 이미지 특징 벡터를 로드
 # 이미지 특징 벡터 데이터. 각 벡터는 이미지를 나타내는 고차원 특징 벡터입니다.
@@ -56,15 +58,31 @@ history = model.fit(
     X_train,              # 학습 데이터.
     y_train_onehot,       # 학습 라벨 (One-hot 인코딩된 값).
     validation_split=0.2, # 검증 데이터로 학습 데이터의 20% 사용.
-    epochs=1,             # 학습 반복 횟수.
+    epochs=1,             # 학습 반복 횟수. -> 나중에 증가시켜야 함
     batch_size=32,        # 배치 크기.
     verbose=1             # 학습 진행 상황을 출력.
 )
+
+def save_recommendations_to_json(recommendations, json_path):
+    """
+    JSON 파일에 추천 의류 정보를 저장합니다.
+
+    :param recommendations: 추천 의류 데이터프레임
+    :param json_path: JSON 파일 경로
+    """
+    # 추천 데이터를 딕셔너리로 변환
+    data_to_save = recommendations[['상품명', '이미지 URL']].to_dict(orient='records')
+
+    # JSON 파일 쓰기
+    with open(json_path, 'w', encoding='utf-8') as json_file:
+        json.dump(data_to_save, json_file, ensure_ascii=False, indent=4)
 
 # 추천 시스템 함수
 def recommend_clothing(user_height, user_weight, user_gender, user_style, recommend_top, top_n=3):
     # 의류 데이터를 로드
     clothing_data = pd.read_csv("C:/Work/dbServer/Clothing_data.csv")
+    # JSON 저장 경로 설정
+    json_path = os.path.join("..", "frontend", "JSON", "images.json")
 
     # 평균 키와 몸무게를 숫자로 변환 (오류 데이터 처리)
     clothing_data['평균 키'] = pd.to_numeric(clothing_data['평균 키'], errors='coerce')
@@ -146,6 +164,10 @@ def recommend_clothing(user_height, user_weight, user_gender, user_style, recomm
         # 추천 결과 출력
         print("추천 의류 상위 항목:")
         print(top_recommendations[['상품명', '이미지 URL']])
+
+        # JSON 파일에 추천 항목 저장
+        save_recommendations_to_json(top_recommendations, json_path)
+        print(f"추천 결과가 JSON 파일에 저장되었습니다: {json_path}")
 
         # 사용자 피드백 받기
         user_input = input("추천된 의류 중 마음에 드는 것이 있습니까? (yes/no): ").strip().lower()
