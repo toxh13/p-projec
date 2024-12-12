@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  fetchPresets();
+  //fetchPresets();
 });
 
 // 프리셋 데이터를 가져오기 위한 함수
