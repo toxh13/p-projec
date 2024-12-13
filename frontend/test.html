@@ -27,7 +27,7 @@
     <style>
       body {
         font-family: Arial, sans-serif;
-        margin: 20px auto;
+        margin: 20px;
         padding-top: 70px;
       }
 
@@ -75,11 +75,11 @@
         <div class="image-option">
           <label>
             <img src="image/man.jpg" alt="남자" />
-            <input type="radio" name="user_gender" value="male" required />
+            <input type="radio" name="gender" value="male" required />
           </label>
           <label>
             <img src="image/woman.jpg" alt="여자" />
-            <input type="radio" name="user_gender" value="female" />
+            <input type="radio" name="gender" value="female" />
           </label>
         </div>
         <button type="button" onclick="validateGender()">다음</button>
@@ -90,11 +90,11 @@
         <h3>키 & 몸무게 입력</h3>
         <div class="phyInfo">
           <label for="height">키 (cm): </label>
-          <input type="number" id="height" name="user_height" required />
+          <input type="number" id="height" name="height" required />
         </div>
         <div class="phyInfo">
           <label for="weight">몸무게 (kg): </label>
-          <input type="number" id="weight" name="user_weight" required />
+          <input type="number" id="weight" name="weight" required />
         </div>
         <button type="button" onclick="validateHeightWeight()">다음</button>
         <button type="reset">다시 입력</button>
@@ -115,10 +115,12 @@
           <option value="스트릿">스트릿</option>
           <option value="미니멀">미니멀</option>
           <option value="워크웨이">워크웨이</option>
-          <option value="프레피">프레피</option>
         </select>
-        <button type="button" name="user_style" onclick="validateCategory()">다음</button>
-        <button type="button" onclick="prevSection('categorySection', 'heightWeightSection')">
+        <button type="button" onclick="validateCategory()">다음</button>
+        <button
+          type="button"
+          onclick="prevSection('categorySection', 'heightWeightSection')"
+        >
           뒤로가기
         </button>
       </div>
@@ -126,10 +128,16 @@
       <!-- 상의 또는 하의 선택 옵션 -->
       <div class="option-section" id="itemSelection">
         <h3>추천 받을 아이템 선택</h3>
-        <button type="button" name="clothingType" onclick="nextSection('itemSelection', 'topRecommendation')" >
+        <button
+          type="button"
+          onclick="nextSection('itemSelection', 'topRecommendation')"
+        >
           상의 추천받기
         </button>
-        <button type="button" name="clothingType" onclick="nextSection('itemSelection', 'bottomRecommendation')">
+        <button
+          type="button"
+          onclick="nextSection('itemSelection', 'bottomRecommendation')"
+        >
           하의 추천받기
         </button>
         <button

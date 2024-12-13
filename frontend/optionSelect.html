@@ -3,165 +3,216 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="" />
-    <meta name="author" content="" />
-    <title>스타일 추천 시스템</title>
-    <link rel="icon" type="image/x-icon" href="웹페이지아이콘추가" />
-    <!-- Font Awesome icons -->
-    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-    <!-- Google fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900,900i" rel="stylesheet" />
-    <!-- Core theme CSS -->
+    <title>옵션 선택 페이지</title>
     <link href="css/styles.css" rel="stylesheet" />
-    <script src="js/navbar.js" defer></script>
     <style>
       body {
         font-family: Arial, sans-serif;
         margin: 20px;
         padding-top: 70px;
       }
-      .option {
+      .option-section {
         display: none;
         text-align: center;
+        padding-top: 10px;
         margin: auto;
-        padding: 20px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        width: 300px;
       }
-      .images img {
-        width: 100px;
-        height: auto;
-        margin: 5px;
-        cursor: pointer;
+      .option-section.active {
+        display: block;
       }
-      .phyInfo {
-        margin: 10px auto;
-        text-align: left;
-      }
-      .phyInfo input {
-        width: 100%;
-        padding: 5px;
-        margin: 5px 0;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-      }
-      button {
-        background-color: #007bff;
-        color: white;
-        border: none;
-        padding: 10px 20px;
+      .recommendation-item {
+        display: inline-block;
         margin: 10px;
+        text-align: center;
+      }
+      .recommendation-item img {
+        width: 150px;
+        height: 200px;
         cursor: pointer;
+        border: 2px solid transparent;
         border-radius: 5px;
       }
-      button:hover {
-        background-color: #0056b3;
-      }
-      button:disabled {
-        background-color: #cccccc;
-        cursor: not-allowed;
+      .recommendation-item img.selected {
+        border-color: blue;
       }
     </style>
   </head>
   <body>
-    <div id="nav-container"></div> <!-- 동적으로 nav.html 삽입 -->
-
-
-    <!-- Step 1: 성별 선택 -->
-    <div id="option1" class="option">
-      <h2>성별을 선택하세요</h2>
-      <div class="images">
-        <img src="image/man.jpg" alt="남성" onclick="selectOption('option1', '남성')" />
-        <img src="image/woman.jpg" alt="여성" onclick="selectOption('option1', '여성')" />
+    <form id="optionsForm">
+      <!-- 성별, 키, 몸무게, 카테고리 입력 -->
+      <div class="option-section active" id="userDetailsSection">
+        <h3>사용자 정보 입력</h3>
+        <label for="gender">성별:</label>
+        <select id="gender" required>
+          <option value="">선택</option>
+          <option value="male">남자</option>
+          <option value="female">여자</option>
+        </select><br />
+        <label for="height">키 (cm):</label>
+        <input type="number" id="height" required /><br />
+        <label for="weight">몸무게 (kg):</label>
+        <input type="number" id="weight" required /><br />
+        <label for="category">스타일:</label>
+        <select id="category" required>
+          <option value="">선택</option>
+          <option value="캐주얼">캐주얼</option>
+          <option value="스트릿">스트릿</option>
+          <option value="미니멀">미니멀</option>
+          <option value="워크웨이">워크웨이</option>
+        </select><br />
+        <button type="button" onclick="startRecommendationSelection()">추천받기 시작</button>
       </div>
-    </div>
 
-    <!-- Step 2: 키와 몸무게 입력 -->
-    <div id="option2" class="option">
-      <h2>자신의 신체정보를 입력해주세요</h2>
-      <div class="phyInfo">
-        <label for="option_stature">키:</label>
-        <input type="text" id="option_stature" placeholder="숫자 입력" />
+      <!-- 상의/하의 선택 -->
+      <div class="option-section" id="itemTypeSelectionSection">
+        <h3>추천받을 항목 선택</h3>
+        <button type="button" onclick="requestRecommendation('top')">상의 추천</button>
+        <button type="button" onclick="requestRecommendation('bottom')">하의 추천</button>
+        <button
+          type="button"
+          onclick="prevSection('itemTypeSelectionSection', 'userDetailsSection')"
+        >
+          뒤로가기
+        </button>
       </div>
-      <div class="phyInfo">
-        <label for="option_weight">몸무게:</label>
-        <input type="text" id="option_weight" placeholder="숫자 입력" />
-      </div>
-      <button onclick="selectOptionInput('option2')">다음</button>
-      <button onclick="goBack('option2', 'option1')">뒤로가기</button>
-    </div>
 
-    <!-- Step 3: 스타일 선택 -->
-    <div id="option3" class="option">
-      <h2>스타일을 선택하세요</h2>
-      <button onclick="selectOption('option3', '캐주얼')">캐주얼</button>
-      <button onclick="selectOption('option3', '스트릿')">스트릿</button>
-      <button onclick="selectOption('option3', '미니멀')">미니멀</button>
-      <button onclick="selectOption('option3', '클래식')">클래식</button>
-      <button onclick="goBack('option3', 'option2')">뒤로가기</button>
-    </div>
-
-    <!-- Step 4: 상의 또는 하의 선택 -->
-    <div id="option4" class="option">
-      <h2>상의 또는 하의를 선택하세요</h2>
-      <div class="images">
-        <img src="image/TopImage.jpg" alt="상의" onclick="selectOption('option4', '상의')" />
-        <img src="image/BottomImage.jpg" alt="하의" onclick="selectOption('option4', '하의')" />
+      <!-- 추천 결과 표시 -->
+      <div class="option-section" id="recommendationSection">
+        <h3>추천 결과</h3>
+        <div id="recommendationResults"></div>
+        <button type="button" onclick="submitChoice()">선택 완료</button>
       </div>
-      <button onclick="goBack('option4', 'option3')">뒤로가기</button>
-    </div>
+
+      <!-- 최종 세트 결과 -->
+      <div class="option-section" id="resultSection">
+        <h3>최종 세트</h3>
+        <div id="finalSet"></div>
+        <button type="button" onclick="restart()">다시 시작</button>
+      </div>
+    </form>
 
     <script>
-      let currentOptionIndex = 0;
-      let userData = {}; // 사용자 데이터 저장
+      let userInfo = {}; // 사용자 정보 저장
+      let selectedTop = null; // 선택한 상의
+      let selectedBottom = null; // 선택한 하의
+      let currentStep = ""; // 현재 단계 (상의 또는 하의 추천)
 
-      // 옵션 선택
-      function selectOption(optionId, selectedOption) {
-        if (optionId === 'option1') userData.gender = selectedOption;
-        if (optionId === 'option3') userData.style = selectedOption;
-        if (optionId === 'option4') userData.clothingType = selectedOption;
-
-        document.getElementById(optionId).style.display = 'none';
-        currentOptionIndex++;
-        showNextOption();
+      // 섹션 이동 함수
+      function showSection(sectionId) {
+        document.querySelectorAll(".option-section").forEach((section) => {
+          section.classList.remove("active");
+        });
+        document.getElementById(sectionId).classList.add("active");
       }
 
-      // 신체 정보 입력
-      function selectOptionInput(optionID) {
-        const stature = document.getElementById("option_stature").value;
-        const weight = document.getElementById("option_weight").value;
+      // 추천 시작
+      function startRecommendationSelection() {
+        const gender = document.getElementById("gender").value;
+        const height = document.getElementById("height").value;
+        const weight = document.getElementById("weight").value;
+        const category = document.getElementById("category").value;
 
-        if (!isNaN(stature) && !isNaN(weight) && stature && weight) {
-          userData.stature = stature;
-          userData.weight = weight;
-          document.getElementById(optionID).style.display = "none";
-          currentOptionIndex++;
-          showNextOption();
-        } else {
-          alert("올바른 숫자를 입력해주세요.");
+        if (!gender || !height || !weight || !category) {
+          alert("모든 정보를 입력해주세요.");
+          return;
+        }
+
+        userInfo = { gender, height, weight, category };
+        showSection("itemTypeSelectionSection");
+      }
+
+      // AI 서버로 데이터 전송 및 추천받기
+      async function requestRecommendation(type) {
+        currentStep = type; // 현재 단계 저장
+        try {
+          const response = await fetch("http://khs.uy.to:8000/api/recommend", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ...userInfo, type }),
+          });
+
+          if (!response.ok) {
+            throw new Error(`추천 실패: ${response.status}`);
+          }
+
+          const result = await response.json();
+          displayRecommendations(result.recommendations, type);
+        } catch (error) {
+          console.error("추천 오류:", error.message);
+          alert("AI 서버와 통신 중 오류가 발생했습니다.");
         }
       }
 
-      // 뒤로가기
-      function goBack(currentOptionId, previousOptionId) {
-        document.getElementById(currentOptionId).style.display = 'none';
-        document.getElementById(previousOptionId).style.display = 'block';
-        currentOptionIndex--;
+      // 추천 결과 표시
+      function displayRecommendations(items, type) {
+        const container = document.getElementById("recommendationResults");
+        container.innerHTML = items
+          .map(
+            (item, index) => `
+          <div class="recommendation-item" onclick="selectItem('${type}', ${index})">
+            <img src="${item.image}" alt="${item.name}" id="${type}-item-${index}" />
+            <p>${item.name}</p>
+          </div>`
+          )
+          .join("");
+
+        showSection("recommendationSection");
       }
 
-      // 다음 옵션 표시
-      function showNextOption() {
-        const nextOption = document.getElementById(`option${currentOptionIndex + 1}`);
-        if (nextOption) nextOption.style.display = 'block';
-        else alert('모든 데이터를 입력했습니다! 서버로 데이터를 전송합니다.');
+      // 항목 선택 처리
+      function selectItem(type, index) {
+        const items = document.querySelectorAll(`#recommendationResults img`);
+        items.forEach((item) => item.classList.remove("selected"));
+
+        const selectedItem = document.getElementById(`${type}-item-${index}`);
+        selectedItem.classList.add("selected");
+
+        if (type === "top") {
+          selectedTop = index;
+        } else {
+          selectedBottom = index;
+        }
       }
 
-      // 페이지 로드 시 첫 번째 옵션 표시
-      window.onload = function () {
-        showNextOption();
-      };
+      // 선택 완료 후 다음 단계로 이동
+      function submitChoice() {
+        if (currentStep === "top" && selectedTop !== null) {
+          requestRecommendation("bottom");
+        } else if (currentStep === "bottom" && selectedBottom !== null) {
+          displayFinalSet();
+        } else {
+          alert("항목을 선택해주세요.");
+        }
+      }
+
+      // 최종 세트 표시
+      function displayFinalSet() {
+        const finalSetContainer = document.getElementById("finalSet");
+        const selectedTopItem = document.querySelector(`#top-item-${selectedTop}`);
+        const selectedBottomItem = document.querySelector(`#bottom-item-${selectedBottom}`);
+
+        finalSetContainer.innerHTML = `
+          <div>
+            <h4>상의</h4>
+            ${selectedTopItem ? selectedTopItem.outerHTML : "선택 안됨"}
+          </div>
+          <div>
+            <h4>하의</h4>
+            ${selectedBottomItem ? selectedBottomItem.outerHTML : "선택 안됨"}
+          </div>
+        `;
+
+        showSection("resultSection");
+      }
+
+      // 다시 시작
+      function restart() {
+        userInfo = {};
+        selectedTop = null;
+        selectedBottom = null;
+        currentStep = "";
+        showSection("userDetailsSection");
+      }
     </script>
   </body>
 </html>
