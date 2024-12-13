@@ -6,7 +6,6 @@
     <title>옵션 선택 페이지</title>
     <link href="css/styles.css" rel="stylesheet" />
     <link href="css/optionsel.css" rel="stylesheet" />
-    <script src="navbar.js"></script>
     <style>
       /* 기본 스타일 설정 */
       body {
@@ -76,7 +75,7 @@
       }
       #height,
       #weight {
-        text-align: left; /* 입력란 내용 왼쪽 정렬 */
+        text-align: left; /* 입력란 내용 가운데 정렬 */
       }
     </style>
   </head>
@@ -95,12 +94,12 @@
             남자
           </div>
           <div>
-            <img src="image/woman.jpg" alt="여자" onclick="selectGender('female')" class="genderImage"/>
+            <img src="image/woman.jpg" alt="여자" onclick="selectGender('female')" class="genderImage" />
             <input type="radio" name="gender" value="female" required />
             여자
           </div>
         </div>
-        <button type="button" class="optionSelbutton" onclick="nextSection('heightWeightSection')">
+        <button type="sub" class="optionSelbutton" type="button" onclick="nextSection('heightWeightSection')" >
           다음
         </button>
       </div>
@@ -110,17 +109,19 @@
         <h3>키 & 몸무게 입력</h3>
         <div class="phyInfo">
           <label for="height">키 (cm):</label>
-          <input type="number" id="height" name="option_stature" required/><br />
+          <input type="number" id="height" name="option_stature" required/>
+          <br />
           <p></p>
           <label for="weight">몸무게 (kg):</label>
-          <input type="number" id="weight" name="option_weight" required /><br />
+          <input type="number" id="weight" name="option_weight" required />
+          <br />
         </div>
         <p></p>
-        <button type="button" class="optionSelbutton" onclick="nextSection('categorySection')">
+        <button type="button" class="optionSelbutton" onclick="nextSection('categorySection')" >
           다음
         </button>
-        <button type="reset">다시 입력</button>
-        <button type="button" class="optionSelbutton" onclick="prevSection('heightWeightSection', 'genderSelectionSection')">
+        <button type="reset" class="optionSelbutton">다시 입력</button>
+        <button type="button" class="optionSelbutton" onclick="prevSection('heightWeightSection', 'genderSelectionSection')" >
           뒤로가기
         </button>
       </div>
@@ -138,7 +139,7 @@
           <option value="프레피">프레피피</option>
         </select>
         <br />
-        <button type="button" class="optionSelbutton" onclick="nextSection('itemTypeSelectionSection')">
+        <button type="button" class="optionSelbutton" onclick="nextSection('itemTypeSelectionSection')" >
           다음
         </button>
         <button type="button" class="optionSelbutton" onclick="prevSection('categorySection', 'heightWeightSection')" >
@@ -149,14 +150,13 @@
       <!-- 상의/하의 선택 -->
       <div class="option-section" id="itemTypeSelectionSection">
         <h3>추천받을 항목 선택</h3>
-        <button type="button" class="optionSelbutton" onclick="requestRecommendation('top')">
+        <button type="button" class="optionSelbutton" onclick="requestRecommendation('top')" >
           상의 추천
         </button>
-        <button type="button" class="optionSelbutton" onclick="requestRecommendation('bottom')">
+        <button type="button" class="optionSelbutton" onclick="requestRecommendation('bottom')" >
           하의 추천
         </button>
-        <button
-          type="button" class="optionSelbutton" onclick="prevSection('itemTypeSelectionSection', 'categorySection')" >
+        <button type="button" class="optionSelbutton" onclick="prevSection('itemTypeSelectionSection', 'categorySection')" >
           뒤로가기
         </button>
       </div>
@@ -165,14 +165,18 @@
       <div class="option-section" id="recommendationSection">
         <h3>추천 결과</h3>
         <div id="recommendationResults"></div>
-        <button type="button" class="optionSelbutton" onclick="submitChoice()">선택 완료</button>
+        <button type="button" class="optionSelbutton" onclick="submitChoice()">
+          선택 완료
+        </button>
       </div>
 
       <!-- 최종 세트 결과 -->
       <div class="option-section" id="resultSection">
         <h3>최종 세트</h3>
         <div id="finalSet"></div>
-        <button type="button" class="optionSelbutton" onclick="restart()">다시 시작</button>
+        <button type="button" class="optionSelbutton" onclick="restart()">
+          다시 시작
+        </button>
       </div>
     </form>
 
@@ -185,7 +189,9 @@
       // 성별 선택 처리
       function selectGender(gender) {
         // 해당 성별의 라디오 버튼 선택
-        document.querySelector(`input[name="gender"][value="${gender}"]`).checked = true;
+        document.querySelector(
+          `input[name="gender"][value="${gender}"]`
+        ).checked = true;
       }
 
       // 섹션 이동 함수
@@ -199,7 +205,6 @@
       // 다음 섹션으로 이동
       function nextSection(nextSectionId) {
         const gender = document.querySelector('input[name="gender"]:checked'); // 선택된 성별
-
         // 성별 선택 확인
         if (nextSectionId === "heightWeightSection" && !gender) {
           alert("성별을 선택해주세요.");
@@ -215,7 +220,6 @@
             alert("키와 몸무게를 입력해주세요.");
             return;
           }
-
           // 사용자 정보 저장
           userInfo.gender = gender.value;
           userInfo.height = height;
@@ -225,13 +229,13 @@
         // 스타일 카테고리 선택 확인
         if (nextSectionId === "itemTypeSelectionSection") {
           const category = document.getElementById("category").value;
-
           if (!category) {
             alert("스타일 카테고리를 선택해주세요.");
             return;
           }
           userInfo.category = category; // 사용자 정보에 스타일 카테고리 추가
         }
+
         showSection(nextSectionId); // 다음 섹션으로 이동
       }
 
@@ -345,5 +349,10 @@
         showSection("genderSelectionSection"); // 성별 선택 섹션으로 이동
       }
     </script>
+
+    <!--JS-->
+    <script src="navbar.js"></script>
+    <!--<script src="js/optionsel.js" defer></script>-->
+    <!--현재까지 작업한 내용들 담겨있음(위 스크립트와 똑같은 내용(12.13.20:13))-->
   </body>
 </html>
