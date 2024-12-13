@@ -3,74 +3,58 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Join</title>
-    <!-- Font Awesome icons -->
-    <script
-      src="https://use.fontawesome.com/releases/v6.3.0/js/all.js"
-      crossorigin="anonymous"
-    ></script>
-    <!-- Google fonts -->
-    <link
-      href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900,900i"
-      rel="stylesheet"
-    />
-    <!-- Core theme CSS -->
+    <title>회원가입</title>
+    <link rel="icon" type="image/x-icon" href="웹페이지아이콘추가" />
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous" ></script>
+    <link href="https://fonts.googleapis.com/css?family=Catamaran:400,600" rel="stylesheet"/> <link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet"/>
+    
+    <!--CSS-->
     <link href="css/styles.css" rel="stylesheet" />
-    <!-- Custom CSS -->
+    <!--부트스트랩 디자인-->
     <link href="css/join.css" rel="stylesheet" />
-    <script src="js/navbar.js" defer></script>
-    <script src="js/join.js" defer></script>
+    <!--회원가입 디자인-->
   </head>
   <body>
-    <div id="nav-container"></div> <!-- 동적으로 nav.html 삽입 -->
+    <div id="nav-container"></div>
+    <!-- 동적으로 nav.html 삽입 -->
 
-    <form id="joinForm">
-      <table>
-        <tr>
-          <td><h2>회원가입</h2></td>
-        </tr>
-        <tr>
-          <td>이메일</td>
-        </tr>
-        <tr>
-          <td>
-            <input type="text" class="email" id="email" /> @
+    <div class="join-container">
+      <h2>회원가입</h2>
+      <form id="joinForm">
+        <div class="alignLeft">
+          <label for="email">이메일</label>
+          <div class="email-container">
+            <input type="text" class="email" id="email" placeholder="이메일 입력" />
+            <span>@</span>
             <select id="emailDomain">
               <option>naver.com</option>
               <option>gmail.com</option>
               <option>daum.net</option>
               <option>gachon.ac.kr</option>
             </select>
-          </td>
-        </tr>
-        <tr>
-          <td>비밀번호</td>
-        </tr>
-        <tr>
-          <td><input type="password" class="text" id="password" required /></td>
-        </tr>
-        <tr>
-          <td>비밀번호 확인</td>
-        </tr>
-        <tr>
-          <td><input type="password" class="text" id="confirmPassword" required /></td>
-        </tr>
-        <tr>
-          <td>이름</td>
-        </tr>
-        <tr>
-          <td><input type="text" class="text" id="username" required /></td>
-        </tr>
-        <tr>
-          <td>
-            <input type="submit" value="가입하기" class="btn" />
-          </td>
-        </tr>
-      </table>
-    </form>
+          </div>
+        </div>
+        <div class="alignLeft">
+          <label for="password">비밀번호</label>
+          <input type="password" class="text" id="password" placeholder="비밀번호" required />
+        </div>
+        <div class="alignLeft">
+          <label for="confirmPassword">비밀번호 확인</label>
+          <input type="password" class="text" id="confirmPassword" placeholder="비밀번호 확인" required />
+        </div>
+        <div class="alignLeft">
+          <label for="username">이름</label>
+          <input type="text" class="text" id="username" placeholder="이름 입력" required/>
+        </div>
+        <input type="submit" value="가입하기" class="btn" />
+      </form>
+      <div class="message" id="join_error_message"></div>
+    </div>
+
+    <!--JS-->
+    <script src="js/navbar.js" defer></script>
+    <!--네비게이션 기능-->
+    <script src="js/join.js" defer></script>
+    <!--회원가입 기능-->
   </body>
 </html>
