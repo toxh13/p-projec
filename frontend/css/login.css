@@ -1,34 +1,64 @@
 body {
-    padding-top: 70px;
-  }
-  table {
-    width: 280px;
-    height: 250px;
-    margin: auto;
-    font-size: 15px;
-  }
-  input[type="text"],
-  input[type="password"] {
-    width: 250px;
-    height: 32px;
-    font-size: 15px;
-    border: 0;
-    border-radius: 15px;
-    outline: none;
-    padding-left: 10px;
-    background-color: rgb(233, 233, 233);
-  }
-  .btn {
-    width: 263px;
-    height: 32px;
-    font-size: 15px;
-    border: 0;
-    border-radius: 15px;
-    outline: none;
-    padding-left: 10px;
-    background-color: rgb(164, 199, 255);
-  }
-  .btn:active {
-    background-color: rgb(61, 135, 255);
-  }
-  
+  font-family: "Lato", sans-serif;
+  background-color: #f7f9fa;
+  display: flex;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  flex-direction: column; /* 세로 정렬을 위해 추가 */
+  padding-top: 90px;
+}
+h2 {
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 28px; /* 폰트 크기 조정 */
+}
+.login-container {
+  background-color: white;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  text-align: center;
+}
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  height: 32px;
+  font-size: 15px;
+  outline: none;
+
+  background-color: rgb(233, 233, 233);
+}
+.btn {
+  height: 32px;
+  font-size: 15px;
+  outline: none;
+  background-color: #1bc5b6;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+}
+.btn:hover {
+  background-color: #17a2a8;
+}
+.btn:active {
+  background-color: rgb(61, 135, 255);
+}
+.alignLeft {
+  text-align: left;
+  margin: 10px 0;
+}
+.join {
+  margin-top: 10px;
+}
+.message {
+  color: red;
+  margin-top: 10px;
+}
