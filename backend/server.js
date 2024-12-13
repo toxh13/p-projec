@@ -161,6 +161,7 @@ app.get("/api/clothing_presets", authenticateToken, (req, res) => {
       bottom.상품명 AS bottom_name,
       bottom.브랜드 AS bottom_brand,
       bottom.이미지_URL AS bottom_image_url
+      bottom.구매사이트 AS purchase
     FROM User_Closets uc
     LEFT JOIN Clothing top ON uc.top_clothing_id = top.id
     LEFT JOIN Clothing bottom ON uc.bottom_clothing_id = bottom.id
@@ -207,12 +208,11 @@ app.post("/api/user_closets", authenticateToken, (req, res) => {
 
 
 
-// 프리셋 삭제 API (User_Closets 테이블 기반)
 app.delete("/api/user_closets/:presetId", authenticateToken, (req, res) => {
-  const presetId = req.params.presetId; // 삭제하려는 프리셋 ID
-  const userId = req.user.id; // 로그인된 사용자의 ID
+  const presetId = req.params.presetId;
+  const userId = req.user.id;
 
-  console.log(`[INFO] 사용자 ID(${userId})의 프리셋 삭제 요청: presetId(${presetId})`);
+  console.log(`[INFO] 삭제 요청: presetId(${presetId}), userId(${userId})`);
 
   const query = `
     DELETE FROM User_Closets
@@ -226,16 +226,17 @@ app.delete("/api/user_closets/:presetId", authenticateToken, (req, res) => {
     }
 
     if (result.affectedRows === 0) {
-      console.log(`[INFO] 삭제 실패: 사용자 ID(${userId})의 프리셋(${presetId})이 존재하지 않거나 권한 없음`);
+      console.log(`[INFO] 삭제 실패: user_id(${userId}), preset_id(${presetId})`);
       return res
         .status(404)
         .json({ message: "해당 프리셋을 찾을 수 없거나 삭제 권한이 없습니다." });
     }
 
-    console.log(`[INFO] 사용자 ID(${userId})의 프리셋(${presetId})이 삭제되었습니다.`);
+    console.log(`[INFO] 삭제 성공: user_id(${userId}), preset_id(${presetId})`);
     res.status(200).json({ message: "프리셋이 삭제되었습니다." });
   });
 });
+
 // Clothing 데이터 조회 API
 app.get("/api/clothing/:id", (req, res) => {
   const clothingId = req.params.id; // 요청된 의류 ID
