@@ -103,8 +103,8 @@
 
       <!-- 키 & 몸무게 입력 -->
       <div class="option-section" id="heightWeightSection">
+        <h3>키 & 몸무게 입력</h3>
         <div class="phyInfo">
-          <h3>키 & 몸무게 입력</h3>
           <label for="height">키 (cm):</label>
           <input
             type="number"
@@ -119,18 +119,15 @@
             name="option_weight"
             required
           /><br />
-          <p></p>
+        </div>
+        <p></p>
           <button type="button" onclick="nextSection('categorySection')">
             다음
           </button>
           <button type="reset">다시 입력</button>
-          <button
-            type="button"
-            onclick="prevSection('heightWeightSection', 'genderSelectionSection')"
-          >
+          <button type="button" onclick="prevSection('heightWeightSection', 'genderSelectionSection')">
             뒤로가기
           </button>
-        </div>
       </div>
 
       <!-- 스타일 카테고리 선택 -->
