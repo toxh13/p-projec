@@ -31,17 +31,21 @@ connection = pymysql.connect(
 )
 
 # SQL 쿼리로 의류 데이터 로드
-clothing_data_query = "SELECT * FROM Clothing_data"
+clothing_data_query = "SELECT * FROM Clothing"
 clothing_data = pd.read_sql(clothing_data_query, connection)
 
-# 스타일별로 고유한 숫자 값을 매핑하여 라벨 데이터를 숫자로 변환.
+features_path = "image_features.npy"
+features = np.load(features_path)
+
+# 스타일별로 고유한 숫자 값을 매핑하여 라벨 데이터를 숫자로 변환
 label_map = {label: idx for idx, label in enumerate(clothing_data['스타일'].unique())}
 encoded_labels = clothing_data['스타일'].map(label_map).values
 
-# 이미지 특징 벡터 데이터 로드
-# 이미지 특징 벡터 데이터. 각 벡터는 이미지를 나타내는 고차원 특징 벡터입니다.
-features_path = os.path.join("..", "AI", "image_features.npy")
-features = np.load(features_path)
+# features와 encoded_labels의 샘플 수를 맞춤
+# 작은 크기를 기준으로 데이터를 잘라냄
+min_samples = min(len(features), len(encoded_labels))
+features = features[:min_samples]
+encoded_labels = encoded_labels[:min_samples]
 
 # 데이터 분할
 # 데이터를 학습용과 테스트용으로 나누는 과정. 학습: 80%, 테스트: 20%.
@@ -91,7 +95,7 @@ history = model.fit(
 # 추천 시스템 함수
 def recommend_clothing(user_height, user_weight, user_gender, user_style, clothingType, top_n=3, excluded_items=None):
     # 의류 데이터를 MySQL에서 로드
-    clothing_data_query = "SELECT * FROM Clothing_data"
+    clothing_data_query = "SELECT * FROM Clothing"
     clothing_data = pd.read_sql(clothing_data_query, connection)
 
     # 평균 키와 몸무게를 숫자로 변환 (오류 데이터 처리)
@@ -122,7 +126,7 @@ def recommend_clothing(user_height, user_weight, user_gender, user_style, clothi
     user_features = np.array([[user_height, user_weight]])
 
     for _, row in filtered_data.iterrows():
-        item_features = np.array([[float(row['평균 키']), float(row['평균 몸무게'])]])
+        item_features = np.array([[float(row['평균_키']), float(row['평균_몸무게'])]])
         combined_features = np.zeros((1, features.shape[1]))
         combined_features[:, :user_features.shape[1] + item_features.shape[1]] = np.concatenate(
             [user_features, item_features], axis=1
@@ -140,14 +144,14 @@ def recommend_clothing(user_height, user_weight, user_gender, user_style, clothi
 
     # 점수 기준 상위 추천 반환
     top_recommendations = filtered_data.nlargest(top_n, 'score')
-    return top_recommendations[['상품명', '이미지 URL', 'score']].to_dict(orient='records')
+    return top_recommendations[['상품명', '이미지_URL', 'score']].to_dict(orient='records')
 
 def recommend_otherClothing(selected_item_name, clothing_data, model, clothingType, top_n=3, excluded_items=None):
     """
     다른 부위 의류 추천 함수.
 
     :param selected_item_name: 사용자가 선택한 의류의 이름.
-    :param clothing_data: 의류 데이터프레임.
+    :param clothing: 의류 데이터프레임.
     :param model: TensorFlow 모델.
     :param clothingType: 추천받을 의류 부위.
     :param top_n: 추천받을 의류 개수.
@@ -160,8 +164,8 @@ def recommend_otherClothing(selected_item_name, clothing_data, model, clothingTy
         return []
 
     selected_item = selected_item.iloc[0]  # 첫 번째 행 선택
-    user_height = selected_item['평균 키']
-    user_weight = selected_item['평균 몸무게']
+    user_height = selected_item['평균_키']
+    user_weight = selected_item['평균_몸무게']
     user_gender = selected_item['성별']
     user_style = selected_item['스타일']
 

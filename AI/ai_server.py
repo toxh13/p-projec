@@ -121,8 +121,8 @@ async def recommend_other(
     :param excluded_items: 추천 제외 항목 리스트.
     """
     # SQLAlchemy로 데이터베이스 연결
-    clothing_data_query = "SELECT * FROM Clothing_data"
-    clothing_data = pd.read_sql(clothing_data_query, connection)
+    clothing_data_query = "SELECT * FROM Clothing"
+    clothing_data = pd.read_sql(clothing_data_query, engine)
 
     # 다른 부위 추천 호출
     recommendations = recommend_otherClothing(
