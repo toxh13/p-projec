@@ -1,0 +1,88 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+  padding-top: 70px;
+}
+
+/* 기본적으로 모든 섹션은 숨김 */
+.option-section {
+  display: none;
+  text-align: center;
+  padding-top: 10px;
+  margin: auto;
+}
+
+.option-box {
+  border: 1px solid #ccc;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 600px;
+  margin: auto;
+}
+
+/* active 클래스가 있을 때만 보이도록 설정 */
+.option-section.active {
+  display: block;
+}
+.recommendation-item {
+  display: inline-block;
+  margin: 10px;
+  text-align: center;
+}
+.recommendation-item img {
+  width: 150px;
+  height: 200px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  border-radius: 5px;
+}
+/* 선택된 이미지에 파란 테두리 적용 */
+.recommendation-item img.selected {
+  border-color: blue;
+}
+
+.inputInterval {
+  margin-top: 20px;
+}
+
+.optionSelbutton {
+  background-color: #d3d3d3;
+  color: black;
+  border: 3px;
+  padding: 10px 20px;
+  margin: 30px 20px 20px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+.gender-option {
+  display: flex; /* 성별 옵션을 가로로 정렬 */
+  justify-content: center;
+  margin-top: 20px;
+}
+.gender-option div {
+  margin: 0 20px; /* 항목 간의 간격 설정 */
+  display: flex;
+  flex-direction: column; /* 세로 방향으로 정렬 */
+  align-items: center; /* 가운데 정렬 */
+}
+.genderImage {
+  width: 250px;
+  height: auto;
+}
+.gender-option input {
+  margin-top: 10px;
+}
+
+/* 키 몸무게 입력 옵션 */
+.phyInfo {
+  text-align: right; /* 오른쪽 정렬 */
+  width: 300px;
+  height: 70px;
+  margin: 0 auto; /* 전체 가운데 정렬 */
+  margin-top: 20px;
+  padding-bottom: 10px;
+}
+#height,
+#weight {
+  text-align: left; /* 입력란 내용 가운데 정렬 */
+}
