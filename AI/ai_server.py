@@ -8,7 +8,7 @@ from sqlalchemy.orm import sessionmaker
 import pymysql
 from fastapi.templating import Jinja2Templates
 from fastapi import Request
-from deepRunning import recommend_clothing, recommend_otherClothing  # deepRunning에서 recommend_clothing 함수를 불러옵니다.
+from deepLearning import recommend_clothing, recommend_otherClothing  # deepLearning에서 recommend_clothing 함수를 불러옵니다.
 
 app = FastAPI()
 
