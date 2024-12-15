@@ -24,6 +24,7 @@
         border-radius: 10px;
         width: 60%;
         justify-content: space-between;
+        position: relative; /* 추가된 부분 */
       }
       .item img {
         width: 200px;
@@ -56,18 +57,29 @@
       .hidden {
         display: none;
       }
+      .link-button {
+        /* 추가된 스타일 */
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        padding: 5px 10px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .link-button:hover {
+        background-color: #218838;
+      }
     </style>
-    <!--CSS-->
     <link href="css/styles.css" rel="stylesheet" />
   </head>
   <body>
     <div id="nav-container"></div>
-    <!--동적 네비게이션 기능-->
 
     <h2>추천 의류 세트</h2>
-    <div class="set-container" id="set-container">
-      <!-- 추천 의류 세트가 여기에 표시됩니다 -->
-    </div>
+    <div class="set-container" id="set-container"></div>
     <div class="button-container">
       <button id="view-selection-btn" class="action-button">
         선택 정보 보기
@@ -75,18 +87,18 @@
       <button id="save-preset-btn" class="action-button hidden">
         프리셋 저장하기
       </button>
+      <button id="rercommend-btn" class="action-button">재추천</button>
+      <!-- 추가된 부분 -->
     </div>
 
     <script>
-      const API_BASE_URL = "http://khs.uy.to:3000"; // API 서버 주소
+      const API_BASE_URL = "http://khs.uy.to:3000";
 
-      // 추천된 의류 ID
       const receivedClothingIds = {
-        top_clothing_id: 180, // 상의 ID
-        bottom_clothing_id: 255, // 하의 ID
+        top_clothing_id: 180,
+        bottom_clothing_id: 255,
       };
 
-      // 사용자가 선택한 정보 (임의 설정)
       const userSelection = {
         gender: "남",
         height: 170,
@@ -94,24 +106,20 @@
         style: "캐주얼",
       };
 
-      // 로그인 상태 확인
       function checkLoginStatus() {
         const token = localStorage.getItem("token");
-        return !!token; // 토큰이 있으면 true 반환
+        return !!token;
       }
 
-      // 의류 데이터 표시
       async function displayClothingSet(ids) {
         const container = document.getElementById("set-container");
         const saveButton = document.getElementById("save-preset-btn");
 
-        // 로그인 상태에 따라 저장 버튼 표시
         if (checkLoginStatus()) {
           saveButton.classList.remove("hidden");
         }
 
         try {
-          // 상의와 하의 데이터를 병렬로 가져오기
           const [topResponse, bottomResponse] = await Promise.all([
             fetch(`${API_BASE_URL}/api/clothing/${ids.top_clothing_id}`),
             fetch(`${API_BASE_URL}/api/clothing/${ids.bottom_clothing_id}`),
@@ -124,46 +132,58 @@
           const topData = await topResponse.json();
           const bottomData = await bottomResponse.json();
 
-          // 데이터 렌더링
           const topItem = `
-          <div class="item">
-            <img src="${topData.image_url}" alt="${topData.name}" />
-            <div class="item-info">
-              <h3>상의: ${topData.name}</h3>
-              <p>${
-                topData.brand ? "브랜드: " + topData.brand : "브랜드 정보 없음"
-              }</p>
-              <p>가격: ${
-                topData.price ? topData.price + "원" : "가격 정보 없음"
-              }</p>
-            </div>
-          </div>
-        `;
+                <div class="item">
+                    <img src="${topData.image_url}" alt="${topData.name}" />
+                    <div class="item-info">
+                        <h3>상의: ${topData.name}</h3>
+                        <p>${
+                          topData.brand
+                            ? "브랜드: " + topData.brand
+                            : "브랜드 정보 없음"
+                        }</p>
+                        <p>가격: ${
+                          topData.price
+                            ? topData.price + "원"
+                            : "가격 정보 없음"
+                        }</p>
+                    </div>
+                    <button class="link-button" onclick="window.open('${
+                      topData.purchase_url
+                    }', '_blank')">보러가기</button> <!-- 수정된 부분 -->
+                </div>
+                `;
 
           const bottomItem = `
-          <div class="item">
-            <img src="${bottomData.image_url}" alt="${bottomData.name}" />
-            <div class="item-info">
-              <h3>하의: ${bottomData.name}</h3>
-              <p>${
-                bottomData.brand
-                  ? "브랜드: " + bottomData.brand
-                  : "브랜드 정보 없음"
-              }</p>
-              <p>가격: ${
-                bottomData.price ? bottomData.price + "원" : "가격 정보 없음"
-              }</p>
-            </div>
-          </div>
-        `;
+                <div class="item">
+                    <img src="${bottomData.image_url}" alt="${
+            bottomData.name
+          }" />
+                    <div class="item-info">
+                        <h3>하의: ${bottomData.name}</h3>
+                        <p>${
+                          bottomData.brand
+                            ? "브랜드: " + bottomData.brand
+                            : "브랜드 정보 없음"
+                        }</p>
+                        <p>가격: ${
+                          bottomData.price
+                            ? bottomData.price + "원"
+                            : "가격 정보 없음"
+                        }</p>
+                    </div>
+                    <button class="link-button" onclick="window.open('${
+                      bottomData.purchase_url
+                    }', '_blank')">보러가기</button> <!-- 수정된 부분 -->
+                </div>
+                `;
 
           container.innerHTML = `
-          <h2>추천 스타일: ${topData.style || "알 수 없음"}</h2>
-          ${topItem}
-          ${bottomItem}
-        `;
+                <h2>추천 스타일: ${topData.style || "알 수 없음"}</h2>
+                ${topItem}
+                ${bottomItem}
+                `;
 
-          // 프리셋 저장 버튼 클릭 이벤트
           saveButton.addEventListener("click", () =>
             savePreset(ids, topData.style)
           );
@@ -173,14 +193,13 @@
         }
       }
 
-      // 프리셋 저장 API 호출
       async function savePreset(ids, style) {
         try {
           const response = await fetch(`${API_BASE_URL}/api/user_closets`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`, // JWT 토큰 포함
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
             body: JSON.stringify({
               top_clothing_id: ids.top_clothing_id,
@@ -204,7 +223,6 @@
         }
       }
 
-      // 선택 정보 보기
       function showUserSelection() {
         const { gender, height, weight, style } = userSelection;
         alert(
@@ -212,18 +230,21 @@
         );
       }
 
-      // 선택 정보 보기 버튼 이벤트
       document
         .getElementById("view-selection-btn")
         .addEventListener("click", showUserSelection);
 
-      // 페이지 로드 시 데이터 표시
+      // 재추천 버튼 클릭 시 옵션 선택 페이지로 이동
+      document
+        .getElementById("rercommend-btn")
+        .addEventListener("click", () => {
+          window.location.href = "optionSelect.html"; // 옵션 선택 페이지로 이동
+        });
+
       window.onload = () => {
         displayClothingSet(receivedClothingIds);
       };
     </script>
-    <!--JS-->
     <script src="js/navbar.js" defer></script>
-    <!--동적 네비게이션 기능-->
   </body>
 </html>
