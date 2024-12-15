@@ -2,7 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
     <title>내스타일 - 스타일 추천 시스템</title>
     <script
       src="https://use.fontawesome.com/releases/v6.3.0/js/all.js"
@@ -16,97 +19,17 @@
       href="https://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900,900i"
       rel="stylesheet"
     />
-    <style>
-      body {
-  font-family: Arial, sans-serif;
-  padding-top: 70px;
-}
 
-#preset-container {
-  display: flex;
-  flex-direction: column; /* 프리셋을 수직으로 정렬 */
-  gap: 30px; /* 프리셋 간 간격 추가 */
-}
-
-.preset {
-  display: flex;
-  flex-direction: row; /* 개별 프리셋 내부의 콘텐츠는 수평 정렬 */
-  align-items: flex-start; /* 콘텐츠 상단 정렬 */
-  gap: 30px; /* 내부 콘텐츠 간 간격 추가 */
-  border: 1px solid #ddd; /* 각 프리셋에 경계선 추가 */
-  padding: 20px;
-  border-radius: 10px; /* 둥근 모서리 추가 */
-  background-color: #f9f9f9; /* 배경색 추가 */
-}
-
-.clothing-info {
-  display: flex;
-  flex-direction: column; /* 상품 데이터를 수직 정렬 */
-  flex: 3; /* 텍스트 영역 비율을 더 넓게 설정 */
-  gap: 15px;
-}
-
-.clothing-info .item {
-  display: flex;
-  align-items: flex-start;
-  gap: 20px;
-}
-
-.clothing-info img {
-  width: 150px; /* 이미지 크기 조정 */
-  height: auto; /* 비율 유지 */
-  border-radius: 5px;
-  flex-shrink: 0; /* 이미지가 텍스트에 의해 줄어들지 않도록 설정 */
-}
-
-.details-box {
-  flex-grow: 1;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  padding: 20px;
-  background-color: #fff; /* 세부 정보 배경 흰색 */
-  display: none; /* 기본 숨김 */
-  margin: 0; /* 외부 여백 제거 */
-  align-self: stretch; /* 상위 요소의 높이에 맞춰 확장 */
-}
-
-
-.button-container {
-  display: flex;
-  flex-direction: column; /* 버튼을 수직 정렬 */
-  gap: 10px; /* 버튼 간 간격 추가 */
-}
-
-.button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 15px; /* 버튼 크기 조정 */
-  cursor: pointer;
-  border-radius: 5px;
-  font-size: 16px; /* 텍스트 크기 조정 */
-  text-align: center;
-}
-
-.button:hover {
-  background-color: #0056b3;
-}
-
-.delete-button {
-  background-color: #dc3545;
-}
-
-.delete-button:hover {
-  background-color: #a71d2a;
-}
-
-    </style>
+    <!--CSS-->
     <link href="css/styles.css" rel="stylesheet" />
-    <script src="js/navbar.js" defer></script>
+    <!--부트스트립립-->
+    <link href="css/myPreset.css" rel="stylesheet" />
+    <!--내스타일 디자인-->
   </head>
 
   <body>
-    <div id="nav-container"></div> <!-- 동적으로 nav.html 삽입 -->
+    <div id="nav-container"></div>
+    <!-- 동적으로 nav.html 삽입 -->
 
     <h1>내 스타일 - 저장된 프리셋</h1>
     <div id="preset-container"></div>
@@ -163,22 +86,38 @@
                 <div class="item">
                   <img src="${preset.top_image_url || "#"}" alt="상의 이미지" />
                   <div>
-                    <div><strong>상품명:</strong> ${preset.top_name || "정보 없음"}</div>
-                    <div><strong>브랜드:</strong> ${preset.top_brand || "정보 없음"}</div>
-                    <div><strong>구매링크:</strong> ${preset.top_purchase || "정보 없음"}</div>
+                    <div><strong>상품명:</strong> ${
+                      preset.top_name || "정보 없음"
+                    }</div>
+                    <div><strong>브랜드:</strong> ${
+                      preset.top_brand || "정보 없음"
+                    }</div>
+                    <div><strong>구매링크:</strong> ${
+                      preset.top_purchase || "정보 없음"
+                    }</div>
                   </div>
                 </div>
                 <div class="item">
-                  <img src="${preset.bottom_image_url || "#"}" alt="하의 이미지" />
+                  <img src="${
+                    preset.bottom_image_url || "#"
+                  }" alt="하의 이미지" />
                   <div>
-                    <div><strong>상품명:</strong> ${preset.bottom_name || "정보 없음"}</div>
-                    <div><strong>브랜드:</strong> ${preset.bottom_brand || "정보 없음"}</div>
-                    <div><strong>구매링크:</strong> ${preset.top_brand || "정보 없음"}</div>
+                    <div><strong>상품명:</strong> ${
+                      preset.bottom_name || "정보 없음"
+                    }</div>
+                    <div><strong>브랜드:</strong> ${
+                      preset.bottom_brand || "정보 없음"
+                    }</div>
+                    <div><strong>구매링크:</strong> ${
+                      preset.top_brand || "정보 없음"
+                    }</div>
                   </div>
                 </div>
                 <button
                   class="button"
-                  onclick="toggleDetails(${preset.user_closet_id}, '${preset.style}', ${preset.height}, ${preset.weight}, '${preset.sex}')"
+                  onclick="toggleDetails(${preset.user_closet_id}, '${
+              preset.style
+            }', ${preset.height}, ${preset.weight}, '${preset.sex}')"
                 >
                   세부정보
                 </button>
@@ -191,7 +130,9 @@
               </div>
 
               <!-- 세부 정보 (숨김 상태) -->
-              <div id="details-box-${preset.user_closet_id}" class="details-box"></div>
+              <div id="details-box-${
+                preset.user_closet_id
+              }" class="details-box"></div>
             </div>`
           )
           .join("");
@@ -199,8 +140,11 @@
 
       // 세부 정보 표시
       function toggleDetails(userClosetId, style, height, weight, sex) {
-        const detailsBox = document.getElementById(`details-box-${userClosetId}`);
-        detailsBox.style.display = detailsBox.style.display === "none" ? "block" : "none";
+        const detailsBox = document.getElementById(
+          `details-box-${userClosetId}`
+        );
+        detailsBox.style.display =
+          detailsBox.style.display === "none" ? "block" : "none";
         if (detailsBox.style.display === "block") {
           detailsBox.innerHTML = `
             <h3>세부 정보</h3>
@@ -230,7 +174,9 @@
           })
             .then((response) => {
               if (!response.ok) {
-                throw new Error(`삭제 실패 (HTTP 상태 코드: ${response.status})`);
+                throw new Error(
+                  `삭제 실패 (HTTP 상태 코드: ${response.status})`
+                );
               }
               alert("프리셋이 삭제되었습니다.");
               window.location.reload(); // 페이지 새로고침
@@ -242,5 +188,10 @@
         }
       }
     </script>
+    <!--JS-->
+    <script src="js/navbar.js" defer></script>
+    <!--동적 네비게이션 바-->
+    <!--<script src="js/mypreset.js" defer></script>-->
+    <!--내스타일 기능-->
   </body>
 </html>
