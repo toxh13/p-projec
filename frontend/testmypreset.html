@@ -4,12 +4,21 @@
     <meta charset="utf-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
     <title>내스타일 - 스타일 추천 시스템</title>
     <script
-      src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous" ></script>
-    <link href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900,900i" rel="stylesheet" />
+      src="https://use.fontawesome.com/releases/v6.3.0/js/all.js"
+      crossorigin="anonymous"
+    ></script>
+    <link
+      href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900,900i"
+      rel="stylesheet"
+    />
 
     <link href="css/styles.css" rel="stylesheet" />
     <!-- 기본 스타일시트 -->
@@ -63,7 +72,7 @@
       }
 
       .clothing-info img {
-        width: 250px; /* 이미지 크기 조정 */
+        width: 180px; /* 이미지 크기 조정 */
         height: auto; /* 비율 유지 */
         border-radius: 5px;
         flex-shrink: 0; /* 이미지가 텍스트에 의해 줄어들지 않도록 설정 */
@@ -82,7 +91,7 @@
 
       .button-container {
         display: flex;
-        flex-direction: column; /* 버튼을 수직 정렬 */
+        flex-direction: flex-end; /* 버튼을 오른쪽으로 정렬렬 */
         gap: 10px; /* 버튼 간 간격 추가 */
       }
 
@@ -90,10 +99,10 @@
         background-color: #007bff;
         color: white;
         border: none;
-        padding: 10px 15px; /* 버튼 크기 조정 */
+        padding: 5px 10px; /* 버튼 크기 조정 */
         cursor: pointer;
         border-radius: 5px;
-        font-size: 16px; /* 텍스트 크기 조정 */
+        font-size: 14px; /* 텍스트 크기 조정 */
         text-align: center;
       }
 
@@ -226,7 +235,7 @@
                                 preset.top_brand || "정보 없음"
                               }</div>
                               <div><strong>구매링크:</strong> ${
-                                preset.top_purchase_link || "정보 없음"
+                                preset.purchase_link || "정보 없음"
                               }</div>
                           </div>
                       </div>
@@ -242,18 +251,20 @@
                                 preset.bottom_brand || "정보 없음"
                               }</div>
                               <div><strong>구매링크:</strong> ${
-                                preset.bottom_purchase_link || "정보 없음"
+                                preset.purchase_link || "정보 없음"
                               }</div>
                           </div>
                       </div>
-                      <button class="button" onclick="showDetails(${
-                        preset.user_closet_id
-                      }, '${preset.style}', ${preset.height}, ${
+                      <div class="button-container">
+                        <button class="button" onclick="showDetails(${
+                          preset.user_closet_id
+                        }, '${preset.style}', ${preset.height}, ${
               preset.weight
             }, '${preset.sex}')">세부정보</button>
-                      <button class="button delete-button" onclick="deletePreset(${
-                        preset.user_closet_id
-                      })">삭제</button>
+                        <button class="button delete-button" onclick="deletePreset(${
+                          preset.user_closet_id
+                        })">삭제</button>
+                      </div>
                   </div>
               </div>`
           )
@@ -319,9 +330,6 @@
       }
     </script>
 
-    <!--JS-->
-    <script src="js/navbar.js" defer></script>
-    <!--네비게이션바 기능-->
     <script src="js/mypreset.js" defer></script>
     <!-- 모달 기능을 위한 JS 파일 -->
   </body>
