@@ -6,10 +6,10 @@
     <title>추천 의류 세트</title>
     <style>
       body {
-        text-align: center;
+        align-items: center;
         font-family: Arial, sans-serif;
         margin: 20px;
-        padding-top: 70px;
+        padding-top: 90px;
       }
       .set-container {
         display: flex;
@@ -63,7 +63,7 @@
         bottom: 10px;
         right: 10px;
         padding: 5px 10px;
-        background-color: #28a745;
+        background-color: #007bff;
         color: white;
         border: none;
         border-radius: 5px;
@@ -71,6 +71,14 @@
       }
       .link-button:hover {
         background-color: #218838;
+      }
+
+      .custom-heading {
+        font-size: 20px; /* 원하는 크기로 설정 */
+        font-weight: bold; /* 필요에 따라 볼드체 설정 */
+      }
+      .custom-body {
+        font-size: 15px; /* 원하는 크기로 설정 */
       }
     </style>
     <link href="css/styles.css" rel="stylesheet" />
@@ -136,20 +144,20 @@
                 <div class="item">
                     <img src="${topData.image_url}" alt="${topData.name}" />
                     <div class="item-info">
-                        <h3>상의: ${topData.name}</h3>
-                        <p>${
+                        <p clas="custom-heading">상의: ${topData.name}</p>
+                        <p class="custom-body">${
                           topData.brand
                             ? "브랜드: " + topData.brand
                             : "브랜드 정보 없음"
                         }</p>
-                        <p>가격: ${
+                        <p class="custom-body">가격: ${
                           topData.price
                             ? topData.price + "원"
                             : "가격 정보 없음"
                         }</p>
                     </div>
                     <button class="link-button" onclick="window.open('${
-                      topData.purchase_url
+                      topData.purchase_link
                     }', '_blank')">보러가기</button> <!-- 수정된 부분 -->
                 </div>
                 `;
@@ -160,20 +168,20 @@
             bottomData.name
           }" />
                     <div class="item-info">
-                        <h3>하의: ${bottomData.name}</h3>
-                        <p>${
+                        <p clas="custom-heading">하의: ${bottomData.name}</p>
+                        <p class="custom-body">${
                           bottomData.brand
                             ? "브랜드: " + bottomData.brand
                             : "브랜드 정보 없음"
                         }</p>
-                        <p>가격: ${
+                        <p class="custom-body">가격: ${
                           bottomData.price
                             ? bottomData.price + "원"
                             : "가격 정보 없음"
                         }</p>
                     </div>
                     <button class="link-button" onclick="window.open('${
-                      bottomData.purchase_url
+                      bottomData.purchase_link
                     }', '_blank')">보러가기</button> <!-- 수정된 부분 -->
                 </div>
                 `;
