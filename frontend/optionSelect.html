@@ -3,18 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>옵션 선택 페이지</title>
-    <link href="css/styles.css" rel="stylesheet" />
+    <title>추천 시스템</title>
     <style>
       body {
         font-family: Arial, sans-serif;
         margin: 20px;
-        padding-top: 70px;
       }
       .option-section {
         display: none;
         text-align: center;
-        padding-top: 10px;
         margin: auto;
       }
       .option-section.active {
@@ -34,185 +31,233 @@
       }
       .recommendation-item img.selected {
         border-color: blue;
+        box-shadow: 0 0 10px rgba(0, 0, 255, 0.5);
       }
     </style>
   </head>
   <body>
     <form id="optionsForm">
-      <!-- 성별, 키, 몸무게, 카테고리 입력 -->
-      <div class="option-section active" id="userDetailsSection">
-        <h3>사용자 정보 입력</h3>
-        <label for="gender">성별:</label>
-        <select id="gender" required>
-          <option value="">선택</option>
-          <option value="male">남자</option>
-          <option value="female">여자</option>
-        </select><br />
-        <label for="height">키 (cm):</label>
-        <input type="number" id="height" required /><br />
-        <label for="weight">몸무게 (kg):</label>
-        <input type="number" id="weight" required /><br />
-        <label for="category">스타일:</label>
-        <select id="category" required>
-          <option value="">선택</option>
-          <option value="캐주얼">캐주얼</option>
-          <option value="스트릿">스트릿</option>
-          <option value="미니멀">미니멀</option>
-          <option value="워크웨이">워크웨이</option>
-        </select><br />
-        <button type="button" onclick="startRecommendationSelection()">추천받기 시작</button>
-      </div>
+      <!-- 사용자 정보 입력 -->
+<div class="option-section active" id="userDetailsSection">
+  <h3>사용자 정보 입력</h3>
+  <label for="gender">성별:</label>
+  <select id="gender" required>
+    <option value="">선택</option>
+    <option value="male">남자</option>
+    <option value="female">여자</option>
+  </select><br />
 
-      <!-- 상의/하의 선택 -->
-      <div class="option-section" id="itemTypeSelectionSection">
-        <h3>추천받을 항목 선택</h3>
-        <button type="button" onclick="requestRecommendation('top')">상의 추천</button>
-        <button type="button" onclick="requestRecommendation('bottom')">하의 추천</button>
-        <button
-          type="button"
-          onclick="prevSection('itemTypeSelectionSection', 'userDetailsSection')"
-        >
-          뒤로가기
-        </button>
-      </div>
+  <label for="height">키 (cm):</label>
+  <input type="number" id="height" required /><br />
 
-      <!-- 추천 결과 표시 -->
+  <label for="weight">몸무게 (kg):</label>
+  <input type="number" id="weight" required /><br />
+
+  <label for="style">스타일:</label>
+  <select id="style" required>``
+    <option value="">선택</option>
+    <option value="캐주얼">캐주얼</option>
+    <option value="스트릿">스트릿</option>
+    <option value="미니멀">미니멀</option>
+    <option value="워크웨이">워크웨이</option>
+  </select><br />
+
+  <label for="recommendationOrder">추천 시작 항목:</label>
+  <select id="recommendationOrder" required>
+    <option value="">선택</option>
+    <option value="상의">상의</option>
+    <option value="하의">하의</option>
+  </select><br />
+
+  <button type="button" onclick="startRecommendation()">추천받기 시작</button>
+</div>
+
+
+      <!-- 추천 결과 -->
       <div class="option-section" id="recommendationSection">
         <h3>추천 결과</h3>
         <div id="recommendationResults"></div>
-        <button type="button" onclick="submitChoice()">선택 완료</button>
+        <button type="button" onclick="confirmSelection()">다음 단계</button>
       </div>
 
-      <!-- 최종 세트 결과 -->
-      <div class="option-section" id="resultSection">
+      <!-- 최종 결과 -->
+      <div class="option-section" id="finalSection">
         <h3>최종 세트</h3>
-        <div id="finalSet"></div>
+        <div id="finalResults"></div>
         <button type="button" onclick="restart()">다시 시작</button>
+        <button type="button" onclick="goToClothingSet()">결과 보기</button>
       </div>
     </form>
 
     <script>
       let userInfo = {}; // 사용자 정보 저장
-      let selectedTop = null; // 선택한 상의
-      let selectedBottom = null; // 선택한 하의
-      let currentStep = ""; // 현재 단계 (상의 또는 하의 추천)
+let selectedTop = null; // 선택한 상의 ID
+let selectedBottom = null; // 선택한 하의 ID
 
-      // 섹션 이동 함수
-      function showSection(sectionId) {
-        document.querySelectorAll(".option-section").forEach((section) => {
-          section.classList.remove("active");
-        });
-        document.getElementById(sectionId).classList.add("active");
-      }
+function showSection(sectionId) {
+  document.querySelectorAll(".option-section").forEach((section) => {
+    section.classList.remove("active");
+  });
+  document.getElementById(sectionId).classList.add("active");
+}
 
-      // 추천 시작
-      function startRecommendationSelection() {
-        const gender = document.getElementById("gender").value;
-        const height = document.getElementById("height").value;
-        const weight = document.getElementById("weight").value;
-        const category = document.getElementById("category").value;
+function startRecommendation() {
+  const gender = document.getElementById("gender").value;
+  const height = document.getElementById("height").value;
+  const weight = document.getElementById("weight").value;
+  const style = document.getElementById("style").value;
+  const recommendationOrder = document.getElementById("recommendationOrder").value;
 
-        if (!gender || !height || !weight || !category) {
-          alert("모든 정보를 입력해주세요.");
-          return;
-        }
+  if (!gender || !height || !weight || !style || !recommendationOrder) {
+    alert("모든 정보를 입력해주세요.");
+    return;
+  }
 
-        userInfo = { gender, height, weight, category };
-        showSection("itemTypeSelectionSection");
-      }
+  // 사용자 정보를 저장
+  userInfo = { gender, height, weight, style, recommendationOrder };
 
-      // AI 서버로 데이터 전송 및 추천받기
-      async function requestRecommendation(type) {
-        currentStep = type; // 현재 단계 저장
-        try {
-          const response = await fetch("http://khs.uy.to:8000/api/recommend", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ ...userInfo, type }),
-          });
+  // 선택한 순서에 따라 추천 시작
+  requestRecommendation(recommendationOrder);
+}
 
-          if (!response.ok) {
-            throw new Error(`추천 실패: ${response.status}`);
-          }
+async function requestRecommendation(type) {
+  const token = localStorage.getItem("token");
+  const user_id = token ? parseInt(localStorage.getItem("user_id"), 10) : null; // user_id를 localStorage에서 가져옴
+  const payload = {
+    user_id: user_id, 
+    gender: userInfo.gender,
+    height: parseInt(userInfo.height, 10),
+    weight: parseInt(userInfo.weight, 10),
+    style: userInfo.style,
+    clothingType: type,
+  };
 
-          const result = await response.json();
-          displayRecommendations(result.recommendations, type);
-        } catch (error) {
-          console.error("추천 오류:", error.message);
-          alert("AI 서버와 통신 중 오류가 발생했습니다.");
-        }
-      }
+  console.log("Payload sent to the server:", payload); // 확인용 로그
 
-      // 추천 결과 표시
-      function displayRecommendations(items, type) {
-        const container = document.getElementById("recommendationResults");
-        container.innerHTML = items
-          .map(
-            (item, index) => `
-          <div class="recommendation-item" onclick="selectItem('${type}', ${index})">
-            <img src="${item.image}" alt="${item.name}" id="${type}-item-${index}" />
-            <p>${item.name}</p>
-          </div>`
-          )
-          .join("");
+  try {
+    const aiResponse = await fetch("http://khs.uy.to:8000/api/recommend", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
 
-        showSection("recommendationSection");
-      }
+    if (!aiResponse.ok) {
+      const errorMessage = await aiResponse.text();
+      console.error("추천 요청 실패:", errorMessage);
+      alert(`추천 요청 실패: ${errorMessage}`);
+      return;
+    }
 
-      // 항목 선택 처리
-      function selectItem(type, index) {
-        const items = document.querySelectorAll(`#recommendationResults img`);
-        items.forEach((item) => item.classList.remove("selected"));
+    const aiData = await aiResponse.json();
+    console.log("추천 결과:", aiData);
 
-        const selectedItem = document.getElementById(`${type}-item-${index}`);
-        selectedItem.classList.add("selected");
+    if (aiData.recommendations.length > 0) {
+      displayRecommendations(aiData.recommendations, type); // 추천 데이터 표시
+    } else {
+      alert("추천 결과가 없습니다.");
+    }
+  } catch (error) {
+    console.error("추천 요청 중 오류 발생:", error.message);
+    alert("추천 요청 중 오류 발생.");
+  }
+}
 
-        if (type === "top") {
-          selectedTop = index;
-        } else {
-          selectedBottom = index;
-        }
-      }
+function displayRecommendations(items, type) {
+  const container = document.getElementById("recommendationResults");
+  container.innerHTML = items
+    .map(
+      (item) => `
+      <div class="recommendation-item" onclick="selectItem('${type}', '${item.id}')">
+        <img src="${item.이미지_URL}" alt="${item.id}" />
+        <p>${item.상품명}</p>
+      </div>`
+    )
+    .join("");
 
-      // 선택 완료 후 다음 단계로 이동
-      function submitChoice() {
-        if (currentStep === "top" && selectedTop !== null) {
-          requestRecommendation("bottom");
-        } else if (currentStep === "bottom" && selectedBottom !== null) {
-          displayFinalSet();
-        } else {
-          alert("항목을 선택해주세요.");
-        }
-      }
+  showSection("recommendationSection");
+}
 
-      // 최종 세트 표시
-      function displayFinalSet() {
-        const finalSetContainer = document.getElementById("finalSet");
-        const selectedTopItem = document.querySelector(`#top-item-${selectedTop}`);
-        const selectedBottomItem = document.querySelector(`#bottom-item-${selectedBottom}`);
 
-        finalSetContainer.innerHTML = `
-          <div>
-            <h4>상의</h4>
-            ${selectedTopItem ? selectedTopItem.outerHTML : "선택 안됨"}
-          </div>
-          <div>
-            <h4>하의</h4>
-            ${selectedBottomItem ? selectedBottomItem.outerHTML : "선택 안됨"}
-          </div>
-        `;
+function selectItem(type, id) {
+  // 기존 선택 상태 초기화
+  document.querySelectorAll(".recommendation-item img").forEach((img) => {
+    img.classList.remove("selected");
+  });
 
-        showSection("resultSection");
-      }
+  // 선택한 항목 강조 표시
+  const selectedImage = document.querySelector(`.recommendation-item img[alt="${id}"]`);
+  if (selectedImage) {
+    selectedImage.classList.add("selected");
 
-      // 다시 시작
-      function restart() {
-        userInfo = {};
-        selectedTop = null;
-        selectedBottom = null;
-        currentStep = "";
-        showSection("userDetailsSection");
-      }
+    // 선택한 아이템 ID 저장
+    if (type === "상의") {
+      selectedTop = id;
+      userInfo.recommendationOrder = "하의"; // 다음 추천은 하의
+      console.log("Selected Top ID:", selectedTop);
+    } else if (type === "하의") {
+      selectedBottom = id;
+      userInfo.recommendationOrder = "상의"; // 다음 추천은 상의
+      console.log("Selected Bottom ID:", selectedBottom);
+    }
+  } else {
+    console.error("선택한 항목을 찾을 수 없습니다.");
+  }
+}
+
+function confirmSelection() {
+  console.log("Current Recommendation Order:", userInfo.recommendationOrder);
+
+  if (userInfo.recommendationOrder === "하의" && selectedTop) {
+    console.log("상의 선택 완료. 선택한 상의 ID:", selectedTop);
+    // 상의 선택 완료 후 하의 추천
+    requestRecommendation("하의");
+  } else if (userInfo.recommendationOrder === "상의" && selectedBottom) {
+    console.log("하의 선택 완료. 선택한 하의 ID:", selectedBottom);
+    // 최종 선택 완료
+    showFinalResults();
+  } else if (!selectedTop && userInfo.recommendationOrder === "하의") {
+    alert("상의를 선택해주세요.");
+  } else if (!selectedBottom && userInfo.recommendationOrder === "상의") {
+    alert("하의를 선택해주세요.");
+  } else {
+    alert("아이템을 선택해주세요.");
+  }
+}
+
+function showFinalResults() {
+  if (!selectedTop || !selectedBottom) {
+    alert("상의와 하의를 모두 선택해주세요.");
+    return;
+  }
+
+  const container = document.getElementById("finalResults");
+  container.innerHTML = `
+    <p><strong>선택한 상의 ID:</strong> ${selectedTop}</p>
+    <p><strong>선택한 하의 ID:</strong> ${selectedBottom}</p>
+  `;
+  showSection("finalSection");
+}
+
+
+function restart() {
+  userInfo = {};
+  selectedTop = null;
+  selectedBottom = null;
+  showSection("userDetailsSection");
+}
+
+function goToClothingSet() {
+  if (!selectedTop || !selectedBottom) {
+    alert("상의와 하의를 모두 선택해주세요.");
+    return;
+  }
+
+  // 사용자 정보와 선택한 상의/하의 ID를 URL에 추가
+  const url = `clothing_set.html?top=${encodeURIComponent(selectedTop)}&bottom=${encodeURIComponent(selectedBottom)}&gender=${encodeURIComponent(userInfo.gender)}&height=${encodeURIComponent(userInfo.height)}&weight=${encodeURIComponent(userInfo.weight)}&style=${encodeURIComponent(userInfo.style)}`;
+  window.location.href = url;
+}
+
+
     </script>
   </body>
 </html>
