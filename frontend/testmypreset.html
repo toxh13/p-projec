@@ -204,31 +204,19 @@
           <div class="item">
             <img src="${preset.bottom_image_url || "#"}" alt="하의 이미지" />
             <div>
-              <div><strong>상품명:</strong> ${
-                preset.bottom_name || "정보 없음"
-              }</div>
-              <div><strong>브랜드:</strong> ${
-                preset.bottom_brand || "정보 없음"
-              }</div>
-              <div><strong>구매링크:</strong> ${
-                preset.top_brand || "정보 없음"
-              }</div>
+              <div><strong>상품명:</strong> ${preset.bottom_name || "정보 없음" }</div>
+              <div><strong>브랜드:</strong> ${ preset.bottom_brand || "정보 없음" }</div>
+              <div><strong>구매링크:</strong> ${ preset.top_brand || "정보 없음" }</div>
             </div>
           </div>
-          <button
-            class="button delete-button"
-            onclick="deletePreset(${preset.user_closet_id})"
-          >
-            삭제
-          </button>
-          <button
-            class="button"
-            onclick="toggleDetails(${preset.user_closet_id}, '${
-            preset.style
-          }', ${preset.height}, ${preset.weight}, '${preset.sex}')"
-          >
-            세부정보
-          </button>
+          <div class="button-container">
+            <button class="button delete-button" onclick="deletePreset(${preset.user_closet_id})" >
+              삭제
+            </button>
+            <button class="button" onclick="toggleDetails(${preset.user_closet_id}, '${preset.style }', ${preset.height}, ${preset.weight}, '${preset.sex}')" >
+              세부정보
+            </button>
+          </div>
         </div>
 
         <!-- 세부 정보 (숨김 상태) -->
