@@ -1,83 +1,199 @@
-let currentOptionIndex = 0;
+let userInfo = {}; // 사용자 정보 저장 객체 (성별, 키, 몸무게, 스타일 등 사용자 입력값 저장)
+let selectedTop = null; // 선택한 상의 ID 저장
+let selectedBottom = null; // 선택한 하의 ID 저장
+let isTopFirst = true; // 추천 시작 순서 (true: 상의 먼저, false: 하의 먼저)
 
-// 옵션 보이기
-function showNextOption() {
-  const currentOption = document.getElementById(`option${currentOptionIndex + 1}`);
-  if (currentOption) {
-    currentOption.style.display = "block";
+/**
+ * 특정 섹션만 활성화하는 함수
+ * @param {string} sectionId - 활성화하려는 섹션의 ID
+ */
+function showSection(sectionId) {
+  document.querySelectorAll(".option-section").forEach((section) => {
+    section.classList.remove("active");
+  });
+  document.getElementById(sectionId).classList.add("active");
+}
+
+/**
+ * 입력값 유효성 검증 후 다음 섹션으로 이동
+ * @param {string} nextSectionId - 이동할 섹션 ID
+ */
+function nextSection(nextSectionId) {
+  if (nextSectionId === "heightWeightSection") {
+    const gender = document.getElementById("gender").value;
+    if (!gender) {
+      alert("성별을 선택해주세요.");
+      return;
+    }
+  } else if (nextSectionId === "styleSection") {
+    const height = document.getElementById("height").value;
+    const weight = document.getElementById("weight").value;
+    if (!height || !weight) {
+      alert("키와 몸무게를 입력해주세요.");
+      return;
+    }
+  } else if (nextSectionId === "recommendationOrderSection") {
+    const style = document.getElementById("style").value;
+    if (!style) {
+      alert("스타일을 선택해주세요.");
+      return;
+    }
   }
+  showSection(nextSectionId);
 }
 
-// 옵션 선택
-function selectOption(optionId, selectedOption) {
-  alert(`${selectedOption}을 선택하셨습니다.`);
-  document.getElementById(optionId).style.display = "none";
-  currentOptionIndex++;
-  showNextOption();
+/**
+ * 이전 섹션으로 돌아가기
+ * @param {string} previousSectionId - 돌아갈 섹션 ID
+ */
+function previousSection(previousSectionId) {
+  showSection(previousSectionId);
 }
 
-// 신체 정보 입력 확인
-function selectOptionInput(optionID) {
-  const stature = document.getElementById("option_stature").value;
-  const weight = document.getElementById("option_weight").value;
+/**
+ * 추천 시작 함수
+ */
+function startRecommendation() {
+  const gender = document.getElementById("gender").value;
+  const height = document.getElementById("height").value;
+  const weight = document.getElementById("weight").value;
+  const style = document.getElementById("style").value;
+  const recommendationOrder = document.getElementById("recommendationOrder").value;
 
-  if (!isNaN(stature) && !isNaN(weight) && stature && weight) {
-    alert(`키: ${stature}, 몸무게: ${weight}가 입력되었습니다.`);
-    document.getElementById(optionID).style.display = "none";
-    currentOptionIndex++;
-    showNextOption();
-  } else {
-    alert("숫자만 입력해주세요.");
+  if (!gender || !height || !weight || !style || !recommendationOrder) {
+    alert("모든 정보를 입력해주세요.");
+    return;
   }
+
+  userInfo = { gender, height, weight, style };
+  isTopFirst = recommendationOrder === "상의";
+  requestRecommendation(isTopFirst ? "상의" : "하의");
 }
 
-// 뒤로 가기
-function goBack(currentOptionId, previousOptionId) {
-  document.getElementById(currentOptionId).style.display = "none";
-  document.getElementById(previousOptionId).style.display = "block";
-  currentOptionIndex--;
-}
+/**
+ * 추천 요청 함수
+ * @param {string} type - 추천 요청 타입 ("상의" 또는 "하의")
+ */
+async function requestRecommendation(type) {
+  const token = localStorage.getItem("token");
+  const user_id = token ? parseInt(localStorage.getItem("user_id"), 10) : null;
 
-// 상의 스타일 선택
-function showTopClothing(category) {
-  const categoryButtons = document.getElementById("categoryButtons");
-  const clothingOptions = document.getElementById("clothingOptions");
-
-  categoryButtons.classList.add("hidden");
-  clothingOptions.classList.remove("hidden");
-
-  document.getElementById("selectedCategory").innerText = category;
-
-  const clothingItems = {
-    캐주얼: ["니트", "맨투맨", "후드티"],
-    스트릿: ["오버사이즈 티셔츠", "조거 팬츠", "스니커즈"],
-    미니멀: ["슬랙스", "니트", "셔츠"],
-    워크웨어: ["작업복", "카고 팬츠", "부츠"],
-    스포티: ["운동복", "레깅스", "스포츠 브라"],
-    클래식: ["블레이저", "드레스 셔츠", "치노 팬츠"],
-    시크: ["블랙 원피스", "가죽 자켓", "하이힐"],
-    로맨틱: ["레이스 블라우스", "플레어 스커트", "샌들"],
-    시티보이: ["후드 집업", "반바지", "캡"],
-    레트로: ["빈티지 티셔츠", "데님 재킷", "와이드 팬츠"],
+  const payload = {
+    user_id,
+    gender: userInfo.gender,
+    height: parseInt(userInfo.height, 10),
+    weight: parseInt(userInfo.weight, 10),
+    style: userInfo.style,
+    clothingType: type,
   };
 
-  const items = clothingItems[category];
-  const clothingDiv = document.getElementById("clothingItems");
-  clothingDiv.innerHTML = ""; // 초기화
+  try {
+    const aiResponse = await fetch("http://khs.uy.to:8000/api/recommend", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
 
-  items.forEach((item) => {
-    const button = document.createElement("button");
-    button.textContent = item;
-    clothingDiv.appendChild(button);
+    if (!aiResponse.ok) {
+      const errorMessage = await aiResponse.text();
+      alert(`추천 요청 실패: ${errorMessage}`);
+      return;
+    }
+
+    const aiData = await aiResponse.json();
+    if (aiData.recommendations.length > 0) {
+      displayRecommendations(aiData.recommendations, type);
+    } else {
+      alert("추천 결과가 없습니다.");
+    }
+  } catch (error) {
+    alert("추천 요청 중 오류 발생.");
+  }
+}
+
+/**
+ * 추천 결과 표시 함수
+ */
+function displayRecommendations(items, type) {
+  const container = document.getElementById("recommendationResults");
+  container.innerHTML = items
+    .map(
+      (item) => `
+        <div class="recommendation-item" onclick="selectItem('${type}', '${item.id}')">
+          <img src="${item.이미지_URL}" alt="${item.id}" />
+          <p>${item.상품명}</p>
+        </div>`
+    )
+    .join("");
+  showSection("recommendationSection");
+}
+
+/**
+ * 추천 아이템 선택 함수
+ */
+function selectItem(type, id) {
+  document.querySelectorAll(".recommendation-item img").forEach((img) => {
+    img.classList.remove("selected");
   });
+
+  const selectedImage = document.querySelector(`.recommendation-item img[alt="${id}"]`);
+  if (selectedImage) {
+    selectedImage.classList.add("selected");
+    if (type === "상의") {
+      selectedTop = id;
+    } else if (type === "하의") {
+      selectedBottom = id;
+    }
+  }
 }
 
-// 재추천
-function recommend() {
-  alert("추천 항목을 새로 제공합니다.");
+/**
+ * 선택 확인 및 다음 단계로 이동
+ */
+function confirmSelection() {
+  if (isTopFirst) {
+    if (!selectedTop) {
+      alert("먼저 상의를 선택해주세요.");
+      return;
+    }
+    if (!selectedBottom) {
+      requestRecommendation("하의");
+    } else {
+      goToClothingSet();
+    }
+  } else {
+    if (!selectedBottom) {
+      alert("먼저 하의를 선택해주세요.");
+      return;
+    }
+    if (!selectedTop) {
+      requestRecommendation("상의");
+    } else {
+      goToClothingSet();
+    }
+  }
 }
 
-// 페이지 로드 시 첫 번째 옵션 보여주기
-window.onload = function () {
-  showNextOption();
-};
+/**
+ * 최종 결과 페이지로 이동
+ */
+function goToClothingSet() {
+  if (!selectedTop || !selectedBottom) {
+    alert("상의와 하의를 모두 선택해주세요.");
+    return;
+  }
+
+  const url = `clothing_set.html?top=${encodeURIComponent(selectedTop)}&bottom=${encodeURIComponent(selectedBottom)}&gender=${encodeURIComponent(userInfo.gender)}&height=${encodeURIComponent(userInfo.height)}&weight=${encodeURIComponent(userInfo.weight)}&style=${encodeURIComponent(userInfo.style)}`;
+  window.location.href = url;
+}
+
+/**
+ * 초기화 및 재시작
+ */
+function restart() {
+  userInfo = {};
+  selectedTop = null;
+  selectedBottom = null;
+  isTopFirst = true;
+  showSection("genderSection");
+}

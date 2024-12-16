@@ -54,7 +54,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div>
                   <div><strong>상품명:</strong> ${preset.top_name || "정보 없음"}</div>
                   <div><strong>브랜드:</strong> ${preset.top_brand || "정보 없음"}</div>
-                  <div><strong>구매링크:</strong> ${preset.top_purchase || "정보 없음"}</div>
+                   <div><strong>구매링크:</strong> ${
+              preset.top_purchase
+                ? `<a href="${preset.top_purchase}" target="_blank">구매하기</a>`
+                : "정보 없음"
+            }</div>
                 </div>
               </div>
               <div class="item">
@@ -62,22 +66,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div>
                   <div><strong>상품명:</strong> ${preset.bottom_name || "정보 없음"}</div>
                   <div><strong>브랜드:</strong> ${preset.bottom_brand || "정보 없음"}</div>
-                  <div><strong>구매링크:</strong> ${preset.bottom_purchase || "정보 없음"}</div>
+                   <div><strong>구매링크:</strong> ${
+              preset.bottom_purchase
+                ? `<a href="${preset.bottom_purchase}" target="_blank">구매하기</a>`
+                : "정보 없음"
+            }</div>
                 </div>
               </div>
-              <button
-                class="button"
-                onclick="toggleDetails(${preset.user_closet_id}, '${preset.style}', ${preset.height}, ${preset.weight}, '${preset.sex}')"
-              >
-                세부정보
-              </button>
-              <button
-                class="button delete-button"
-                onclick="deletePreset(${preset.user_closet_id})"
-              >
-                삭제
-              </button>
-            </div>
+              <div class="button-container">
+                    <button class="button delete-button" onclick="deletePreset(${preset.user_closet_id})">
+                      삭제
+                    </button>
+                    <button class="button" onclick="toggleDetails(${preset.user_closet_id}, '${preset.style}', ${preset.height}, ${preset.weight}, '${preset.sex}')">
+                      세부정보
+                    </button>
+                  </div>
+                </div>
             <!-- 세부 정보 (숨김 상태) -->
             <div id="details-box-${preset.user_closet_id}" class="details-box"></div>
           </div>`
@@ -130,4 +134,31 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
   }
-  
+  // 세부 정보 표시 (모달)
+  function toggleDetails(userClosetId, style, height, weight, sex) {
+    const modal = document.getElementById("modal");
+    const modalDetails = document.getElementById("modal-details");
+
+    modal.style.display = "flex"; // 모달을 표시
+    modalDetails.innerHTML = `
+          <h3>세부 정보</h3>
+          <p><strong>스타일:</strong> ${style}</p>
+          <p><strong>키:</strong> ${height}cm</p>
+          <p><strong>몸무게:</strong> ${weight}kg</p>
+          <p><strong>성별:</strong> ${sex}</p>
+      `;
+  }
+
+  // 모달 닫기 함수
+  function closeModal() {
+    const modal = document.getElementById("modal");
+    modal.style.display = "none"; // 모달 숨기기
+  }
+
+  // 모달 외부 클릭 시 닫기
+  window.onclick = function (event) {
+    const modal = document.getElementById("modal");
+    if (event.target == modal) {
+      closeModal(); // 모달이 외부 클릭 시 닫힘
+    }
+  };

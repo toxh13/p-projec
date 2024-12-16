@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.neighbors import NearestNeighbors
 from sqlalchemy import create_engine
-import random
+
 # MySQL 연결 설정
 DB_CONFIG = {
     "host": "khs.uy.to",
@@ -51,8 +51,69 @@ def get_user_closet_preset(user_id):
     return preset
 
 
-def recommend_clothing(clothing_data, user_id, user_height, user_weight, user_gender, user_style,
-                                         clothingType, top_n=3):
+def calculate_similarity_score(row, user_height, user_weight, user_style, user_gender):
+    """
+    각 의류 항목과 사용자의 유사도를 계산하는 함수
+    """
+    # 키와 몸무게에 기반한 거리 계산 (Euclidean)
+    distance = np.sqrt((row['평균_키'] - user_height) ** 2 + (row['평균_몸무게'] - user_weight) ** 2)
+
+    # 스타일 점수 (사용자 스타일과 불일치 시 패널티 추가)
+    style_score = 0 if row['스타일'] == user_style else 5
+
+    # 성별 점수 (성별이 일치하면 0점, 공용이면 2점, 불일치하면 10점)
+    if row['성별'] == user_gender:
+        gender_score = 0
+    elif row['성별'] == "공용":
+        gender_score = 2
+    else:
+        gender_score = 10
+
+    # 총 점수 (거리 + 스타일 점수 + 성별 점수)
+    total_score = distance + style_score + gender_score
+    return total_score
+
+
+def recommend_based_on_conditions(clothing_data, user_height, user_weight, user_gender, user_style, clothingType,
+                                  top_n=3):
+    """
+    조건 기반 추천 함수: 키, 몸무게, 성별, 스타일에 따라 유사한 의류 추천
+    """
+    # 사용자 조건에 맞는 데이터 필터링
+    filtered_data = clothing_data[
+        (clothing_data['평균_키'] >= user_height - 5) &
+        (clothing_data['평균_키'] <= user_height + 5) &
+        (clothing_data['평균_몸무게'] >= user_weight - 5) &
+        (clothing_data['평균_몸무게'] <= user_weight + 5) &
+        ((clothing_data['성별'] == user_gender) | (clothing_data['성별'] == "공용")) &
+        (clothing_data['스타일'] == user_style) &
+        (clothing_data['부위'].str.strip().str.lower() == clothingType.strip().lower())
+        ]
+
+    if filtered_data.empty:
+        return []
+
+    # 복사본 생성 및 유사도 점수 계산
+    filtered_data = filtered_data.copy()
+    filtered_data.loc[:, 'similarity_score'] = filtered_data.apply(
+        calculate_similarity_score,
+        axis=1,
+        args=(user_height, user_weight, user_style, user_gender)
+    )
+
+    # 무작위 가중치 추가
+    random_weights = np.random.uniform(0, 3.0, size=len(filtered_data))  # 무작위 가중치 추가
+    filtered_data.loc[:, 'random_score'] = filtered_data['similarity_score'] + random_weights
+
+    # 유사도 점수와 무작위 가중치를 합산한 점수로 정렬하여 상위 top_n 항목 반환
+    recommendations = filtered_data.nsmallest(top_n, 'random_score')
+    return recommendations[['id', '상품명', '이미지_URL', 'random_score']].to_dict(orient='records')
+
+
+def recommend_clothing(clothing_data, user_id, user_height, user_weight, user_gender, user_style, clothingType, top_n=3):
+    """
+    프리셋 기반 추천 또는 조건 기반 추천을 수행하는 함수
+    """
     if user_id:
         preset = get_user_closet_preset(user_id)
         if not preset.empty:
@@ -68,63 +129,22 @@ def recommend_clothing(clothing_data, user_id, user_height, user_weight, user_ge
                 print(f"알 수 없는 clothingType: {clothingType}")
                 return []
 
-            # 추천 로직
-            recommendations = []
-            for _, item in preset_items.iterrows():
-                features = clothing_data[['평균_키', '평균_몸무게']].values
-                item_features = np.array([[item['평균_키'], item['평균_몸무게']]])
-                knn = NearestNeighbors(n_neighbors=min(top_n, len(features)), metric='euclidean')
-                knn.fit(features)
-                distances, indices = knn.kneighbors(item_features)
+            # 프리셋 기반 추천
+            if not preset_items.empty:
+                recommendations = recommend_based_on_conditions(
+                    preset_items, user_height, user_weight, user_gender, user_style, clothingType, top_n
+                )
+                if len(recommendations) < top_n:  # 추천 결과가 부족한 경우
+                    print("프리셋 기반 추천 결과가 충분하지 않습니다. 조건 기반 추천으로 전환합니다.")
+                    return recommend_based_on_conditions(
+                        clothing_data, user_height, user_weight, user_gender, user_style, clothingType, top_n
+                    )
+                return recommendations
 
-                similar_items = clothing_data.iloc[indices[0]].copy()
-                similar_items['distance'] = distances[0]
-                similar_items = similar_items[similar_items['부위'] == clothingType]
-                recommendations.append(similar_items)
-
-            # 결과 병합
-            all_recommendations = pd.concat(recommendations).drop_duplicates(subset='id')
-            all_recommendations = all_recommendations.nsmallest(top_n, 'distance')
-
-            # 프리셋 결과 부족 시 조건 기반 추천
-            if all_recommendations.empty or len(all_recommendations) < top_n:
-                print("프리셋 기반 추천 결과가 충분하지 않습니다. 조건 기반 추천으로 전환합니다.")
-                return recommend_based_on_conditions(clothing_data, user_height, user_weight, user_gender, user_style, clothingType, top_n)
-
-            return all_recommendations[['id', '상품명', '이미지_URL', 'distance']].to_dict(orient='records')
-
-    # 이전 데이터가 없는 경우 조건 기반 추천
+    # 프리셋이 없거나 결과가 부족할 경우 조건 기반 추천
+    print("프리셋 기반 추천이 부족하여 조건 기반 추천으로 전환합니다.")
     return recommend_based_on_conditions(clothing_data, user_height, user_weight, user_gender, user_style, clothingType, top_n)
 
-
-def recommend_based_on_conditions(clothing_data, user_height, user_weight, user_gender, user_style, clothingType, top_n=3):
-    filtered_data = clothing_data[
-        (clothing_data['평균_키'] >= user_height - 10) &
-        (clothing_data['평균_키'] <= user_height + 10) &
-        (clothing_data['평균_몸무게'] >= user_weight - 10) &
-        (clothing_data['평균_몸무게'] <= user_weight + 10) &
-        ((clothing_data['성별'] == user_gender) | (clothing_data['성별'] == "공용")) &
-        (clothing_data['스타일'] == user_style) &
-        (clothing_data['부위'].str.strip().str.lower() == clothingType.strip().lower())
-    ]
-
-    if filtered_data.empty:
-        return []
-
-    features = filtered_data[['평균_키', '평균_몸무게']].values
-    user_features = np.array([[user_height, user_weight]])
-
-    knn = NearestNeighbors(n_neighbors=min(top_n, len(features)), metric='euclidean')
-    knn.fit(features)
-
-    distances, indices = knn.kneighbors(user_features)
-    recommendations = filtered_data.iloc[indices[0]].copy()
-    recommendations['distance'] = distances[0]
-
-    # 결과를 섞기
-    recommendations = recommendations.sample(frac=1).reset_index(drop=True)
-
-    return recommendations[['id', '상품명', '이미지_URL', 'distance']].to_dict(orient='records')
 
 
 # 실행
@@ -133,7 +153,7 @@ if __name__ == "__main__":
     clothing_data = load_clothing_data()
 
     # 사용자 정보
-    user_id = 3  # 로그인된 사용자 ID (비로그인: None)
+    user_id = 1  # 로그인된 사용자 ID (비로그인: None)
     user_height = 175
     user_weight = 70
     user_gender = "남성"
@@ -149,7 +169,6 @@ if __name__ == "__main__":
     if recommendations:
         print("추천 결과:")
         for rec in recommendations:
-            print(f"ID: {rec['id']}, 상품명: {rec['상품명']}, 거리: {rec['distance']}, 이미지 URL: {rec['이미지_URL']}")
+            print(f"ID: {rec['id']}, 상품명: {rec['상품명']}, 무작위 점수: {rec['random_score']}, 이미지 URL: {rec['이미지_URL']}")
     else:
         print("추천 결과가 없습니다.")
-

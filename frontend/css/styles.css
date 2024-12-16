@@ -11183,7 +11183,7 @@ html {
 .navbar-custom {
   padding-top: 1rem;
   padding-bottom: 1rem;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0);
 }
 .navbar-custom .navbar-brand {
   text-transform: uppercase;
