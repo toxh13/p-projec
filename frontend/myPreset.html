@@ -7,6 +7,7 @@
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
     <title>내스타일 - 스타일 추천 시스템</title>
+    <link rel="icon" type="image/x-icon" href="image/webpageicon.ico" />
     <script
       src="https://use.fontawesome.com/releases/v6.3.0/js/all.js"
       crossorigin="anonymous"
@@ -20,192 +21,271 @@
       rel="stylesheet"
     />
 
+    <style>
+      body {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        font-family: Arial, sans-serif;
+        padding-top: 90px;
+      }
+
+      h2 {
+        padding-bottom: 30px;
+      }
+
+      #preset-container {
+        display: flex;
+        flex-direction: column; /* 프리셋을 수직으로 정렬 */
+        gap: 30px; /* 프리셋 간 간격 추가 */
+      }
+
+      .preset {
+        display: flex;
+        flex-direction: row; /* 개별 프리셋 내부의 콘텐츠는 수평 정렬 */
+        align-items: flex-start; /* 콘텐츠 상단 정렬 */
+        gap: 30px; /* 내부 콘텐츠 간 간격 추가 */
+        border: 1px solid #ddd; /* 각 프리셋에 경계선 추가 */
+        padding: 20px;
+        border-radius: 10px; /* 둥근 모서리 추가 */
+        background-color: #f9f9f9; /* 배경색 추가 */
+      }
+
+      .clothing-info {
+        display: flex;
+        flex-direction: column; /* 상품 데이터를 수직 정렬 */
+        flex: 3; /* 텍스트 영역 비율을 더 넓게 설정 */
+        gap: 15px;
+      }
+
+      .clothing-info .item {
+        display: flex;
+        align-items: flex-start;
+        gap: 20px;
+      }
+      .item div {
+        display: grid;
+        grid-template-rows: 1fr 1fr;
+        font-size: 20px;
+        margin-bottom: 20px;
+      }
+
+      .clothing-info img {
+        width: 250px; /* 이미지 크기 조정 */
+        height: auto; /* 비율 유지 */
+        border-radius: 5px;
+        flex-shrink: 0; /* 이미지가 텍스트에 의해 줄어들지 않도록 설정 */
+      }
+
+      .details-box {
+        flex-grow: 1;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 20px;
+        background-color: #fff; /* 세부 정보 배경 흰색 */
+        display: none; /* 기본 숨김 */
+        margin: 0; /* 외부 여백 제거 */
+        align-self: stretch; /* 상위 요소의 높이에 맞춰 확장 */
+      }
+
+      .button-container {
+  display: flex;
+  justify-content: flex-start; /* 왼쪽 정렬 */
+  align-items: flex-end; /* 아래쪽 정렬 */
+  gap: 10px; /* 버튼 간 간격 */
+}
+
+.button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 5px 10px; /* 버튼 크기 축소 */
+  cursor: pointer;
+  border-radius: 3px; /* 모서리를 약간 둥글게 */
+  font-size: 12px; /* 글씨 크기 축소 */
+  text-align: center;
+}
+
+.button:hover {
+  background-color: #0056b3; /* 호버 효과 */
+}
+
+.delete-button {
+  background-color: #dc3545;
+}
+
+.delete-button:hover {
+  background-color: #a71d2a;
+}
+    </style>
+
     <!--CSS-->
     <link href="css/styles.css" rel="stylesheet" />
-    <!--부트스트립립-->
-    <link href="css/myPreset.css" rel="stylesheet" />
-    <!--내스타일 디자인-->
+    <!--부트스트랩랩-->
   </head>
 
   <body>
     <div id="nav-container"></div>
     <!-- 동적으로 nav.html 삽입 -->
 
-    <h1>내 스타일 - 저장된 프리셋</h1>
+    <h2>내 스타일 - 저장된 프리셋</h2>
     <div id="preset-container"></div>
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        fetchPresets();
-      });
 
-      // 프리셋 데이터를 가져오기 위한 함수
-      function fetchPresets() {
+    <!--JS-->
+    <script src="js/navbar.js" defer></script>
+    <!--동적 네비게이션 바-->
+    <script src="js/mypreset.js" defer></script>
+    <!--내스타일 기능-->
+  </body>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      fetchPresets();
+    });
+
+    // 프리셋 데이터를 가져오기 위한 함수
+    function fetchPresets() {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("로그인이 필요합니다.");
+        window.location.href = "/login.html";
+        return;
+      }
+
+      fetch("http://khs.uy.to:3000/api/clothing_presets", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP 상태 코드: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          const presets = Array.isArray(data) ? data : data.data;
+          if (!presets || presets.length === 0) {
+            renderNoPresets();
+            return;
+          }
+          renderPresets(presets);
+        })
+        .catch((error) => {
+          console.error("프리셋 데이터를 가져오는 중 오류:", error);
+          alert(`프리셋을 불러오는 중 오류가 발생했습니다: ${error.message}`);
+        });
+    }
+
+    function renderPresets(presets) {
+  const container = document.getElementById("preset-container");
+
+  container.innerHTML = presets
+    .map(
+      (preset) => `
+    <div class="preset">
+      <!-- 의류 정보 -->
+      <div class="clothing-info">
+        <div class="item">
+          <img src="${preset.top_image_url || "#"}" alt="상의 이미지" />
+          <div>
+            <div><strong>상품명:</strong> ${preset.top_name || "정보 없음"}</div>
+            <div><strong>브랜드:</strong> ${preset.top_brand || "정보 없음"}</div>
+            <div><strong>구매링크:</strong> ${
+              preset.top_purchase
+                ? `<a href="${preset.top_purchase}" target="_blank" rel="noopener noreferrer">구매하기</a>`
+                : "정보 없음"
+            }</div>
+          </div>
+        </div>
+        <div class="item">
+          <img src="${preset.bottom_image_url || "#"}" alt="하의 이미지" />
+          <div>
+            <div><strong>상품명:</strong> ${preset.bottom_name || "정보 없음"}</div>
+            <div><strong>브랜드:</strong> ${preset.bottom_brand || "정보 없음"}</div>
+            <div><strong>구매링크:</strong> ${
+              preset.bottom_purchase
+                ? `<a href="${preset.bottom_purchase}" target="_blank" rel="noopener noreferrer">구매하기</a>`
+                : "정보 없음"
+            }</div>
+          </div>
+        </div>
+        <div class="button-container">
+          <button class="button delete-button" onclick="deletePreset(${preset.user_closet_id})">
+            삭제
+          </button>
+          <button class="button" onclick="toggleDetails(${preset.user_closet_id}, '${preset.style}', ${preset.height}, ${preset.weight}, '${preset.gender}')">
+            세부정보
+          </button>
+        </div>
+      </div>
+      <!-- 세부 정보 (숨김 상태) -->
+      <div id="details-box-${preset.user_closet_id}" class="details-box"></div>
+    </div>`
+    )
+    .join("");
+}
+
+
+
+    // 세부 정보 표시
+    function toggleDetails(userClosetId, style, height, weight, gender) {
+  const detailsBox = document.getElementById(`details-box-${userClosetId}`);
+  
+  if (!detailsBox) {
+    console.error(`Details box not found for userClosetId: ${userClosetId}`);
+    return; // DOM 요소가 없는 경우 함수 종료
+  }
+
+  // 현재 display 상태 확인
+  const isHidden = !detailsBox.style.display || detailsBox.style.display === "none";
+  
+  detailsBox.style.display = isHidden ? "block" : "none";
+
+  if (isHidden) {
+    // 세부 정보를 동적으로 설정
+    detailsBox.innerHTML = `
+      <h3>세부 정보</h3>
+      <p><strong>스타일:</strong> ${style}</p>
+      <p><strong>키:</strong> ${height}cm</p>
+      <p><strong>몸무게:</strong> ${weight}kg</p>
+      <p><strong>성별:</strong> ${gender}</p>
+    `;
+  }
+}
+
+
+    // 프리셋이 없을 때 렌더링
+    function renderNoPresets() {
+      const container = document.getElementById("preset-container");
+      container.innerHTML = "<p>저장된 프리셋이 없습니다.</p>";
+    }
+
+    // 삭제 API 호출 후 UI에서 삭제된 프리셋을 제거
+    function deletePreset(userClosetId) {
+      if (confirm("정말로 삭제하시겠습니까?")) {
         const token = localStorage.getItem("token");
-        if (!token) {
-          alert("로그인이 필요합니다.");
-          window.location.href = "/login.html";
-          return;
-        }
-
-        fetch("http://khs.uy.to:3000/api/clothing_presets", {
-          method: "GET",
+        fetch(`http://khs.uy.to:3000/api/user_closets/${userClosetId}`, {
+          method: "DELETE",
           headers: {
             Authorization: `Bearer ${token}`,
           },
         })
           .then((response) => {
             if (!response.ok) {
-              throw new Error(`HTTP 상태 코드: ${response.status}`);
+              throw new Error(`삭제 실패 (HTTP 상태 코드: ${response.status})`);
             }
-            return response.json();
-          })
-          .then((data) => {
-            const presets = Array.isArray(data) ? data : data.data;
-            if (!presets || presets.length === 0) {
-              renderNoPresets();
-              return;
-            }
-            renderPresets(presets);
+            alert("프리셋이 삭제되었습니다.");
+            window.location.reload(); // 페이지 새로고침
           })
           .catch((error) => {
-            console.error("프리셋 데이터를 가져오는 중 오류:", error);
-            alert(`프리셋을 불러오는 중 오류가 발생했습니다: ${error.message}`);
+            console.error("삭제 중 오류 발생:", error);
+            alert("삭제 중 오류가 발생했습니다.");
           });
       }
+    }
+  </script>
 
-      // 프리셋 데이터를 렌더링
-      function renderPresets(presets) {
-        const container = document.getElementById("preset-container");
-
-        container.innerHTML = presets
-          .map(
-            (preset) => `
-            <div class="preset">
-              <!-- 의류 정보 -->
-              <div class="clothing-info">
-                <div class="item">
-                  <img src="${preset.top_image_url || "#"}" alt="상의 이미지" />
-                  <div>
-                    <div><strong>상품명:</strong> ${
-                      preset.top_name || "정보 없음"
-                    }</div>
-                    <div><strong>브랜드:</strong> ${
-                      preset.top_brand || "정보 없음"
-                    }</div>
-                    <div><strong>구매링크:</strong> ${
-                      preset.top_purchase || "정보 없음"
-                    }</div>
-                  </div>
-                </div>
-                <div class="item">
-                  <img src="${
-                    preset.bottom_image_url || "#"
-                  }" alt="하의 이미지" />
-                  <div>
-                    <div><strong>상품명:</strong> ${
-                      preset.bottom_name || "정보 없음"
-                    }</div>
-                    <div><strong>브랜드:</strong> ${
-                      preset.bottom_brand || "정보 없음"
-                    }</div>
-                    <div><strong>구매링크:</strong> ${
-                      preset.top_brand || "정보 없음"
-                    }</div>
-                  </div>
-                </div>
-                <button
-                  class="button"
-                  onclick="toggleDetails(${preset.user_closet_id}, '${
-              preset.style
-            }', ${preset.height}, ${preset.weight}, '${preset.sex}')"
-                >
-                  세부정보
-                </button>
-                <button
-                  class="button delete-button"
-                  onclick="deletePreset(${preset.user_closet_id})"
-                >
-                  삭제
-                </button>
-              </div>
-
-              <!-- 세부 정보 (숨김 상태) -->
-              <div id="details-box-${
-                preset.user_closet_id
-              }" class="details-box"></div>
-            </div>`
-          )
-          .join("");
-      }
-
-      // 세부 정보 표시
-      function toggleDetails(userClosetId, style, height, weight, sex) {
-        const detailsBox = document.getElementById(
-          `details-box-${userClosetId}`
-        );
-        detailsBox.style.display =
-          detailsBox.style.display === "none" ? "block" : "none";
-        if (detailsBox.style.display === "block") {
-          detailsBox.innerHTML = `
-            <h3>세부 정보</h3>
-            <p><strong>스타일:</strong> ${style}</p>
-            <p><strong>키:</strong> ${height}cm</p>
-            <p><strong>몸무게:</strong> ${weight}kg</p>
-            <p><strong>성별:</strong> ${sex}</p>
-          `;
-        }
-      }
-
-      // 프리셋이 없을 때 렌더링
-      function renderNoPresets() {
-        const container = document.getElementById("preset-container");
-        container.innerHTML = "<p>저장된 프리셋이 없습니다.</p>";
-      }
-
-      // 삭제 API 호출 후 UI에서 삭제된 프리셋을 제거
-      function deletePreset(userClosetId) {
-        if (confirm("정말로 삭제하시겠습니까?")) {
-          const token = localStorage.getItem("token");
-          fetch(`http://khs.uy.to:3000/api/user_closets/${userClosetId}`, {
-            method: "DELETE",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          })
-            .then((response) => {
-              if (!response.ok) {
-                throw new Error(
-                  `삭제 실패 (HTTP 상태 코드: ${response.status})`
-                );
-              }
-              alert("프리셋이 삭제되었습니다.");
-              window.location.reload(); // 페이지 새로고침
-            })
-            .catch((error) => {
-              console.error("삭제 중 오류 발생:", error);
-              alert("삭제 중 오류가 발생했습니다.");
-            });
-        }
-      }
-      function printLocalStorage() {
-  console.log("LocalStorage 데이터 확인:");
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    const value = localStorage.getItem(key);
-    console.log(`${key}: ${value}`);
-  }
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("페이지 로드 시 로컬스토리지 내용 확인:");
-  printLocalStorage();
-});
-
-    </script>
-    <!--JS-->
-    <script src="js/navbar.js" defer></script>
-    <!--동적 네비게이션 바-->
-    <!--<script src="js/mypreset.js" defer></script>-->
-    <!--내스타일 기능-->
-  </body>
+  <script src="js/navbar.js" defer></script>
 </html>
