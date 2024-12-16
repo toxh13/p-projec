@@ -89,6 +89,15 @@
         align-self: stretch; /* 상위 요소의 높이에 맞춰 확장 */
       }
 
+      .button-container {
+        display: flex;
+        justify-content: space-between; /* 양옆으로 배치 */
+        width: 100%; /* 버튼 컨테이너가 전체 폭 차지 */
+        position: absolute; /* 절대 위치로 설정 */
+        bottom: 20px; /* 하단에서 20px 떨어진 위치 */
+        left: 0; /* 왼쪽 정렬 */
+      }
+
       .button {
         background-color: #007bff;
         color: white;
@@ -132,7 +141,8 @@
         padding: 20px;
         border-radius: 10px;
         width: 80%; /* 원하는 너비로 조정 */
-        max-width: 600px; /* 최대 너비 */
+        max-width: 300px; /* 최대 너비 */
+        text-align: center;
       }
 
       .close-button {
@@ -218,61 +228,39 @@
           .map(
             (preset) => `
               <div class="preset">
-                  <!-- 의류 정보 -->
-                  <div class="clothing-info">
-                      <div class="item">
-                          <img src="${
-                            preset.top_image_url || "#"
-                          }" alt="상의 이미지" />
-                          <div>
-                              <div><strong>상품명:</strong> ${
-                                preset.top_name || "정보 없음"
-                              }</div>
-                              <div><strong>브랜드:</strong> ${
-                                preset.top_brand || "정보 없음"
-                              }</div>
-                              <div><strong>구매링크:</strong> ${
-                                preset.top_purchase_link || "정보 없음"
-                              }</div>
-                          </div>
-                      </div>
-                      <div class="item">
-                          <img src="${
-                            preset.bottom_image_url || "#"
-                          }" alt="하의 이미지" />
-                          <div>
-                              <div><strong>상품명:</strong> ${
-                                preset.bottom_name || "정보 없음"
-                              }</div>
-                              <div><strong>브랜드:</strong> ${
-                                preset.bottom_brand || "정보 없음"
-                              }</div>
-                              <div><strong>구매링크:</strong> ${
-                                preset.top_brand || "정보 없음"
-                              }</div>
-                          </div>
-                      </div>
-                      <button class="button delete-button" onclick="deletePreset(${
-                        preset.user_closet_id
-                      })">
-                          삭제
-                      </button>
-                      <button class="button" onclick="toggleDetails(${
-                        preset.user_closet_id
-                      }, '${preset.style}', ${preset.height}, ${
-              preset.weight
-            }, '${preset.sex}')">
-                          세부정보
-                      </button>
+                <!-- 의류 정보 -->
+                <div class="clothing-info">
+                  <div class="item">
+                    <img src="${preset.top_image_url || "#"}" alt="상의 이미지" />
+                    <div>
+                      <div><strong>상품명:</strong> ${preset.top_name || "정보 없음"}</div>
+                      <div><strong>브랜드:</strong> ${preset.top_brand || "정보 없음"}</div>
+                      <div><strong>구매링크:</strong> ${preset.top_purchase_link || "정보 없음"}</div>
+                    </div>
                   </div>
+                  <div class="item">
+                    <img src="${preset.bottom_image_url || "#"}" alt="하의 이미지" />
+                    <div>
+                      <div><strong>상품명:</strong> ${preset.bottom_name || "정보 없음"}</div>
+                      <div><strong>브랜드:</strong> ${preset.bottom_brand || "정보 없음"}</div>
+                      <div><strong>구매링크:</strong> ${ preset.top_brand || "정보 없음"}</div>
+                    </div>
+                  </div>
+                  <div class="button-container">
+                    <button class="button delete-button" onclick="deletePreset(${preset.user_closet_id})">
+                      삭제
+                    </button>
+                    <button class="button" onclick="toggleDetails(${preset.user_closet_id}, '${preset.style}', ${preset.height}, ${preset.weight}, '${preset.sex}')">
+                      세부정보
+                    </button>
+                  </div>
+                </div>
 
-                  <!-- 세부 정보 (숨김 상태) -->
-                  <div id="details-box-${
-                    preset.user_closet_id
-                  }" class="details-box"></div>
+                <!-- 세부 정보 (숨김 상태) -->
+                <div id="details-box-${preset.user_closet_id}" class="details-box"></div>
               </div>`
-          )
-          .join("");
+            )
+            .join("");
       }
 
       // 세부 정보 표시 (모달)
