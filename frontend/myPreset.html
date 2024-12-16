@@ -31,7 +31,7 @@
       }
 
       h2 {
-        padding-bottom: 30px;
+        padding-bottom: 20px;
       }
 
       #preset-container {
@@ -89,34 +89,33 @@
       }
 
       .button-container {
-  display: flex;
-  justify-content: flex-start; /* 왼쪽 정렬 */
-  align-items: flex-end; /* 아래쪽 정렬 */
-  gap: 10px; /* 버튼 간 간격 */
-}
+        display: flex;
+        flex-direction: row-reverse;
+        gap: 10px; /* 버튼 간 간격 추가 */
+      }
 
-.button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 5px 10px; /* 버튼 크기 축소 */
-  cursor: pointer;
-  border-radius: 3px; /* 모서리를 약간 둥글게 */
-  font-size: 12px; /* 글씨 크기 축소 */
-  text-align: center;
-}
+      .button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 15px; /* 버튼 크기 조정 */
+        cursor: pointer;
+        border-radius: 5px;
+        font-size: 16px; /* 텍스트 크기 조정 */
+        text-align: center;
+      }
 
-.button:hover {
-  background-color: #0056b3; /* 호버 효과 */
-}
+      .button:hover {
+        background-color: #0056b3;
+      }
 
-.delete-button {
-  background-color: #dc3545;
-}
+      .delete-button {
+        background-color: #dc3545;
+      }
 
-.delete-button:hover {
-  background-color: #a71d2a;
-}
+      .delete-button:hover {
+        background-color: #a71d2a;
+      }
     </style>
 
     <!--CSS-->
@@ -178,83 +177,72 @@
         });
     }
 
+    // 프리셋 데이터를 렌더링
     function renderPresets(presets) {
-  const container = document.getElementById("preset-container");
+      const container = document.getElementById("preset-container");
 
-  container.innerHTML = presets
-    .map(
-      (preset) => `
-    <div class="preset">
-      <!-- 의류 정보 -->
-      <div class="clothing-info">
-        <div class="item">
-          <img src="${preset.top_image_url || "#"}" alt="상의 이미지" />
-          <div>
-            <div><strong>상품명:</strong> ${preset.top_name || "정보 없음"}</div>
-            <div><strong>브랜드:</strong> ${preset.top_brand || "정보 없음"}</div>
-            <div><strong>구매링크:</strong> ${
-              preset.top_purchase
-                ? `<a href="${preset.top_purchase}" target="_blank" rel="noopener noreferrer">구매하기</a>`
-                : "정보 없음"
-            }</div>
+      container.innerHTML = presets
+        .map(
+          (preset) => `
+      <div class="preset">
+        <!-- 의류 정보 -->
+        <div class="clothing-info">
+          <div class="item">
+            <img src="${preset.top_image_url || "#"}" alt="상의 이미지" />
+            <div>
+              <div><strong>상품명:</strong> ${
+                preset.top_name || "정보 없음"
+              }</div>
+              <div><strong>브랜드:</strong> ${
+                preset.top_brand || "정보 없음"
+              }</div>
+              <div><strong>구매링크:</strong> ${
+                preset.top_purchase_link || "정보 없음"
+              }</div>
+            </div>
+          </div>
+          <div class="item">
+            <img src="${preset.bottom_image_url || "#"}" alt="하의 이미지" />
+            <div>
+              <div><strong>상품명:</strong> ${preset.bottom_name || "정보 없음" }</div>
+              <div><strong>브랜드:</strong> ${ preset.bottom_brand || "정보 없음" }</div>
+              <div><strong>구매링크:</strong> ${ preset.top_brand || "정보 없음" }</div>
+            </div>
+          </div>
+          <div class="button-container">
+            <button class="button delete-button" onclick="deletePreset(${preset.user_closet_id})" >
+              삭제
+            </button>
+            <button class="button" onclick="toggleDetails(${preset.user_closet_id}, '${preset.style }', ${preset.height}, ${preset.weight}, '${preset.sex}')" >
+              세부정보
+            </button>
           </div>
         </div>
-        <div class="item">
-          <img src="${preset.bottom_image_url || "#"}" alt="하의 이미지" />
-          <div>
-            <div><strong>상품명:</strong> ${preset.bottom_name || "정보 없음"}</div>
-            <div><strong>브랜드:</strong> ${preset.bottom_brand || "정보 없음"}</div>
-            <div><strong>구매링크:</strong> ${
-              preset.bottom_purchase
-                ? `<a href="${preset.bottom_purchase}" target="_blank" rel="noopener noreferrer">구매하기</a>`
-                : "정보 없음"
-            }</div>
-          </div>
-        </div>
-        <div class="button-container">
-          <button class="button delete-button" onclick="deletePreset(${preset.user_closet_id})">
-            삭제
-          </button>
-          <button class="button" onclick="toggleDetails(${preset.user_closet_id}, '${preset.style}', ${preset.height}, ${preset.weight}, '${preset.gender}')">
-            세부정보
-          </button>
-        </div>
-      </div>
-      <!-- 세부 정보 (숨김 상태) -->
-      <div id="details-box-${preset.user_closet_id}" class="details-box"></div>
-    </div>`
-    )
-    .join("");
-}
 
-
+        <!-- 세부 정보 (숨김 상태) -->
+        <div id="details-box-${
+          preset.user_closet_id
+        }" class="details-box"></div>
+      </div>`
+        )
+        .join("");
+    }
 
     // 세부 정보 표시
-    function toggleDetails(userClosetId, style, height, weight, gender) {
-  const detailsBox = document.getElementById(`details-box-${userClosetId}`);
-  
-  if (!detailsBox) {
-    console.error(`Details box not found for userClosetId: ${userClosetId}`);
-    return; // DOM 요소가 없는 경우 함수 종료
-  }
-
-  // 현재 display 상태 확인
-  const isHidden = !detailsBox.style.display || detailsBox.style.display === "none";
-  
-  detailsBox.style.display = isHidden ? "block" : "none";
-
-  if (isHidden) {
-    // 세부 정보를 동적으로 설정
-    detailsBox.innerHTML = `
+    function toggleDetails(userClosetId, style, height, weight, sex) {
+      const detailsBox = document.getElementById(`details-box-${userClosetId}`);
+      detailsBox.style.display =
+        detailsBox.style.display === "none" ? "block" : "none";
+      if (detailsBox.style.display === "block") {
+        detailsBox.innerHTML = `
       <h3>세부 정보</h3>
       <p><strong>스타일:</strong> ${style}</p>
       <p><strong>키:</strong> ${height}cm</p>
       <p><strong>몸무게:</strong> ${weight}kg</p>
-      <p><strong>성별:</strong> ${gender}</p>
+      <p><strong>성별:</strong> ${sex}</p>
     `;
-  }
-}
-
+      }
+    }
 
     // 프리셋이 없을 때 렌더링
     function renderNoPresets() {

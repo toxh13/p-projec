@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>옵션 선택 페이지</title>
+    <link href="css/styles.css" rel="stylesheet" />
+    <!--<link href="css/testOption.css" rel="stylesheet" />-->
+    <link href="css/testOption.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div id="nav-container"></div>
+    <!-- 동적으로 nav.html 삽입 -->
+
+    <!-- 옵션 선택 박스 추가 -->
+    <div class="option-box">
+      <form id="optionsForm">
+        <!-- 성별 선택 -->
+        <div class="option-section active" id="genderSelectionSection">
+          <h2>성별 선택</h2>
+          <div class="gender-option">
+            <div>
+              <img
+                src="image/man.jpg"
+                alt="남자"
+                onclick="selectGender('male')"
+                class="genderImage"
+              />
+              <input type="radio" name="gender" value="male" required />
+              남자
+            </div>
+            <div>
+              <img
+                src="image/woman.jpg"
+                alt="여자"
+                onclick="selectGender('female')"
+                class="genderImage"
+              />
+              <input type="radio" name="gender" value="female" required />
+              여자
+            </div>
+          </div>
+          <button
+            type="submit"
+            class="optionSelbutton"
+            onclick="nextSection('heightWeightSection')"
+          >
+            다음
+          </button>
+        </div>
+
+        <!-- 키 & 몸무게 입력 -->
+        <div class="option-section" id="heightWeightSection">
+          <h3>키 & 몸무게 입력</h3>
+          <div class="phyInfo">
+            <label for="height">키 (cm):</label>
+            <input
+              type="number"
+              id="height"
+              name="option_stature"
+              required
+            /><br />
+            <p></p>
+            <label for="weight">몸무게 (kg):</label>
+            <input
+              type="number"
+              id="weight"
+              name="option_weight"
+              required
+            /><br />
+          </div>
+          <p></p>
+          <button
+            type="submit"
+            class="optionSelbutton"
+            onclick="nextSection('categorySection')"
+          >
+            다음
+          </button>
+          <button type="reset" class="optionSelbutton">다시 입력</button>
+          <button
+            type="button"
+            class="optionSelbutton"
+            onclick="prevSection('heightWeightSection', 'genderSelectionSection')"
+          >
+            뒤로가기
+          </button>
+        </div>
+
+        <!-- 스타일 카테고리 선택 -->
+        <div class="option-section" id="categorySection">
+          <h3>스타일 카테고리 선택</h3>
+          <label for="category" class="inputInterval">스타일:</label>
+          <select id="category" required>
+            <option value="">선택</option>
+            <option value="캐주얼">캐주얼</option>
+            <option value="스트릿">스트릿</option>
+            <option value="미니멀">미니멀</option>
+            <option value="워크웨이">워크웨이</option>
+            <option value="프레피">프레피피</option>
+          </select>
+          <br />
+          <button
+            type="button"
+            class="optionSelbutton"
+            onclick="nextSection('itemTypeSelectionSection')"
+          >
+            다음
+          </button>
+          <button
+            type="button"
+            class="optionSelbutton"
+            onclick="prevSection('categorySection', 'heightWeightSection')"
+          >
+            뒤로가기
+          </button>
+        </div>
+
+        <!-- 상의/하의 선택 -->
+        <div class="option-section" id="itemTypeSelectionSection">
+          <h3>추천받을 항목 선택</h3>
+          <button
+            type="button"
+            class="optionSelbutton"
+            onclick="requestRecommendation('top')"
+          >
+            상의 추천
+          </button>
+          <button
+            type="button"
+            class="optionSelbutton"
+            onclick="requestRecommendation('bottom')"
+          >
+            하의 추천
+          </button>
+          <button
+            type="button"
+            class="optionSelbutton"
+            onclick="prevSection('itemTypeSelectionSection', 'categorySection')"
+          >
+            뒤로가기
+          </button>
+        </div>
+
+        <!-- 추천 결과 표시 -->
+        <div class="option-section" id="recommendationSection">
+          <h3>추천 결과</h3>
+          <div id="recommendationResults"></div>
+          <button
+            type="button"
+            class="optionSelbutton"
+            onclick="submitChoice()"
+          >
+            선택 완료
+          </button>
+        </div>
+
+        <!-- 최종 세트 결과 -->
+        <div class="option-section" id="resultSection">
+          <h3>최종 세트</h3>
+          <div id="finalSet"></div>
+          <button type="button" class="optionSelbutton" onclick="restart()">
+            다시 시작
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!--JS-->
+    <script src="navbar.js"></script>
+    <script src="js/testOptionSel.js" defer></script>
+  </body>
+</html>

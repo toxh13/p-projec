@@ -99,10 +99,10 @@ def recommend_clothing(clothing_data, user_id, user_height, user_weight, user_ge
 
 def recommend_based_on_conditions(clothing_data, user_height, user_weight, user_gender, user_style, clothingType, top_n=3):
     filtered_data = clothing_data[
-        (clothing_data['평균_키'] >= user_height - 5) &
-        (clothing_data['평균_키'] <= user_height + 5) &
-        (clothing_data['평균_몸무게'] >= user_weight - 5) &
-        (clothing_data['평균_몸무게'] <= user_weight + 5) &
+        (clothing_data['평균_키'] >= user_height - 10) &
+        (clothing_data['평균_키'] <= user_height + 10) &
+        (clothing_data['평균_몸무게'] >= user_weight - 10) &
+        (clothing_data['평균_몸무게'] <= user_weight + 10) &
         ((clothing_data['성별'] == user_gender) | (clothing_data['성별'] == "공용")) &
         (clothing_data['스타일'] == user_style) &
         (clothing_data['부위'].str.strip().str.lower() == clothingType.strip().lower())

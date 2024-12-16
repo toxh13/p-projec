@@ -1,81 +1,81 @@
 body {
-  font-family: Arial, sans-serif;
-  padding-top: 70px;
-}
-
-#preset-container {
-  display: flex;
-  flex-direction: column; /* 프리셋을 수직으로 정렬 */
-  gap: 30px; /* 프리셋 간 간격 추가 */
-}
-
-.preset {
-  display: flex;
-  flex-direction: row; /* 개별 프리셋 내부의 콘텐츠는 수평 정렬 */
-  align-items: flex-start; /* 콘텐츠 상단 정렬 */
-  gap: 30px; /* 내부 콘텐츠 간 간격 추가 */
-  border: 1px solid #ddd; /* 각 프리셋에 경계선 추가 */
-  padding: 20px;
-  border-radius: 10px; /* 둥근 모서리 추가 */
-  background-color: #f9f9f9; /* 배경색 추가 */
-}
-
-.clothing-info {
-  display: flex;
-  flex-direction: column; /* 상품 데이터를 수직 정렬 */
-  flex: 3; /* 텍스트 영역 비율을 더 넓게 설정 */
-  gap: 15px;
-}
-
-.clothing-info .item {
-  display: flex;
-  align-items: flex-start;
-  gap: 20px;
-}
-
-.clothing-info img {
-  width: 150px; /* 이미지 크기 조정 */
-  height: auto; /* 비율 유지 */
-  border-radius: 5px;
-  flex-shrink: 0; /* 이미지가 텍스트에 의해 줄어들지 않도록 설정 */
-}
-
-.details-box {
-  flex-grow: 1;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  padding: 20px;
-  background-color: #fff; /* 세부 정보 배경 흰색 */
-  display: none; /* 기본 숨김 */
-  margin: 0; /* 외부 여백 제거 */
-  align-self: stretch; /* 상위 요소의 높이에 맞춰 확장 */
-}
-
-.button-container {
-  display: flex;
-  flex-direction: column; /* 버튼을 수직 정렬 */
-  gap: 10px; /* 버튼 간 간격 추가 */
-}
-
-.button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 15px; /* 버튼 크기 조정 */
-  cursor: pointer;
-  border-radius: 5px;
-  font-size: 16px; /* 텍스트 크기 조정 */
-  text-align: center;
-}
-
-.button:hover {
-  background-color: #0056b3;
-}
-
-.delete-button {
-  background-color: #dc3545;
-}
-
-.delete-button:hover {
-  background-color: #a71d2a;
-}
+    font-family: Arial, sans-serif;
+    padding-top: 70px;
+  }
+  
+  #preset-container {
+    display: flex;
+    flex-direction: column; /* 프리셋을 수직으로 정렬 */
+    gap: 30px; /* 프리셋 간 간격 추가 */
+  }
+  
+  .preset {
+    display: flex;
+    flex-direction: row; /* 개별 프리셋 내부의 콘텐츠는 수평 정렬 */
+    align-items: flex-start; /* 콘텐츠 상단 정렬 */
+    gap: 30px; /* 내부 콘텐츠 간 간격 추가 */
+    border: 1px solid #ddd; /* 각 프리셋에 경계선 추가 */
+    padding: 20px;
+    border-radius: 10px; /* 둥근 모서리 추가 */
+    background-color: #f9f9f9; /* 배경색 추가 */
+  }
+  
+  .clothing-info {
+    display: flex;
+    flex-direction: column; /* 상품 데이터를 수직 정렬 */
+    flex: 3; /* 텍스트 영역 비율을 더 넓게 설정 */
+    gap: 15px;
+  }
+  
+  .clothing-info .item {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+  }
+  
+  .clothing-info img {
+    width: 150px; /* 이미지 크기 조정 */
+    height: auto; /* 비율 유지 */
+    border-radius: 5px;
+    flex-shrink: 0; /* 이미지가 텍스트에 의해 줄어들지 않도록 설정 */
+  }
+  
+  .details-box {
+    flex-grow: 1;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
+    background-color: #fff; /* 세부 정보 배경 흰색 */
+    display: none; /* 기본 숨김 */
+    margin: 0; /* 외부 여백 제거 */
+    align-self: stretch; /* 상위 요소의 높이에 맞춰 확장 */
+  }
+  
+  .button-container {
+    display: flex;
+    flex-direction: column; /* 버튼을 수직 정렬 */
+    gap: 10px; /* 버튼 간 간격 추가 */
+  }
+  
+  .button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px; /* 버튼 크기 조정 */
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px; /* 텍스트 크기 조정 */
+    text-align: center;
+  }
+  
+  .button:hover {
+    background-color: #0056b3;
+  }
+  
+  .delete-button {
+    background-color: #dc3545;
+  }
+  
+  .delete-button:hover {
+    background-color: #a71d2a;
+  }

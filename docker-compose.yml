@@ -5,10 +5,9 @@ services:
   frontend:
     build: ./frontend
     ports:
-      - "80:80"
+      - "80:80"  # 프론트엔드 호스트 포트를 8080으로 변경
     networks:
       - project-net
-    # 오류가 발생할 수 있는 포트나 환경 변수를 추가
     volumes:
       - ./frontend:/var/www/html
 
@@ -27,7 +26,8 @@ services:
     depends_on:
       - db
     volumes:
-      - ./backend:/app  # 코드 변경 반영을 위해 볼륨 설
+      - ./backend:/app
+
   # AI 서버 (FastAPI)
   ai_server:
     build: ./AI
@@ -36,11 +36,12 @@ services:
     networks:
       - project-net
     environment:
-      AI_MODEL_PATH: ""  # 비워놓은 상태
+      - AI_MODEL_PATH=  # 필요 없으면 이 줄 제거
     volumes:
-      - ./AI:/app  # AI 폴더를 컨테이너에 매핑
+      - ./AI:/app
     depends_on:
-      - db  # DB가 필요할 경우 DB와 연결B가 필요할 경우 DB와 연결
+      - db
+
   # DB 서버 (MySQL)
   db:
     image: mysql:8
