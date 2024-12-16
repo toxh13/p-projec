@@ -154,16 +154,17 @@ app.get("/api/clothing_presets", authenticateToken, (req, res) => {
       uc.added_at AS created_at,
       uc.height,
       uc.weight,
-      uc.sex,
+      uc.gender,
       top.id AS top_clothing_id,
       top.상품명 AS top_name,
       top.브랜드 AS top_brand,
       top.이미지_URL AS top_image_url,
+      top.구매사이트 AS top_purchase,
       bottom.id AS bottom_clothing_id,
       bottom.상품명 AS bottom_name,
       bottom.브랜드 AS bottom_brand,
-      bottom.이미지_URL AS bottom_image_url
-     
+      bottom.이미지_URL AS bottom_image_url,
+      bottom.구매사이트 AS bottom_purchase 
     FROM User_Closets uc
     LEFT JOIN Clothing top ON uc.top_clothing_id = top.id
     LEFT JOIN Clothing bottom ON uc.bottom_clothing_id = bottom.id
@@ -177,35 +178,55 @@ app.get("/api/clothing_presets", authenticateToken, (req, res) => {
       return res.status(500).json({ message: "DB 조회 오류" });
     }
 
+    if (results.length === 0) {
+      return res.status(404).json({ message: "프리셋이 없습니다." });
+    }
+
     res.status(200).json({ message: "프리셋 조회 성공", data: results });
   });
 });
 
-// 완성된 의류 프리셋 저장 API
-app.post("/api/user_closets", authenticateToken, (req, res) => {
-  const userId = req.user.id; // JWT에서 추출된 사용자 ID
-  const { top_clothing_id, bottom_clothing_id, style, weight, height } = req.body;
 
-  if (!top_clothing_id || !bottom_clothing_id || !style || !weight || !height) {
-    console.error("[ERROR] 누락된 필드:", { top_clothing_id, bottom_clothing_id , style });
+app.post("/api/user_closets", authenticateToken, (req, res) => {
+  const { gender, top_clothing_id, bottom_clothing_id, style, weight, height } = req.body;
+  console.log("[DEBUG] Gender received:", gender); // 디버깅 로그
+
+  if (!top_clothing_id || !bottom_clothing_id || !style || !weight || !height || !gender) {
+    console.error("[ERROR] 누락된 필드:", { gender, top_clothing_id, bottom_clothing_id, style, weight, height });
     return res.status(400).json({ message: "모든 필드를 제공해야 합니다." });
   }
 
   const query = `
-    INSERT INTO User_Closets (user_id, top_clothing_id, bottom_clothing_id, style, added_at)
-    VALUES (?, ?, ?, ?, NOW());
+    INSERT INTO User_Closets (user_id, top_clothing_id, bottom_clothing_id, style, weight, height, gender, added_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, NOW());
   `;
+  console.log("[DEBUG] Query Values:", [
+    req.user.id,
+    top_clothing_id,
+    bottom_clothing_id,
+    style,
+    weight,
+    height,
+    gender,
+  ]);
 
-  db.query(query, [userId, top_clothing_id, bottom_clothing_id, style], (err, results) => {
-    if (err) {
-      console.error("[ERROR] DB 저장 오류:", err);
-      return res.status(500).json({ message: "DB 저장 오류" });
+  db.query(
+    query,
+    [req.user.id, top_clothing_id, bottom_clothing_id, style, weight, height, gender],
+    (err, results) => {
+      if (err) {
+        console.error("[ERROR] DB 저장 오류:", err);
+        return res.status(500).json({ message: "DB 저장 오류" });
+      }
+
+      console.log(`[INFO] 프리셋 저장 성공, ID(${results.insertId})`);
+      res.status(201).json({ message: "프리셋 저장 성공", presetId: results.insertId });
     }
-
-    console.log(`[INFO] 사용자 ID(${userId})의 프리셋이 저장되었습니다.`);
-    res.status(201).json({ message: "프리셋 저장 성공", presetId: results.insertId });
-  });
+  );
 });
+
+
+
 
 
 
