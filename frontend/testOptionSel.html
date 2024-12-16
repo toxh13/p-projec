@@ -226,31 +226,7 @@
           >
             뒤로가기
           </button>
-          <button
-            id="viewResultButton"
-            class="optionSelbutton"
-            onclick="goToClothingSet()"
-          >
-            결과 보기
-          </button>
         </div>
-
-        <!-- 최종 결과 
-        <div class="option-section" id="finalSection">
-          <h3>최종 세트</h3>
-          <div id="finalResults"></div>
-          <button type="button" class="optionSelbutton" onclick="restart()">
-            다시 시작
-          </button>
-          <button
-            type="button"
-            class="optionSelbutton"
-            onclick="goToClothingSet()"
-          >
-            결과 보기
-          </button>
-        </div>
-    -->
       </form>
     </div>
 
@@ -380,24 +356,6 @@
         showSection("recommendationSection");
       }
 
-      function showFinalResults() {
-        if (!selectedTop && !selectedBottom) {
-          alert("상의와 하의를 모두 선택해주세요.");
-          return;
-        }
-
-        const container = document.getElementById("finalResults");
-        container.innerHTML = `
-          <p><strong>선택한 상의 ID:</strong> ${selectedTop}</p>
-          <p><strong>선택한 하의 ID:</strong> ${selectedBottom}</p>
-        `;
-
-        // 결과 보기 버튼 보여주기
-        document.getElementById("viewResultButton").style.display = "block";
-
-        showSection("finalSection");
-      }
-
       function selectItem(type, id) {
         // 기존 선택 상태 초기화
         document.querySelectorAll(".recommendation-item img").forEach((img) => {
@@ -437,7 +395,7 @@
             console.log("상의 선택 완료. 하의 추천 시작.");
             requestRecommendation("하의");
           } else {
-            showFinalResults();
+            goToClothingSet(); // 최종 결과를 표시하는 대신 결과 보기 함수 호출
           }
         } else {
           // 하의를 먼저 추천받은 경우
@@ -449,23 +407,9 @@
             console.log("하의 선택 완료. 상의 추천 시작.");
             requestRecommendation("상의");
           } else {
-            showFinalResults();
+            goToClothingSet(); // 최종 결과를 표시하는 대신 결과 보기 함수 호출
           }
         }
-      }
-
-      function showFinalResults() {
-        if (!selectedTop && !selectedBottom) {
-          alert("상의와 하의를 모두 선택해주세요.");
-          return;
-        }
-
-        const container = document.getElementById("finalResults");
-        container.innerHTML = `
-          <p><strong>선택한 상의 ID:</strong> ${selectedTop}</p>
-          <p><strong>선택한 하의 ID:</strong> ${selectedBottom}</p>
-          `;
-        showSection("finalSection");
       }
 
       function restart() {
