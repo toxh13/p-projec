@@ -94,10 +94,6 @@
         border-radius: 5px;
       }
     </style>
-    
-    <!--CSS-->
-    <link href="css/styles.css" rel="stylesheet" />
-    <!--부트스트랩-->
   </head>
   <body>
     <div id="nav-container"></div>
@@ -230,9 +226,16 @@
           >
             뒤로가기
           </button>
+          <button
+            id="viewResultButton"
+            class="optionSelbutton"
+            onclick="goToClothingSet()"
+          >
+            결과 보기
+          </button>
         </div>
 
-        <!-- 최종 결과 -->
+        <!-- 최종 결과 
         <div class="option-section" id="finalSection">
           <h3>최종 세트</h3>
           <div id="finalResults"></div>
@@ -247,6 +250,7 @@
             결과 보기
           </button>
         </div>
+    -->
       </form>
     </div>
 
@@ -376,6 +380,24 @@
         showSection("recommendationSection");
       }
 
+      function showFinalResults() {
+        if (!selectedTop && !selectedBottom) {
+          alert("상의와 하의를 모두 선택해주세요.");
+          return;
+        }
+
+        const container = document.getElementById("finalResults");
+        container.innerHTML = `
+          <p><strong>선택한 상의 ID:</strong> ${selectedTop}</p>
+          <p><strong>선택한 하의 ID:</strong> ${selectedBottom}</p>
+        `;
+
+        // 결과 보기 버튼 보여주기
+        document.getElementById("viewResultButton").style.display = "block";
+
+        showSection("finalSection");
+      }
+
       function selectItem(type, id) {
         // 기존 선택 상태 초기화
         document.querySelectorAll(".recommendation-item img").forEach((img) => {
@@ -460,7 +482,9 @@
           return;
         }
 
-        const url = `clothing_set.html?top=${"encodeURIComponent(selectedTop)"}&bottom=${encodeURIComponent(
+        const url = `clothing_set.html?top=${encodeURIComponent(
+          selectedTop
+        )}&bottom=${encodeURIComponent(
           selectedBottom
         )}&gender=${encodeURIComponent(
           userInfo.gender
@@ -468,8 +492,8 @@
           userInfo.height
         )}&weight=${encodeURIComponent(
           userInfo.weight
-        )}&style=${encodeURIComponent(userInfo.style)};
-        window.location.href = url`;
+        )}&style=${encodeURIComponent(userInfo.style)}`;
+        window.location.href = url;
       }
     </script>
 
