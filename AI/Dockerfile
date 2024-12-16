@@ -9,6 +9,13 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install pandas
 RUN pip install scikit-learn
+RUN pip install sqlalchemy  
+RUN pip install pymysql
+RUN pip install requests
+RUN pip install tensorflow
+RUN pip install jinja2
+RUN mkdir /app/static
+RUN pip install python-multipart
 # 애플리케이션 파일 복사
 COPY . .
 
