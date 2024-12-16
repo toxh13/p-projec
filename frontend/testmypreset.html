@@ -90,7 +90,7 @@
 
       .button-container {
         display: flex;
-        flex-direction: column; /* 버튼을 수직 정렬 */
+        flex-direction: row-reverse;
         gap: 10px; /* 버튼 간 간격 추가 */
       }
 
@@ -216,18 +216,18 @@
             </div>
           </div>
           <button
+            class="button delete-button"
+            onclick="deletePreset(${preset.user_closet_id})"
+          >
+            삭제
+          </button>
+          <button
             class="button"
             onclick="toggleDetails(${preset.user_closet_id}, '${
             preset.style
           }', ${preset.height}, ${preset.weight}, '${preset.sex}')"
           >
             세부정보
-          </button>
-          <button
-            class="button delete-button"
-            onclick="deletePreset(${preset.user_closet_id})"
-          >
-            삭제
           </button>
         </div>
 
