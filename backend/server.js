@@ -11,7 +11,7 @@ const PORT = 3000;
 const SECRET_KEY = "your_secret_key"; // JWT 서명용 키
 
 // 미들웨어 설정
-app.use(cors());
+app.use(cors({ origin: "*" }));
 app.use(bodyParser.json());
 
 // MySQL DB 연결 설정
@@ -80,14 +80,16 @@ app.post("/api/login", (req, res) => {
     // JWT 토큰 생성
     const token = jwt.sign({ id: user.user_id, email: user.email }, SECRET_KEY, { expiresIn: "1h" });
 
-
+    // 클라이언트에 필요한 데이터 포함
     res.status(200).json({
       message: "로그인 성공",
       username: user.username,
+      user_id: user.user_id, // 클라이언트에 user_id 추가
       token, // JWT 토큰
     });
   });
 });
+
 
 // 회원가입 API
 app.post("/api/signup", (req, res) => {
@@ -161,7 +163,7 @@ app.get("/api/clothing_presets", authenticateToken, (req, res) => {
       bottom.상품명 AS bottom_name,
       bottom.브랜드 AS bottom_brand,
       bottom.이미지_URL AS bottom_image_url
-      bottom.구매사이트 AS purchase
+     
     FROM User_Closets uc
     LEFT JOIN Clothing top ON uc.top_clothing_id = top.id
     LEFT JOIN Clothing bottom ON uc.bottom_clothing_id = bottom.id
@@ -182,10 +184,10 @@ app.get("/api/clothing_presets", authenticateToken, (req, res) => {
 // 완성된 의류 프리셋 저장 API
 app.post("/api/user_closets", authenticateToken, (req, res) => {
   const userId = req.user.id; // JWT에서 추출된 사용자 ID
-  const { top_clothing_id, bottom_clothing_id, style } = req.body;
+  const { top_clothing_id, bottom_clothing_id, style, weight, height } = req.body;
 
-  if (!top_clothing_id || !bottom_clothing_id || !style) {
-    console.error("[ERROR] 누락된 필드:", { top_clothing_id, bottom_clothing_id, style });
+  if (!top_clothing_id || !bottom_clothing_id || !style || !weight || !height) {
+    console.error("[ERROR] 누락된 필드:", { top_clothing_id, bottom_clothing_id , style });
     return res.status(400).json({ message: "모든 필드를 제공해야 합니다." });
   }
 
